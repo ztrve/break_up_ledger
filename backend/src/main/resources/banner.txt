@@ -1,0 +1,21 @@
+
+  _________                .__                                           .__   .__
+ /   _____/______  _______ |__|  ____    ____     ____             ____  |  |  |__|
+ \_____  \ \____ \ \_  __ \|  | /    \  /    \   / ___\   ______ _/ ___\ |  |  |  |
+ /        \|  |_> > |  | \/|  ||   |  \|   |  \ / /_/  > /_____/ \  \___ |  |__|  |
+/_______  /|   __/  |__|   |__||___|  /|___|  / \___  /           \___  >|____/|__|
+        \/ |__|                     \/      \/ /_____/                \/
+
+
+${AnsiColor.BRIGHT_MAGENTA}Tip: You can custom project banner at here https://patorjk.com/software/taag/#p=display&h=0&v=1&f=Graffiti&t=SpringCli ${AnsiColor.MAGENTA}
+${AnsiColor.CYAN}spring-cli (v1.0.6) ${AnsiColor.MAGENTA}
+Application Created By Edward Jobs <fatewa.fit@gmail.com> ${AnsiColor.DEFAULT}
+
+Coding Features
+${AnsiColor.BRIGHT_GREEN}# 1     Response Join point${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_GREEN}# 2     Mybatis Migration${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_GREEN}# 3     Api Hooks${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_GREEN}# 4     Mybatis Plus${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_GREEN}# 5     Auto SQL Builder & Controller automatic injection${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_YELLOW}# 6     Task Scheduling (WIP)${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_GREEN}# 7     Data Scopes${AnsiColor.DEFAULT}

@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWD:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:break_up_ledger}?currentSchema=${DB_SCHEMA:break_up_ledger}&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+    driver-class-name: org.postgresql.Driver
+    
+mybatis-plus:
+  type-enums-package: com.diswares.breakupledger.enums
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      #数据库类型
+      id-type: auto
+      logic-delete-field: exist
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 使用默认的枚举类型处理器
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
