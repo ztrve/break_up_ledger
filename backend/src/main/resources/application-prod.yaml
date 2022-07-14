@@ -5,7 +5,24 @@ spring:
     password: ${DB_PASSWD:postgres}
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:break_up_ledger}?currentSchema=${DB_SCHEMA:break_up_ledger}&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
     driver-class-name: org.postgresql.Driver
-  
+    hikari:
+      connection-timeout: 60000
+      idle-timeout: 600000
+      max-lifetime: 28740000
+      connection-test-query: SELECT 1
+      minimum-idle: 10
+      maximum-pool-size: 20
+      auto-commit: true
+  redis:
+    host: ${REDIS_HOST:10.0.10.35}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWD:thisispassword}
+    lettuce:
+      shutdown-timeout: 0
+    db:
+      default: 0
+      example: 10
+
 mybatis-plus:
   type-enums-package: com.diswares.breakupledger.enums
   # 以下配置均有默认值,可以不设置
@@ -23,5 +40,11 @@ mybatis-plus:
     call-setters-on-nulls: true
     # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    # 使用默认的枚举类型处理器
+    # 使用默认œ的枚举类型处理器
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+
+# 鉴权服务部署的ip:port或者域名,多个使用分号分割
+absol:
+  domain:
+    center: ${ABSOL_DOMAIN_CENTER:localhost:42000}
+

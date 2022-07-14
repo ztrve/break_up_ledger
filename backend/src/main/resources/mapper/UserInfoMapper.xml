@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.diswares.breakupledger.backend.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.diswares.breakupledger.backend.po.UserInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="unitCode" column="unit_code" jdbcType="BIGINT"/>
+            <result property="photo" column="photo" jdbcType="VARCHAR"/>
+            <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="idCard" column="id_card" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
+            <result property="account" column="account" jdbcType="VARCHAR"/>
+            <result property="source" column="source" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,unit_code,photo,
+        nick_name,name,id_card,
+        phone,account,source,
+        create_time,update_time
+    </sql>
+
+    <select id="selectUserInfoByConditions" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from break_up_ledger.user_info
+        <where>
+            <if test="qo.searchValue != null and qo.searchValue != '' ">
+                and (name like '%' || #{qo.searchValue,jdbcType=VARCHAR} || '%'
+                    or id_card like '%' || #{qo.searchValue,jdbcType=VARCHAR} || '%'
+                    or phone like '%' || #{qo.searchValue,jdbcType=VARCHAR} || '%')
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <select id="getUnbindEmployeeUserInfo" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM break_up_ledger.user_info ui
+        WHERE not EXISTS (SELECT user_id from break_up_ledger.employee_info ei WHERE user_id is not null and ui.unit_code = ei.user_id)
+        <if test="qo.searchValue != null and qo.searchValue != ''">
+            and (ui.account like '%' || #{qo.searchValue,jdbcType=VARCHAR} || '%'
+                or ui.name like '%' || #{qo.searchValue,jdbcType=VARCHAR} || '%')
+        </if>
+    </select>
+</mapper>

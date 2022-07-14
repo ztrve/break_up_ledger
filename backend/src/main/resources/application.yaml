@@ -1,7 +1,7 @@
 server:
   port: 3000
   servlet:
-    context-path: /api
+    context-path: /api/bul
 spring:
   jackson:
     default-property-inclusion: use_defaults
