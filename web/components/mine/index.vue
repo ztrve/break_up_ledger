@@ -14,7 +14,7 @@
       }" :src="userInfo.avatarUrl">
     </div>
 
-    <nut-empty image="empty" image-size="90px"	description="程序员正在秃头研发中..." />
+    <nut-empty image="empty" image-size="90px" description="程序员正在秃头研发中..." />
   </div>
 </template>
 
@@ -43,8 +43,6 @@ const avatarCssOptions = ref({
 function computeBackground() {
   const systemInfo = Taro.getSystemInfoSync()
   const windowWidth = systemInfo.windowWidth
-  console.log(windowWidth);
-
   // bg 1170 × 954
   const bgw = windowWidth
   const bgh = 954 / 1170 * bgw
@@ -61,6 +59,8 @@ function computeBackground() {
       avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
       avatarCssOptions.value.top = bgh * 0.525 + 'px'
       avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
+      console.log('computed user background size');
+      console.log(avatarCssOptions.value);
     })
 }
 
