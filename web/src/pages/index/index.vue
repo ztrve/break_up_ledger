@@ -1,10 +1,10 @@
 <template>
   <view class="index" :style="`height: ${indexHeight}`">
     <view class="main-wrapper" :style="`height: ${mainWrapperHeight}`">
-      <home v-if="pageIsShow(0)" />
+      <home v-if="pageIsShow(3)" />
       <friends v-if="pageIsShow(1)" />
       <notices v-if="pageIsShow(2)" />
-      <mine v-if="pageIsShow(3)" />
+      <mine v-if="pageIsShow(0)" />
     </view>
 
     <nut-tabbar :value="activePageIndex" @change="changeActivePageIndex" :bottom="true" @tab-switch="activePage">
