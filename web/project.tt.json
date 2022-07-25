@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "break_up_ledger",
+  "description": "绝交账单",
+  "appid": "wx85c5f230e6e144ed",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
