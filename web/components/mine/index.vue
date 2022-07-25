@@ -14,7 +14,7 @@
       }" :src="userInfo.avatarUrl">
     </div>
 
-    <nut-empty image="empty" description="程序员正在秃头研发中..."></nut-empty>
+    <nut-empty image="empty" image-size="90px"	description="程序员正在秃头研发中..." />
   </div>
 </template>
 
@@ -40,29 +40,33 @@ const avatarCssOptions = ref({
   bgheight: '0px'
 })
 
-onMounted(() => {
-  eventCenter.once(getCurrentInstance().router.onReady, () => {
-    const systemInfo = Taro.getSystemInfoSync()
-    const windowWidth = systemInfo.windowWidth
-    console.log(windowWidth);
+function computeBackground() {
+  const systemInfo = Taro.getSystemInfoSync()
+  const windowWidth = systemInfo.windowWidth
+  console.log(windowWidth);
 
-    // bg 1170 × 954
-    const bgw = windowWidth
-    const bgh = 954 / 1170 * bgw
-    avatarCssOptions.value.bgWidth = bgw + 'px'
-    avatarCssOptions.value.bgheight = bgh + 'px'
-    Taro.createSelectorQuery().select('.user-display > .mine-avatar-bg')
-      .boundingClientRect()
-      .exec(bgs => {
-        // const bgw = windowWidth
-        // const bgh = bgs[0].height
-        const avaw = bgw * 0.26
-        avatarCssOptions.value.width = avaw + 'px'
-        avatarCssOptions.value.height = avaw + 'px'
-        avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
-        avatarCssOptions.value.top = bgh * 0.525 + 'px'
-        avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
-      })
+  // bg 1170 × 954
+  const bgw = windowWidth
+  const bgh = 954 / 1170 * bgw
+  avatarCssOptions.value.bgWidth = bgw + 'px'
+  avatarCssOptions.value.bgheight = bgh + 'px'
+  Taro.createSelectorQuery().select('.user-display > .mine-avatar-bg')
+    .boundingClientRect()
+    .exec(bgs => {
+      // const bgw = windowWidth
+      // const bgh = bgs[0].height
+      const avaw = bgw * 0.26
+      avatarCssOptions.value.width = avaw + 'px'
+      avatarCssOptions.value.height = avaw + 'px'
+      avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
+      avatarCssOptions.value.top = bgh * 0.525 + 'px'
+      avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
+    })
+}
+
+onMounted(() => {
+  Taro.nextTick(() => {
+    computeBackground()
   })
 })
 </script>
