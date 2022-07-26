@@ -40,11 +40,6 @@ public class UserInfo extends AncestorDomain implements Serializable {
     private String name;
 
     /**
-     * 身份证号
-     */
-    private String idCard;
-
-    /**
      * 手机号
      */
     private String phone;

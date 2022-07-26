@@ -20,14 +20,28 @@
         <p3c-pmd.version>2.1.1</p3c-pmd.version>
         <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
         <redisson-starter.version>3.16.4</redisson-starter.version>
-        <absol-core.version>2.1.8</absol-core.version>
+        <openfeign.version>2.2.6.RELEASE</openfeign.version>
+        <feign-okhttp.version>11.0</feign-okhttp.version>
+        <fastjson.version>1.2.68</fastjson.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.group.cw.absol</groupId>
-            <artifactId>absol-core</artifactId>
-            <version>${absol-core.version}</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${openfeign.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+            <version>${feign-okhttp.version}</version>
         </dependency>
 
         <dependency>

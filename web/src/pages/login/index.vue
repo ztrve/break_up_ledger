@@ -1,0 +1,228 @@
+<template>
+  <div class="login-wrapper" :style="{
+    width: win.w,
+    height: win.h
+  }">
+    <img :src="require('../../../assets/login-bg.jpeg')" class="bg" :style="{
+      width: win.w,
+      height: win.h
+    }">
+    <div class="login-top">
+      <!-- 占位 -->
+    </div>
+    <div class="login-interact">
+      <div class="login-title login-interact-item">微信授权登陆/注册</div>
+      <nut-button class="login-button login-interact-item" color="#07c160" size="small"
+        @click="clickLoginInteractButton">
+        点击授权
+      </nut-button>
+      <div class="login-other-operate login-interact-item login-interact-item-last">
+        <div class="user-agree">
+          <div class="agree-botton" @click="agreeUserProtocol = !agreeUserProtocol">
+            <div :class="{
+              circle: true,
+              check: agreeUserProtocol
+            }">
+              <div v-if="agreeUserProtocol">✔</div>
+            </div>
+            同意
+          </div>
+          <div class="user-protocol" @click="clickUserProtocol">《用户协议》</div>
+        </div>
+        <div class="has-problem" @click="clickHasProblem">遇到问题？</div>
+      </div>
+    </div>
+    <div class="login-bottom">
+      <!-- 占位 -->
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import Taro from '@tarojs/taro'
+
+const win = ref({
+  w: '0',
+  h: '0'
+})
+
+const agreeUserProtocol = ref(false)
+
+function clickHasProblem() {
+  Taro.showToast({
+    title: '不, 你没有问题！',
+    icon: 'none',
+  })
+}
+
+function clickUserProtocol() {
+  Taro.showToast({
+    title: '没有用户协议...........',
+    icon: 'none',
+  })
+}
+
+async function backendLogin(wxLoginCode) {
+  return await Taro.request({
+    url: 'http://localhost:3000/api/bul/user/login',
+    method: 'POST',
+    data: {
+      reqPlatform: 'WX',
+      data: wxLoginCode
+    }
+  })
+}
+
+function clickLoginInteractButton() {
+  Taro.login({
+    success: function (res) {
+      const wxLoginCode = res.code
+      if (wxLoginCode) {
+        console.log(`wx login code ${wxLoginCode}`);
+
+        const res = backendLogin(wxLoginCode)
+        console.log(res);
+
+        // 获取用户资料
+        // Taro.getUserProfile({
+        //   desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+        //   success: (res) => {
+        //     // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
+        //     console.log(res);
+        //     // this.setState({
+        //       //   userInfo: res.userInfo,
+        //     //   hasUserInfo: true
+        //     // })
+        //   }
+        // })
+
+        //发起网络请求
+        // Taro.request({
+        //   url: `https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=${res.code}&grant_type=authorization_code`,
+        //   data: {
+        //     code: res.code
+        //   }
+        // })
+      } else {
+        console.log('登录失败！' + res.errMsg)
+      }
+    }
+  })
+
+
+  // 获取用户资料
+  Taro.getUserProfile({
+    desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+    success: (res) => {
+      // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
+      console.log(res);
+      // this.setState({
+      //   userInfo: res.userInfo,
+      //   hasUserInfo: true
+      // })
+    }
+  })
+}
+
+onMounted(() => {
+  const systemInfo = Taro.getSystemInfoSync()
+  const windowWidth = systemInfo.windowWidth
+  const windowHeight = systemInfo.windowHeight
+
+  win.value.w = windowWidth + 'px'
+  win.value.h = windowHeight + 'px'
+})
+
+</script>
+
+<style lang="scss">
+.login-wrapper {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-top {
+  flex-grow: 6;
+}
+
+.login-interact {
+  flex: 5;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  width: 80%;
+}
+
+.login-interact>.login-interact-item {
+  margin-bottom: 14px;
+}
+
+.login-interact>.login-interact-item-last {
+  margin-bottom: 0;
+}
+
+.login-interact>.login-title {
+  color: #FFF;
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.login-interact>.login-button {}
+
+.login-interact>.login-other-operate {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  color: #FFF;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-other-operate>.user-agree {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.user-agree>.agree-botton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.agree-botton>.circle {
+  border: 1px solid #FFF;
+  width: 16px;
+  height: 16px;
+  border-radius: 16px;
+  margin-right: 5px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.agree-botton>.check {
+  background-color: #07c160;
+}
+
+.user-agree>.user-protocol {
+  color: #4d90fe
+}
+
+.login-bottom {
+  flex-grow: 4;
+}
+
+.bg {
+  position: absolute;
+  z-index: -1;
+}
+</style>

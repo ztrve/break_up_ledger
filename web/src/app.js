@@ -2,10 +2,11 @@ import { createApp } from 'vue'
 import {
   Button, Toast, Tabbar, TabbarItem, Icon, Avatar, AvatarGroup, Empty,
   Cell, CellGroup, Menu, MenuItem, OverLay, Popup, Tag, Navbar, Tabs, TabPane,
-  Price, Collapse, CollapseItem, Divider, Ellipsis
+  Price, Collapse, CollapseItem, Divider, Ellipsis, Checkbox, CheckboxGroup
 } from '@nutui/nutui-taro';
 import { createPinia } from 'pinia'
 import Taro from '@tarojs/taro'
+
 
 import './app.styl'
 
@@ -21,6 +22,7 @@ const App = createApp({
   // 对应 onShow
   onShow(options) {
     console.log('app.js onShow');
+
     Taro.checkSession({
       success: resp => {
         console.log(resp)
@@ -30,17 +32,7 @@ const App = createApp({
               //发起网络请求
               console.log('发起网络请求');
               console.log(resp);
-              Taro.getUserProfile({
-                desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-                success: (res) => {
-                  // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-                  console.log(res);
-                  // this.setState({
-                  //   userInfo: res.userInfo,
-                  //   hasUserInfo: true
-                  // })
-                }
-              })
+   
               // 向后端发起token请求
               // Taro.request({
               //   url: 'https://test.com/onLogin',
@@ -55,17 +47,7 @@ const App = createApp({
         })
       },
       fail: resp => {
-        console.log(error)
-        // Taro.login({
-        //   success: resp => {
-        //     console.log('login success');
-        //     console.log(resp);
-        //   },
-        //   fail: resp => {
-        //     console.log('login fail');
-        //     console.log(resp);
-        //   }
-        // })
+        console.log('校验session失败')
       }
     })
   },
@@ -79,5 +61,5 @@ App
   .use(createPinia())
   .use(Button).use(Toast).use(Tabbar).use(TabbarItem).use(Icon).use(Avatar).use(AvatarGroup).use(Empty)
   .use(Cell).use(CellGroup).use(Menu).use(MenuItem).use(OverLay).use(Popup).use(Tag).use(Navbar).use(Tabs).use(TabPane)
-  .use(Price).use(Collapse).use(CollapseItem).use(Divider).use(Ellipsis)
+  .use(Price).use(Collapse).use(CollapseItem).use(Divider).use(Ellipsis).use(Checkbox).use(CheckboxGroup)
 export default App

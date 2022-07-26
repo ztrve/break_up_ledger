@@ -1,12 +1,17 @@
 import { defineStore } from 'pinia'
 
-export const useCounterStore = defineStore('counter', {
+export const useUserInfoStore = defineStore('user-profile', {
   state: () => {
-    return { count: 0 }
+    return {
+      userProfile: {}
+    }
   },
   actions: {
-    increment() {
-      this.count++
+    setUserProfile(userProfile) {
+      this.userProfile = userProfile
+    },
+    userProfileIsEmpty () {
+      return undefined === this.userProfile || null === this.userProfile || {} === this.userProfile
     }
   }
 })

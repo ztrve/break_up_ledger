@@ -20,6 +20,7 @@ import Home from '/components/home'
 import Friends from '/components/friends'
 import Notices from '/components/notices'
 import Mine from '/components/mine'
+import { useUserInfoStore } from '/store/index.js'
 
 export default {
   name: 'Index',
@@ -67,6 +68,11 @@ export default {
             state.mainWrapperHeight = windowHeight - tabbarHeight + 'px'
           })
       })
+
+      const userInfoStore = useUserInfoStore()
+      if (userInfoStore.userProfileIsEmpty) {
+        Taro.redirectTo({ url: '/pages/login/index' })
+      }
     })
 
     return {
