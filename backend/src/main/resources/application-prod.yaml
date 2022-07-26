@@ -46,7 +46,6 @@ mybatis-plus:
     # 使用默认的枚举类型处理器
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
 
-
 feign:
   # 开启压缩
   compression:
@@ -59,10 +58,14 @@ feign:
   hystrix:
     enabled: true
 
+
 env:
   wx:
-    appId: ${WX_APPID:111}
-    appSecret: ${WX_APP_SECRET:111}
+    appId: ${WX_APPID:<my_wx_appid>}
+    appSecret: ${WX_APP_SECRET:<my_wx_app_secret>}
   auth:
     login:
       expire-second: 60
+  jwt:
+    secret: <my_jwt_secret>
+

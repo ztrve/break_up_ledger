@@ -13,5 +13,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("auth.login")
 @Component
 public class AuthorLoginConfigurationProperties {
-    private String expireSecond;
+    private Integer expireSecond;
 }

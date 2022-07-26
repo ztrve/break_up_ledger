@@ -41,6 +41,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import Taro from '@tarojs/taro'
+import { useUserInfoStore } from '/store/index.js'
 
 const win = ref({
   w: '0',
@@ -63,66 +64,67 @@ function clickUserProtocol() {
   })
 }
 
-async function backendLogin(wxLoginCode) {
-  return await Taro.request({
-    url: 'http://localhost:3000/api/bul/user/login',
-    method: 'POST',
-    data: {
-      reqPlatform: 'WX',
-      data: wxLoginCode
-    }
-  })
-}
-
 function clickLoginInteractButton() {
-  Taro.login({
-    success: function (res) {
-      const wxLoginCode = res.code
-      if (wxLoginCode) {
-        console.log(`wx login code ${wxLoginCode}`);
-
-        const res = backendLogin(wxLoginCode)
-        console.log(res);
-
-        // 获取用户资料
-        // Taro.getUserProfile({
-        //   desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        //   success: (res) => {
-        //     // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-        //     console.log(res);
-        //     // this.setState({
-        //       //   userInfo: res.userInfo,
-        //     //   hasUserInfo: true
-        //     // })
-        //   }
-        // })
-
-        //发起网络请求
-        // Taro.request({
-        //   url: `https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=${res.code}&grant_type=authorization_code`,
-        //   data: {
-        //     code: res.code
-        //   }
-        // })
-      } else {
-        console.log('登录失败！' + res.errMsg)
-      }
-    }
-  })
-
+  if (agreeUserProtocol.value === false) {
+      Taro.showToast({
+            title: '请先阅读并勾选用户协议...',
+            icon: 'none',
+        })
+    return
+  }
 
   // 获取用户资料
   Taro.getUserProfile({
     desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-    success: (res) => {
+    success: (userProfileResp) => {
       // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      console.log(res);
+      console.log('--- userProfile --');
+      console.log(userProfileResp);
       // this.setState({
       //   userInfo: res.userInfo,
       //   hasUserInfo: true
       // })
+
+      Taro.login({
+        success: function (res) {
+          const wxLoginCode = res.code
+          if (wxLoginCode) {
+            console.log(`wx login code ${wxLoginCode}`);
+
+            Taro.request({
+              url: 'http://localhost:3000/api/bul/user/login',
+              method: 'POST',
+              data: {
+                reqPlatform: 'WX',
+                data: {
+                  jsCode: wxLoginCode,
+                  userProfile: userProfileResp
+                }
+              },
+              success: backendLoginResp => {
+                const data = backendLoginResp.data
+                if ('E0001' === data.code) {
+                  // TODO 存储用户信息
+                  // TODO 存储Token
+                  const userInfoStore = useUserInfoStore()
+                  userInfoStore.setUser(data.data.user)
+                  // TODO 跳转主页
+                  Taro.redirectTo({ url: '/pages/index/index' })
+                } else {
+                  console.error('request backendLogin fault');
+                }
+              }
+            })
+
+          } else {
+            console.log('登录失败！' + res.errMsg)
+          }
+        }
+      })
     }
   })
+
+
 }
 
 onMounted(() => {

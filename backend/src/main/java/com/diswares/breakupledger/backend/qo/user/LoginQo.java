@@ -1,6 +1,7 @@
 package com.diswares.breakupledger.backend.qo.user;
 
 import com.diswares.breakupledger.backend.enums.ReqPlatformEnums;
+import com.diswares.breakupledger.backend.qo.wx.WxLoginDataQo;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ public class LoginQo {
     /**
      * 数据
      */
-    private String data;
+    private WxLoginDataQo data;
 
     /**
      * 登陆的平台

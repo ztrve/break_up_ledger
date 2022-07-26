@@ -23,9 +23,20 @@
         <openfeign.version>2.2.6.RELEASE</openfeign.version>
         <feign-okhttp.version>11.0</feign-okhttp.version>
         <fastjson.version>1.2.68</fastjson.version>
+        <jjwt.version>0.9.1</jjwt.version>
     </properties>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>io.jsonwebtoken</groupId>-->
+<!--            <artifactId>jjwt</artifactId>-->
+<!--            <version>${jjwt.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>

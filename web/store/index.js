@@ -3,15 +3,15 @@ import { defineStore } from 'pinia'
 export const useUserInfoStore = defineStore('user-profile', {
   state: () => {
     return {
-      userProfile: {}
+      user: {}
     }
   },
   actions: {
-    setUserProfile(userProfile) {
-      this.userProfile = userProfile
+    setUser(user) {
+      this.user = user
     },
-    userProfileIsEmpty () {
-      return undefined === this.userProfile || null === this.userProfile || {} === this.userProfile
+    userIsEmpty () {
+      return undefined === this.user || null === this.user || {} === this.user
     }
   }
 })

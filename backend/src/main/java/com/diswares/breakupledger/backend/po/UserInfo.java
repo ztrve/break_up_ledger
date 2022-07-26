@@ -10,59 +10,42 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户表
- * @author GTF
- * @date 2022-05-27 11:15
+ * 用户信息
+ * @TableName user_info
  */
-@EqualsAndHashCode(callSuper = true)
-@TableName(value ="user_info",schema = "edwards")
+@TableName(value ="user_info")
 @Data
+@EqualsAndHashCode
 public class UserInfo extends AncestorDomain implements Serializable {
-
     /**
-     * 唯一标识符，存储用户权限模块唯一标识
+     *
      */
-    private Long unitCode;
+    private String nickname;
 
     /**
-     * 用户头像，图片访问路径
+     *
      */
-    private String photo;
+    private String avatarUrl;
 
     /**
-     * 用户昵称，前端展示用户昵称，不展示用户名
+     *
      */
-    private String nickName;
+    private Object phone;
 
     /**
-     * 真实姓名
+     *
      */
-    private String name;
+    private String wxOpenId;
 
     /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 账户(登录账户名)
-     */
-    private String account;
-
-    /**
-     * 来源
-     */
-    private String source;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
+     *
      */
     private Date updateTime;
+
+    /**
+     *
+     */
+    private Date createTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

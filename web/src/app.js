@@ -48,6 +48,7 @@ const App = createApp({
       },
       fail: resp => {
         console.log('校验session失败')
+        Taro.redirectTo({ url: '/pages/login/index' })
       }
     })
   },

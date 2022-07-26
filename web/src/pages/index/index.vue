@@ -70,7 +70,7 @@ export default {
       })
 
       const userInfoStore = useUserInfoStore()
-      if (userInfoStore.userProfileIsEmpty) {
+      if (userInfoStore.userIsEmpty()) {
         Taro.redirectTo({ url: '/pages/login/index' })
       }
     })
