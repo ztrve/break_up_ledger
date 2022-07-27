@@ -5,6 +5,7 @@ create table break_up_ledger.user_info
     id          bigserial
         constraint user_info_pk
             primary key,
+    code        varchar(20)             not null,
     nickname    varchar(10)             not null,
     avatar_url  text                    not null,
     phone       int4,

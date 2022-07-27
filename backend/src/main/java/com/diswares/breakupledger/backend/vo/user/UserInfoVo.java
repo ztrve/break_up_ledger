@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.po;
+package com.diswares.breakupledger.backend.vo.user;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,10 +14,9 @@ import java.util.Date;
  * @TableName user_info
  * @author z_true
  */
-@TableName(value ="user_info")
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UserInfo extends AncestorDomain implements Serializable {
+@EqualsAndHashCode()
+public class UserInfoVo implements Serializable {
     /**
      * 用户编号
      */
@@ -37,21 +36,6 @@ public class UserInfo extends AncestorDomain implements Serializable {
      *
      */
     private Object phone;
-
-    /**
-     *
-     */
-    private String wxOpenId;
-
-    /**
-     *
-     */
-    private Date updateTime;
-
-    /**
-     *
-     */
-    private Date createTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

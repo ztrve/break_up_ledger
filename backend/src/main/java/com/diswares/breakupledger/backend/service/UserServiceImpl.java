@@ -7,8 +7,11 @@ import com.diswares.breakupledger.backend.helper.rediskey.AuthorKeyConfig;
 import com.diswares.breakupledger.backend.po.UserInfo;
 import com.diswares.breakupledger.backend.qo.user.LoginQo;
 import com.diswares.breakupledger.backend.remote.WxRemote;
+import com.diswares.breakupledger.backend.util.SnowFlake;
 import com.diswares.breakupledger.backend.vo.user.LoginVo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import com.diswares.breakupledger.backend.vo.wx.WxJsCode2SessionVo;
+import jodd.bean.BeanCopy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -50,6 +53,7 @@ public class UserServiceImpl implements UserService {
 
             if (ObjectUtils.isEmpty(userInfo)) {
                 userInfo = new UserInfo();
+                userInfo.setCode(SnowFlake.nextId() + "");
                 userInfo.setNickname(loginQo.getData().getUserProfile().getUserInfo().getNickName());
                 userInfo.setAvatarUrl(loginQo.getData().getUserProfile().getUserInfo().getAvatarUrl());
                 userInfo.setPhone(null);
@@ -60,9 +64,12 @@ public class UserServiceImpl implements UserService {
             // 将openId改为,token
 //            String loginKey = authorKeyConfig.initLoginKey(wxJsCode2SessionVo.getOpenId());
 //            stringRedisTemplate.opsForValue().set(loginKey, "", authorLoginConfigurationProperties.getExpireSecond(), TimeUnit.SECONDS);
+            UserInfoVo userInfoVo = new UserInfoVo();
+            BeanCopy.beans(userInfo, userInfoVo).copy();
+
 
             LoginVo loginVo = new LoginVo();
-            loginVo.setUser(userInfo);
+            loginVo.setUser(userInfoVo);
             // TODO JWT生成TOKEN
             loginVo.setToken("token");
             return loginVo;

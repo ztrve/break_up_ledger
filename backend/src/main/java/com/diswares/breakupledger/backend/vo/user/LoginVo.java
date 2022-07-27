@@ -1,6 +1,5 @@
 package com.diswares.breakupledger.backend.vo.user;
 
-import com.diswares.breakupledger.backend.po.UserInfo;
 import lombok.Data;
 
 /**
@@ -12,5 +11,5 @@ import lombok.Data;
 public class LoginVo {
     private String token;
 
-    private UserInfo user;
+    private UserInfoVo user;
 }

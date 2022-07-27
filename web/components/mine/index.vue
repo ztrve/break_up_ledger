@@ -59,8 +59,6 @@ function computeBackground() {
       avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
       avatarCssOptions.value.top = bgh * 0.525 + 'px'
       avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
-      console.log('computed user background size');
-      console.log(avatarCssOptions.value);
     })
 }
 
