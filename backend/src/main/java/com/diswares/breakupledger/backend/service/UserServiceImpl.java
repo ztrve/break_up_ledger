@@ -15,9 +15,15 @@ import jodd.bean.BeanCopy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,50 +35,41 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private final WxRemote wxRemote;
+
 
     private final UserInfoService userInfoService;
 
-    private final WxConfigurationProperties wxConfigurationProperties;
-
-    private final AuthorKeyConfig authorKeyConfig;
-
-    private final StringRedisTemplate stringRedisTemplate;
-
-    private final AuthorLoginConfigurationProperties authorLoginConfigurationProperties;
-
     @Override
-    public LoginVo login(LoginQo loginQo) {
+    public UserInfoVo login(LoginQo loginQo, String wxUserOpenId) {
         try {
-            String jsCode2SessionResultStr = wxRemote.jsCode2Session(wxConfigurationProperties.getAppId(), wxConfigurationProperties.getAppSecret(),
-                    loginQo.getData().getJsCode(), "authorization_code");
-            WxJsCode2SessionVo wxJsCode2SessionVo = JSON.parseObject(jsCode2SessionResultStr, WxJsCode2SessionVo.class);
-            log.info("wx login result = {}", wxJsCode2SessionVo);
-
-            UserInfo userInfo = userInfoService.getByWxOpenId(wxJsCode2SessionVo.getOpenId());
-
+            UserInfo userInfo = userInfoService.getByWxOpenId(wxUserOpenId);
+            String nickName = loginQo.getData().getUserProfile().getUserInfo().getNickName();
+            String avatarUrl = loginQo.getData().getUserProfile().getUserInfo().getAvatarUrl();
             if (ObjectUtils.isEmpty(userInfo)) {
                 userInfo = new UserInfo();
                 userInfo.setCode(SnowFlake.nextId() + "");
-                userInfo.setNickname(loginQo.getData().getUserProfile().getUserInfo().getNickName());
-                userInfo.setAvatarUrl(loginQo.getData().getUserProfile().getUserInfo().getAvatarUrl());
+                userInfo.setNickname(nickName);
+                userInfo.setAvatarUrl(avatarUrl);
                 userInfo.setPhone(null);
-                userInfo.setWxOpenId(wxJsCode2SessionVo.getOpenId());
+                userInfo.setWxOpenId(wxUserOpenId);
                 userInfoService.save(userInfo);
+            } else {
+                boolean userInfoChanged = false;
+                if (!userInfo.getNickname().equals(nickName)) {
+                    userInfo.setNickname(nickName);
+                    userInfoChanged = true;
+                }
+                if (!userInfo.getAvatarUrl().equals(avatarUrl)) {
+                    userInfo.setAvatarUrl(avatarUrl);
+                    userInfoChanged = true;
+                }
+                if (userInfoChanged) {
+                    userInfoService.updateById(userInfo);
+                }
             }
-            // TODO JWT生成TOKEN
-            // 将openId改为,token
-//            String loginKey = authorKeyConfig.initLoginKey(wxJsCode2SessionVo.getOpenId());
-//            stringRedisTemplate.opsForValue().set(loginKey, "", authorLoginConfigurationProperties.getExpireSecond(), TimeUnit.SECONDS);
             UserInfoVo userInfoVo = new UserInfoVo();
             BeanCopy.beans(userInfo, userInfoVo).copy();
-
-
-            LoginVo loginVo = new LoginVo();
-            loginVo.setUser(userInfoVo);
-            // TODO JWT生成TOKEN
-            loginVo.setToken("token");
-            return loginVo;
+            return userInfoVo;
         } catch (Exception e) {
             log.error("", e);
         }
