@@ -33,7 +33,13 @@ public enum ReqPlatformEnums {
      * 自定义反序列化enum方法
      */
     @JsonCreator
-    public static ReqPlatformEnums getEnum(String name){
-        return ReqPlatformEnums.valueOf(name);
+    public static ReqPlatformEnums getEnum(Integer code){
+        for(ReqPlatformEnums item : values()){
+            if(item.getCode().equals(code)){
+                return item;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Cannot convert code " + code + " to category type enums");
     }
 }

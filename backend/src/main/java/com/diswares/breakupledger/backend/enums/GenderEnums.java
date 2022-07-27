@@ -16,7 +16,7 @@ public enum GenderEnums {
      * wx
      */
     MALE(0, "男"),
-    FEMALE(0, "女"),
+    FEMALE(1, "女"),
     ;
 
     @JsonValue
@@ -34,7 +34,13 @@ public enum GenderEnums {
      * 自定义反序列化enum方法
      */
     @JsonCreator
-    public static GenderEnums getEnum(String name){
-        return GenderEnums.valueOf(name);
+    public static GenderEnums getEnum(Integer code){
+        for(GenderEnums item : values()){
+            if(item.getCode().equals(code)){
+                return item;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Cannot convert code " + code + " to category type enums");
     }
 }

@@ -95,7 +95,7 @@ function clickLoginInteractButton() {
               url: 'http://localhost:3000/api/bul/user/login',
               method: 'POST',
               data: {
-                reqPlatform: 'WX',
+                reqPlatform: 0,
                 data: {
                   jsCode: wxLoginCode,
                   userProfile: userProfileResp
