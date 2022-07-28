@@ -25,7 +25,7 @@ function authLogin () {
                     }
                 }).catch(() => {
                     console.log('用户未注册, 跳转登录')
-                    Taro.redirectTo({ url: '/pages/login/index' })
+                    Taro.redirectTo({ url: '/packageA/pages/login/index' })
                 })
             } else {
                 console.log('登录失败！' + res.errMsg)

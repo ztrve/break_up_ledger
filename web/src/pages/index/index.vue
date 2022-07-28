@@ -1,27 +1,25 @@
 <template>
   <view class="index" :style="`height: ${indexHeight}`">
     <view class="main-wrapper" :style="`height: ${mainWrapperHeight}`">
-      <home v-if="pageIsShow(0)" />
-      <friends v-if="pageIsShow(1)" />
-      <notices v-if="pageIsShow(2)" />
-      <mine v-if="pageIsShow(3)" />
+      <home v-if="pageIsShow(0)"/>
+      <friends v-if="pageIsShow(1)"/>
+      <notices v-if="pageIsShow(2)"/>
+      <mine v-if="pageIsShow(3)"/>
     </view>
 
     <nut-tabbar :value="activePageIndex" @change="changeActivePageIndex" :bottom="true" @tab-switch="activePage">
-      <nut-tabbar-item v-for="tabbar in tabbarList" :key="tabbar.name" :tab-title="tabbar.name" :icon="tabbar.icon" />
+      <nut-tabbar-item v-for="tabbar in tabbarList" :key="tabbar.name" :tab-title="tabbar.name" :icon="tabbar.icon"/>
     </nut-tabbar>
   </view>
 </template>
 
 <script>
-import Taro, { eventCenter, getCurrentInstance } from '@tarojs/taro'
-import { reactive, onMounted, toRefs } from 'vue';
+import Taro, {eventCenter, getCurrentInstance} from '@tarojs/taro'
+import {reactive, onMounted, toRefs} from 'vue';
 import Home from '/src/components/home'
 import Friends from '/src/components/friends'
 import Notices from '/src/components/notices'
 import Mine from '/src/components/mine'
-import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
-import axios_plus from "../../config/axios_plus";
 
 export default {
   name: 'Index',
@@ -34,10 +32,10 @@ export default {
       mainWrapperHeight: '0px',
       activePageIndex: 0,
       tabbarList: [
-        { name: "首页", icon: "home" },
-        { name: "好友", icon: "people" },
-        { name: "通知", icon: "notice" },
-        { name: "我的", icon: "my" }
+        {name: "首页", icon: "home"},
+        {name: "好友", icon: "people"},
+        {name: "通知", icon: "notice"},
+        {name: "我的", icon: "my"}
       ]
     })
 
@@ -63,12 +61,14 @@ export default {
         const windowHeight = systemInfo.windowHeight
         state.indexHeight = windowHeight + 'px'
         Taro.createSelectorQuery().select('.index > .nut-tabbar')
-          .boundingClientRect()
-          .exec(tabbars => {
-            const tabbarHeight = tabbars[0].height
-            state.mainWrapperHeight = windowHeight - tabbarHeight + 'px'
-          })
+            .boundingClientRect()
+            .exec(tabbars => {
+              const tabbarHeight = tabbars[0].height
+              state.mainWrapperHeight = windowHeight - tabbarHeight + 'px'
+            })
       })
+
+      Taro.switchTab({url: '/pages/test/index'})
     })
 
     return {

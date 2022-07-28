@@ -42,7 +42,9 @@ instance.interceptors.response.use(
     (response) => {
         Taro.hideLoading()
         if (response.data.isError) {
-            showErrorToast(response.data.error.message)
+            console.log('error response')
+            console.log(response)
+            showErrorToast(response.data.error.msg)
         } else {
             return response
         }
@@ -55,23 +57,23 @@ instance.interceptors.response.use(
             let res = error.response.data
             switch (res.code) {
                 case 400:
-                    showErrorToast(res.message || '非法请求')
+                    showErrorToast(res.msg || '非法请求')
                     break
                 case 401:
                     authLogin()
                     break
                 case 403:
-                    showErrorToast(res.message || '非法请求')
+                    showErrorToast(res.msg || '非法请求')
                     break
                 case 404:
-                    showErrorToast(res.message || '请求资源不存在')
+                    showErrorToast(res.msg || '请求资源不存在')
                     break
                 case 500:
                 case 502:
-                    showErrorToast(res.message || '服务器开小差啦')
+                    showErrorToast(res.msg || '服务器开小差啦')
                     break
                 default:
-                    showErrorToast(res.message || res.statusText)
+                    showErrorToast(res.msg || res.statusText)
             }
         } else {
             console.log(error)

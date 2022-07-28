@@ -3,7 +3,7 @@
     width: win.w,
     height: win.h
   }">
-    <img :src="require('../../../assets/login-bg.jpeg')" class="bg" :style="{
+    <img :src="require('../../../../assets/login-bg.jpeg')" class="bg" :style="{
       width: win.w,
       height: win.h
     }">
@@ -41,8 +41,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import Taro from '@tarojs/taro'
-import axios_plus from "../../config/axios_plus";
-import { LOCAL_STORAGE_KEYS } from "../../config/local_storage_keys";
+import axios_plus from "../../../config/axios_plus";
+import { LOCAL_STORAGE_KEYS } from "../../../config/local_storage_keys";
 
 const win = ref({
   w: '0',

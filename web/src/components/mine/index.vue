@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import Taro, { eventCenter, getCurrentInstance } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { defineComponent, onMounted, ref } from 'vue';
 import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
 
@@ -28,6 +28,7 @@ defineComponent({
 })
 
 const userInfo = ref({
+  // TODO 进入页面后头像路径需要重新加载
   avatarUrl: Taro.getStorageSync(LOCAL_STORAGE_KEYS.user).avatarUrl
 })
 
