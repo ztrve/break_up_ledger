@@ -41,7 +41,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import Taro from '@tarojs/taro'
-import { useUserInfoStore } from '/store/index.js'
+import axios_plus from "../../config/axios_plus";
+import { LOCAL_STORAGE_KEYS } from "../../config/local_storage_keys";
 
 const win = ref({
   w: '0',
@@ -80,41 +81,31 @@ function clickLoginInteractButton() {
       // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
       console.log('--- userProfile --');
       console.log(userProfileResp);
-      // this.setState({
-      //   userInfo: res.userInfo,
-      //   hasUserInfo: true
-      // })
 
       Taro.login({
         success: function (res) {
           const wxLoginCode = res.code
           if (wxLoginCode) {
             console.log(`wx login code ${wxLoginCode}`);
-
-            Taro.request({
-              url: 'http://localhost:3000/api/bul/user/login',
-              method: 'POST',
+            axios_plus.post("/user/register",{
+              reqPlatform: 0,
               data: {
-                reqPlatform: 0,
-                data: {
-                  jsCode: wxLoginCode,
-                  userProfile: userProfileResp
-                }
-              },
-              success: backendLoginResp => {
-                const data = backendLoginResp.data
-                if ('E0001' === data.code) {
-                  // 存储用户信息
-                  Taro.setStorageSync("user", data.data.token)
-                  Taro.setStorageSync("token", data.data.token)
-                  // 跳转主页
-                  Taro.redirectTo({ url: '/pages/index/index' })
-                } else {
-                  console.error('request backendLogin fault');
-                }
+                jsCode: wxLoginCode,
+                userProfile: userProfileResp
+              }
+            }).then(backendLoginResp => {
+              const data = backendLoginResp.data
+              if ('E0001' === data.code) {
+                console.log(data.data)
+                // 存储用户信息
+                Taro.setStorageSync(LOCAL_STORAGE_KEYS.user, data.data.user)
+                Taro.setStorageSync(LOCAL_STORAGE_KEYS.token, data.data.token)
+                // 跳转主页
+                Taro.redirectTo({ url: '/pages/index/index' })
+              } else {
+                console.error('request backendLogin fault');
               }
             })
-
           } else {
             console.log('登录失败！' + res.errMsg)
           }

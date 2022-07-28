@@ -1,10 +1,10 @@
 package com.diswares.breakupledger.backend.service;
 
-import com.diswares.breakupledger.backend.po.UserInfo;
-import com.diswares.breakupledger.backend.qo.user.LoginQo;
-import com.diswares.breakupledger.backend.vo.user.LoginVo;
+import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
+import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.diswares.breakupledger.backend.vo.user.UserLoginVo;
+import com.diswares.breakupledger.backend.vo.user.UserRegisterVo;
 
 /**
  * @author: z_true
@@ -14,12 +14,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface UserService {
 
     /**
-     * 登陆
+     * 注册
      *
-     * @param loginQo 登陆 qo
-     * @param wxUserOpenId 微信用户 openId
-     * @return 登陆信息
+     * @param userRegisterQo 注册 qo
+     * @return 用户信息
      */
-    UserInfoVo login(LoginQo loginQo, String wxUserOpenId);
+    UserRegisterVo register(UserRegisterQo userRegisterQo);
 
+    /**
+     * 登录
+     *
+     * @param loginQo 登录 qo
+     * @return 用户信息
+     */
+    UserLoginVo login(UserLoginQo loginQo);
 }

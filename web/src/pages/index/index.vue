@@ -20,7 +20,8 @@ import Home from '/src/components/home'
 import Friends from '/src/components/friends'
 import Notices from '/src/components/notices'
 import Mine from '/src/components/mine'
-import { useUserInfoStore } from '/store/index.js'
+import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
+import axios_plus from "../../config/axios_plus";
 
 export default {
   name: 'Index',
@@ -68,14 +69,6 @@ export default {
             state.mainWrapperHeight = windowHeight - tabbarHeight + 'px'
           })
       })
-
-      const userInfoStore = useUserInfoStore()
-      console.log(`user is `)
-      console.log(userInfoStore.user)
-      console.log(`token is ${userInfoStore.token}`)
-      if (userInfoStore.userIsEmpty() || userInfoStore.tokenIsEmpty()) {
-        Taro.redirectTo({ url: '/pages/login/index' })
-      }
     })
 
     return {

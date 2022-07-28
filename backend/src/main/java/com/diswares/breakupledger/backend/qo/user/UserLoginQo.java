@@ -2,6 +2,7 @@ package com.diswares.breakupledger.backend.qo.user;
 
 import com.diswares.breakupledger.backend.enums.ReqPlatformEnums;
 import com.diswares.breakupledger.backend.qo.wx.WxLoginDataQo;
+import com.diswares.breakupledger.backend.qo.wx.WxRegisterDataQo;
 import lombok.Data;
 
 /**
@@ -12,7 +13,7 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class LoginQo {
+public class UserLoginQo {
     /**
      * 数据
      */

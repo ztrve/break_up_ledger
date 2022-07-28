@@ -21,13 +21,14 @@
 <script setup>
 import Taro, { eventCenter, getCurrentInstance } from '@tarojs/taro'
 import { defineComponent, onMounted, ref } from 'vue';
+import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
 
 defineComponent({
   name: 'Mine'
 })
 
 const userInfo = ref({
-  avatarUrl: 'https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2021%2F1018%2F446da79dj00r15fve001fc000hs00vmg.jpg&thumbnail=650x2147483647&quality=80&type=jpg'
+  avatarUrl: Taro.getStorageSync(LOCAL_STORAGE_KEYS.user).avatarUrl
 })
 
 const avatarCssOptions = ref({

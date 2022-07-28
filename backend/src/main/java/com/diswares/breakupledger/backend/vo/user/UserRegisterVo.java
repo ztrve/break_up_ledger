@@ -8,8 +8,8 @@ import lombok.Data;
  * @version: 1.0.0
  */
 @Data
-public class LoginVo {
+public class UserRegisterVo {
     private String token;
 
-//    private UserInfoVo user;
+    private UserInfoVo user;
 }
