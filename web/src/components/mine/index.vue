@@ -4,7 +4,7 @@
       <img class="mine-avatar-bg" :style="{
         width: avatarCssOptions.bgWidth,
         height: avatarCssOptions.bgheight
-      }" :src="require('../../assets/user-bg.jpeg')">
+      }" :src="require('../../../assets/user-bg.jpeg')">
       <img size="large" class="mine-avatar" :style="{
         top: avatarCssOptions.top,
         left: avatarCssOptions.left,

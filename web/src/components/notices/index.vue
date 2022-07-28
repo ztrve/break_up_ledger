@@ -26,7 +26,7 @@
           <div class="notice-link">
             <div class="date">{{ notice.date }}</div>
             <nut-icon name="right"></nut-icon>
-            <img v-if="notice.isDeal" class="deal-img" :src="require('../../assets/deal-img.png')">
+            <img v-if="notice.isDeal" class="deal-img" :src="require('../../../assets/deal-img.png')">
           </div>
         </template>
       </nut-cell>

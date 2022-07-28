@@ -8,7 +8,7 @@
     </view>
 
     <nut-tabbar :value="activePageIndex" @change="changeActivePageIndex" :bottom="true" @tab-switch="activePage">
-      <nut-tabbar-item v-for="tabbar in tobbarList" :key="tabbar.name" :tab-title="tabbar.name" :icon="tabbar.icon" />
+      <nut-tabbar-item v-for="tabbar in tabbarList" :key="tabbar.name" :tab-title="tabbar.name" :icon="tabbar.icon" />
     </nut-tabbar>
   </view>
 </template>
@@ -16,10 +16,10 @@
 <script>
 import Taro, { eventCenter, getCurrentInstance } from '@tarojs/taro'
 import { reactive, onMounted, toRefs } from 'vue';
-import Home from '/components/home'
-import Friends from '/components/friends'
-import Notices from '/components/notices'
-import Mine from '/components/mine'
+import Home from '/src/components/home'
+import Friends from '/src/components/friends'
+import Notices from '/src/components/notices'
+import Mine from '/src/components/mine'
 import { useUserInfoStore } from '/store/index.js'
 
 export default {
@@ -32,7 +32,7 @@ export default {
       indexHeight: '0px',
       mainWrapperHeight: '0px',
       activePageIndex: 0,
-      tobbarList: [
+      tabbarList: [
         { name: "首页", icon: "home" },
         { name: "好友", icon: "people" },
         { name: "通知", icon: "notice" },
@@ -70,7 +70,10 @@ export default {
       })
 
       const userInfoStore = useUserInfoStore()
-      if (userInfoStore.userIsEmpty()) {
+      console.log(`user is `)
+      console.log(userInfoStore.user)
+      console.log(`token is ${userInfoStore.token}`)
+      if (userInfoStore.userIsEmpty() || userInfoStore.tokenIsEmpty()) {
         Taro.redirectTo({ url: '/pages/login/index' })
       }
     })

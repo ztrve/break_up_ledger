@@ -104,11 +104,10 @@ function clickLoginInteractButton() {
               success: backendLoginResp => {
                 const data = backendLoginResp.data
                 if ('E0001' === data.code) {
-                  // TODO 存储用户信息
-                  // TODO 存储Token
-                  const userInfoStore = useUserInfoStore()
-                  userInfoStore.setUser(data.data.user)
-                  // TODO 跳转主页
+                  // 存储用户信息
+                  Taro.setStorageSync("user", data.data.token)
+                  Taro.setStorageSync("token", data.data.token)
+                  // 跳转主页
                   Taro.redirectTo({ url: '/pages/index/index' })
                 } else {
                   console.error('request backendLogin fault');
