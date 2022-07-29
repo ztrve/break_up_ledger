@@ -36,7 +36,7 @@ public class UserInfo extends AncestorDomain implements Serializable {
     /**
      *
      */
-    private Object phone;
+    private String phone;
 
     /**
      *

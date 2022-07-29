@@ -1,6 +1,8 @@
 package com.diswares.breakupledger.backend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
 import com.diswares.breakupledger.backend.po.Notice;
 import com.diswares.breakupledger.backend.mapper.NoticeMapper;
@@ -13,6 +15,7 @@ import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 
@@ -40,7 +43,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
 
         // 是否已经是好友关系
         UserInfo myInfo = AuthUtil.currentUserInfo();
-        Assert.isTrue(!myInfo.getPhone().equals(searchVal) && !myInfo.getCode().equals(searchVal), "不能加自己啊，笨逼");
+        Assert.isTrue(!searchVal.equals(myInfo.getPhone()) && !searchVal.equals(myInfo.getCode()), "不能加自己啊，笨逼");
 
         boolean u2IsU1Friend = friendService.u2IsU1Friend(myInfo.getId(), maybeFriendUser.getId());
         Assert.isTrue(!u2IsU1Friend, "Ta已经是你的好友");
@@ -51,12 +54,24 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         notice.setNoticeType(friendRequest.getType());
         notice.setNoticeName(friendRequest.getName());
         notice.setNoticeMsg(StringReplacer.build(friendRequest.getStrTmpl(), myInfo.getNickname()));
-        notice.setNoticeData(null);
+        notice.setNoticeData("");
         notice.setInitiatorId(myInfo.getId());
         notice.setHandlerId(maybeFriendUser.getId());
-        save(notice);
-        notice.setUpdateTime(LocalDateTime.now());
-        notice.setCreateTime(LocalDateTime.now());
+
+        // 避免重复请求
+        LambdaQueryWrapper<Notice> noticeQuery = new LambdaQueryWrapper<>();
+        noticeQuery.eq(Notice::getNoticeType, notice.getNoticeType());
+        noticeQuery.eq(Notice::getInitiatorId, notice.getInitiatorId());
+        noticeQuery.eq(Notice::getHandlerId, notice.getHandlerId());
+        noticeQuery.eq(Notice::getDealStatus, NoticeDealEnums.UN_DEAL);
+        noticeQuery.last("limit 1");
+        Notice one = getOne(noticeQuery);
+        if (ObjectUtils.isEmpty(one)) {
+            save(notice);
+            notice = getById(notice.getId());
+        } else {
+            notice = one;
+        }
 
         NoticeVo noticeVo = new NoticeVo();
         BeanUtils.copyProperties(notice, noticeVo);

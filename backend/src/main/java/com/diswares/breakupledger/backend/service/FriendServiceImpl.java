@@ -56,7 +56,7 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend>
         LambdaQueryWrapper<Friend> query = new LambdaQueryWrapper<>();
         query.eq(Friend::getLeftUserId, uid1);
         query.eq(Friend::getRightUserId, uid2);
-        return count(query) >= 0;
+        return count(query) > 0;
     }
 }
 
