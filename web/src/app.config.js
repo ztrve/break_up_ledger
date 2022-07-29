@@ -1,7 +1,6 @@
 export default defineAppConfig({
     pages: [
         'pages/index/index',
-        'pages/test/index'
     ],
     subpackages: [
         {
@@ -22,5 +21,6 @@ export default defineAppConfig({
         navigationBarBackgroundColor: '#fff',
         navigationBarTitleText: 'WeChat',
         navigationBarTextStyle: 'black'
-    }
+    },
+    lazyCodeLoading: 'requiredComponents'
 })

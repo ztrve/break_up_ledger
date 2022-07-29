@@ -3,7 +3,7 @@
     width: win.w,
     height: win.h
   }">
-    <img :src="require('../../../../assets/login-bg.jpeg')" class="bg" :style="{
+    <img :src="require('./login-bg.jpeg')" class="bg" :style="{
       width: win.w,
       height: win.h
     }">

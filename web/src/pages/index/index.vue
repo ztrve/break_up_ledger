@@ -67,8 +67,6 @@ export default {
               state.mainWrapperHeight = windowHeight - tabbarHeight + 'px'
             })
       })
-
-      Taro.switchTab({url: '/pages/test/index'})
     })
 
     return {

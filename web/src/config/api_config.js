@@ -3,9 +3,9 @@ function getBaseUrl () {
     console.log('编译环境：',process.env.NODE_ENV)
     switch (env) {
         case 'development':
-            return 'http://localhost:3000/api/bul'
+            return 'http://10.0.2.62:3000/api/bul'
         case 'production':
-            return 'http://localhost:3000/api/bul'
+            return 'http://10.0.2.62:3000/api/bul'
     }
     return ''
 }
