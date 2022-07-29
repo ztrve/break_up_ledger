@@ -13,11 +13,12 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ReqPlatformEnums {
+public enum NoticeDealEnums {
     /**
-     * wx
+     * 。。。
      */
-    WX(0, "微信")
+    UN_DEAL(0, "未处理"),
+    DEAL(1, "处理"),
     ;
 
     @JsonValue
@@ -30,8 +31,8 @@ public enum ReqPlatformEnums {
      * 自定义反序列化enum方法
      */
     @JsonCreator
-    public static ReqPlatformEnums getEnum(Integer code){
-        for(ReqPlatformEnums item : values()){
+    public static NoticeDealEnums getEnum(Integer code){
+        for(NoticeDealEnums item : values()){
             if(item.getCode().equals(code)){
                 return item;
             }

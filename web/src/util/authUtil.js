@@ -3,6 +3,7 @@ import axios_plus from "../config/axios_plus";
 import {LOCAL_STORAGE_KEYS} from "../config/local_storage_keys";
 
 function authLogin () {
+    console.log('登陆')
     Taro.login({
         success: res => {
             const wxLoginCode = res.code
@@ -20,6 +21,8 @@ function authLogin () {
                         // 存储用户信息
                         Taro.setStorageSync(LOCAL_STORAGE_KEYS.user, data.data.user)
                         Taro.setStorageSync(LOCAL_STORAGE_KEYS.token, data.data.token)
+                        Taro.showToast({ title: '自动登陆成功', duration: 4000 })
+                        // TODO 获取当前路由并重定向到当前路由
                     } else {
                         console.error('自动登录失败, 请退出小程序重试');
                     }

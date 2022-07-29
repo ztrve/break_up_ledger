@@ -2,6 +2,7 @@ package com.diswares.breakupledger.backend.service;
 
 import com.alibaba.fastjson.JSON;
 import com.diswares.breakupledger.backend.config.configurationproperties.WxConfigurationProperties;
+import com.diswares.breakupledger.backend.dto.AuthUser;
 import com.diswares.breakupledger.backend.enums.ReqPlatformEnums;
 import com.diswares.breakupledger.backend.exception.WxAuthException;
 import com.diswares.breakupledger.backend.po.UserInfo;
@@ -17,6 +18,7 @@ import com.diswares.breakupledger.backend.vo.wx.WxJsCode2SessionVo;
 import jodd.bean.BeanCopy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +30,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -71,10 +75,12 @@ public class UserServiceImpl implements UserService {
 
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanCopy.beans(userInfo, userInfoVo).copy();
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(wxJsCode2SessionVo.getOpenId());
-        final String token = jwtTokenUtil.generateToken(userDetails);
-
+        Map<String, Object> userInfoMap = null;
+        try {
+            //noinspection unchecked
+            userInfoMap = BeanUtils.describe(userInfo);
+        } catch (Exception ignored) {}
+        final String token = jwtTokenUtil.generateToken(userInfoMap, userInfo.getWxOpenId());
         UserRegisterVo userRegisterVo = new UserRegisterVo();
         userRegisterVo.setUser(userInfoVo);
         userRegisterVo.setToken(token);
@@ -91,8 +97,14 @@ public class UserServiceImpl implements UserService {
         Objects.requireNonNull(wxJsCode2SessionVo.getOpenId());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(wxJsCode2SessionVo.getOpenId(), wxJsCode2SessionVo.getOpenId()));
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(wxJsCode2SessionVo.getOpenId());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final AuthUser authUser = (AuthUser) userDetailsService.loadUserByUsername(wxJsCode2SessionVo.getOpenId());
+
+        Map<String, Object> userInfoMap = null;
+        try {
+            //noinspection unchecked
+            userInfoMap = BeanUtils.describe(authUser.getUserInfo());
+        } catch (Exception ignored) {}
+        final String token = jwtTokenUtil.generateToken(userInfoMap, authUser.getUserInfo().getWxOpenId());
 
         UserInfo userInfo = userInfoService.getByWxOpenId(wxJsCode2SessionVo.getOpenId());
         UserInfoVo userInfoVo = new UserInfoVo();

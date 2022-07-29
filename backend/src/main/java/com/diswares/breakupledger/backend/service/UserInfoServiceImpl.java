@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.mapper.UserInfoMapper;
 import com.diswares.breakupledger.backend.po.UserInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 /**
 * @author z_true
@@ -19,6 +20,16 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     public UserInfo getByWxOpenId(String wxOpenId) {
         LambdaQueryWrapper<UserInfo> query = new LambdaQueryWrapper<>();
         query.eq(UserInfo::getWxOpenId, wxOpenId)
+                .last("limit 1");
+        return getOne(query);
+    }
+
+    @Override
+    public UserInfo getByUserCharacteristics(String userCharacteristics) {
+        LambdaQueryWrapper<UserInfo> query = new LambdaQueryWrapper<>();
+        query.eq(UserInfo::getPhone, userCharacteristics)
+                .or()
+                .eq(UserInfo::getCode, userCharacteristics)
                 .last("limit 1");
         return getOne(query);
     }

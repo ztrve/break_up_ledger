@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.diswares.breakupledger.backend.mapper.NoticeMapper">
+
+    <resultMap id="BaseResultMap" type="com.diswares.breakupledger.backend.po.Notice">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="noticeType" column="notice_type" jdbcType="VARCHAR"/>
+            <result property="noticeName" column="notice_name" jdbcType="VARCHAR"/>
+            <result property="noticeMsg" column="notice_msg" jdbcType="VARCHAR"/>
+            <result property="noticeData" column="notice_data" jdbcType="VARCHAR"/>
+            <result property="initiatorId" column="initiator_id" jdbcType="BIGINT"/>
+            <result property="handlerId" column="handler_id" jdbcType="BIGINT"/>
+            <result property="dealStatus" column="deal_status" jdbcType="INTEGER"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,notice_type,notice_name,
+        notice_msg,notice_data,initiator_id,
+        handler_id,deal_status,update_time,
+        create_time
+    </sql>
+</mapper>

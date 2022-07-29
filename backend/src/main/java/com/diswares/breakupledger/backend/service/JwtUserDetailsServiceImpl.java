@@ -1,5 +1,6 @@
 package com.diswares.breakupledger.backend.service;
 
+import com.diswares.breakupledger.backend.dto.AuthUser;
 import com.diswares.breakupledger.backend.po.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,6 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         if (ObjectUtils.isEmpty(userInfo)) {
             throw new UsernameNotFoundException("No user!");
         }
-
-        return new User(wxUserOpenId, PWD_ENCODER.encode(wxUserOpenId), new ArrayList<>());
+        return new AuthUser(wxUserOpenId, PWD_ENCODER.encode(wxUserOpenId), new ArrayList<>(), userInfo);
     }
 }

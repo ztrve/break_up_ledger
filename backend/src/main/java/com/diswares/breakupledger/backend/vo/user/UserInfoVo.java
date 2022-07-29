@@ -17,6 +17,8 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode()
 public class UserInfoVo implements Serializable {
+    private Long id;
+
     /**
      * 用户编号
      */

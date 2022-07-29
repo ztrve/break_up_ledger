@@ -54,8 +54,8 @@ instance.interceptors.response.use(
             Taro.hideLoading()
             console.log('err', error)
 
-            let res = error.response.data
-            switch (res.code) {
+            let res = error.response
+            switch (res.status) {
                 case 400:
                     showErrorToast(res.msg || '非法请求')
                     break

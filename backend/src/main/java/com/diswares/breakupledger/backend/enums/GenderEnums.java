@@ -3,6 +3,7 @@ package com.diswares.breakupledger.backend.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -11,6 +12,7 @@ import lombok.Getter;
  * @version: 1.0.0
  */
 @Getter
+@AllArgsConstructor
 public enum GenderEnums {
     /**
      * wx
@@ -24,11 +26,6 @@ public enum GenderEnums {
     private final Integer code;
 
     private final String desc;
-
-    GenderEnums(Integer code, String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
 
     /**
      * 自定义反序列化enum方法

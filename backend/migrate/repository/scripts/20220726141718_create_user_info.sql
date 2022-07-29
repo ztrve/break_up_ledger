@@ -21,6 +21,12 @@ create unique index user_info_id_uindex on break_up_ledger.user_info (id);
 create index user_info_wx_open_id_index on break_up_ledger.user_info (wx_open_id);
 create unique index user_info_wx_open_id_uindex on break_up_ledger.user_info (wx_open_id);
 
+CREATE TRIGGER update_time
+    BEFORE UPDATE
+    ON break_up_ledger.user_info
+    FOR EACH ROW
+EXECUTE PROCEDURE break_up_ledger.update_timestamp();
+
 -- //@UNDO
 -- SQL to undo the change goes here.
 drop table break_up_ledger.user_info;

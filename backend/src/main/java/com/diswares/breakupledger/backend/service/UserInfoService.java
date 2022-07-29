@@ -18,4 +18,11 @@ public interface UserInfoService extends IService<UserInfo> {
      */
     UserInfo getByWxOpenId (String wxOpenId);
 
+    /**
+     * 根据用户特征查询一个用户
+     *
+     * @param userCharacteristics 用户特征
+     * @return 用户信息
+     */
+    UserInfo getByUserCharacteristics(String userCharacteristics);
 }

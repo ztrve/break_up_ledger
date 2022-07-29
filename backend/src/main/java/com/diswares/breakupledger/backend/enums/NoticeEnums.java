@@ -13,30 +13,32 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ReqPlatformEnums {
+public enum NoticeEnums {
     /**
-     * wx
+     * 。。。
      */
-    WX(0, "微信")
+    FRIEND_REQUEST("FRIEND_REQUEST", "好友申请", "{}想添加您为好友"),
     ;
 
     @JsonValue
     @EnumValue
-    private final Integer code;
+    private final String type;
 
-    private final String desc;
+    private final String name;
+
+    private final String strTmpl;
 
     /**
      * 自定义反序列化enum方法
      */
     @JsonCreator
-    public static ReqPlatformEnums getEnum(Integer code){
-        for(ReqPlatformEnums item : values()){
-            if(item.getCode().equals(code)){
+    public static NoticeEnums getEnum(String type){
+        for(NoticeEnums item : values()){
+            if(item.getType().equals(type)){
                 return item;
             }
         }
         throw new IllegalArgumentException(
-                "Cannot convert code " + code + " to category type enums");
+                "Cannot convert code " + type + " to category type enums");
     }
 }

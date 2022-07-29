@@ -62,8 +62,6 @@ env:
   wx:
     appId: ${WX_APPID:<my_wx_appid>}
     appSecret: ${WX_APP_SECRET:<my_wx_app_secret>}
-  auth:
-    login:
-      expire-second: 60
   jwt:
     secret: <my_jwt_secret>
+    expire-second: 300

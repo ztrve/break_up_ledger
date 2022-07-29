@@ -1,5 +1,5 @@
 <template>
-  <view class="friends-wrapper">
+  <div class="friends-wrapper">
     <!-- 空 -->
     <nut-empty v-if="undefined === friendList || friendList.length === 0" image="error">
       <template v-slot:description>
@@ -8,15 +8,15 @@
       </template>
       <template v-slot:default>
         <div style="margin-top: 10px">
-          <nut-button icon="add" type="primary">添加好友</nut-button>
+          <nut-button icon="add" type="primary" @click="showAddFriendPopup = true">添加好友</nut-button>
         </div>
       </template>
     </nut-empty>
     <!-- 好友列表 -->
-    <nut-cell-group v-for="groupIndex in 2" :key="groupIndex">
-      <template v-slot:title>
-        <div class="friends-index-first-letter nut-cell-group__title">A</div>
-      </template>
+    <nut-cell-group>
+<!--      <template v-slot:title>-->
+<!--        <div class="friends-index-first-letter nut-cell-group__title">A</div>-->
+<!--      </template>-->
       <nut-cell v-for="(friend, index) in friendList" :key="index" :is-link="true">
         <template v-slot:icon>
           <nut-avatar
@@ -30,24 +30,59 @@
         </template>
       </nut-cell>
     </nut-cell-group>
-  </view>
+
+    <nut-popup position="bottom" :style="{ height: '80%' }" v-model:visible="showAddFriendPopup">
+      <div class="friend-request-pop-title">添加好友</div>
+      <nut-input
+          v-model="friendRequestInput"
+          label="请输入"
+          placeholder="输入手机号或好友码"
+      />
+      <nut-button class="" shape="square" type="primary" @click="sendFriendRequest">
+        发送好友申请
+      </nut-button>
+    </nut-popup>
+  </div>
 </template>
 
 <script setup>
-import { defineComponent, onMounted, reactive } from 'vue';
+import {defineComponent, onMounted, ref} from 'vue';
+import axios_plus from "../../config/axios_plus";
 
 defineComponent({
   name: 'Friends'
 })
 
-const friendList = reactive([
-  { code: 'zhangsan', name: '张三', icon: '' },
-  { code: 'lisi', name: '李四', icon: '' },
-  { code: 'wangwu', name: '王五', icon: '' },
-  { code: 'zhaoliu', name: '赵六', icon: '' },
-  { code: 'hengqi', name: '横七', icon: '' },
-  { code: 'shuba', name: '竖八', icon: '' }
-])
+const showAddFriendPopup = ref(false)
+const friendRequestInput = ref("")
+
+/**
+ *
+ * @type {UnwrapNestedRefs<[{code: string, name: string, icon: string},null]>}
+ */
+const friendList = ref([])
+
+function loadFriends() {
+  axios_plus.get("/friend/my")
+      .then(resp => {
+        if (resp.data.code === 'E0001') {
+          friendList.value = resp.data.data
+        } else {
+          friendList.value = []
+        }
+      }).catch(() => { friendList.value = [] })
+}
+
+/**
+ * 发送好友申请
+ */
+function sendFriendRequest() {
+  axios_plus.post("/notice/friend", {
+    userCharacteristics: friendRequestInput
+  })
+}
+
+loadFriends()
 
 onMounted(() => {
 
@@ -71,5 +106,10 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 5px 10px;
+}
+
+.friend-request-pop-title {
+  text-align: center;
+  padding: 5px;
 }
 </style>
