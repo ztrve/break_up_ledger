@@ -1,29 +1,15 @@
 package com.diswares.breakupledger.backend.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.diswares.breakupledger.backend.config.configurationproperties.WxConfigurationProperties;
-import com.diswares.breakupledger.backend.enums.ReqPlatformEnums;
-import com.diswares.breakupledger.backend.exception.WxAuthException;
 import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
 import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;
-import com.diswares.breakupledger.backend.remote.WxRemote;
 import com.diswares.breakupledger.backend.service.UserService;
-import com.diswares.breakupledger.backend.util.JwtTokenUtil;
 import com.diswares.breakupledger.backend.vo.user.UserLoginVo;
 import com.diswares.breakupledger.backend.vo.user.UserRegisterVo;
-import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
-import com.diswares.breakupledger.backend.vo.wx.WxJsCode2SessionVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**

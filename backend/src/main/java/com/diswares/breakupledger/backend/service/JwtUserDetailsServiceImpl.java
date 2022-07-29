@@ -14,6 +14,11 @@ import java.util.ArrayList;
 
 import static com.diswares.breakupledger.backend.config.auth.WebSecurityConfig.PWD_ENCODER;
 
+/**
+ * @author: z_true
+ * @date: 2022/7/26 14:41
+ * @version: 1.0.0
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor

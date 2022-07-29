@@ -7,7 +7,7 @@ import com.diswares.breakupledger.backend.po.UserInfo;
 import org.springframework.stereotype.Service;
 
 /**
-* @author A
+* @author z_true
 * @description 针对表【user_info(用户信息)】的数据库操作Service实现
 * @createDate 2022-07-26 23:14:26
 */

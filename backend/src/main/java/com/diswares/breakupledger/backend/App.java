@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- * @author 4everlynn
+ * @author z_true
  */
 @SpringBootApplication()
 @MapperScan("com.diswares.breakupledger.backend.mapper")

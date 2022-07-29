@@ -10,6 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * @author: z_true
+ * @date: 2022/7/26 14:41
+ * @version: 1.0.0
+ */
 @Configuration
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
     @Override
