@@ -1,7 +1,9 @@
 package com.diswares.breakupledger.backend.service;
 
-import com.diswares.breakupledger.backend.po.UserInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
+
+import java.util.List;
 
 /**
 * @author A
@@ -9,7 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2022-07-26 23:14:26
 */
 public interface UserInfoService extends IService<UserInfo> {
-
     /**
      * 通过 OpenId 查询用户信息
      *
@@ -25,4 +26,12 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return 用户信息
      */
     UserInfo getByUserCharacteristics(String userCharacteristics);
+
+    /**
+     * 是真实的用户
+     *
+     * @param userIds user id list
+     * @return true 全是 false 有的不是
+     */
+    boolean isRealUsers(List<Long> userIds);
 }

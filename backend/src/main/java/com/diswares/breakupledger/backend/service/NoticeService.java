@@ -1,11 +1,15 @@
 package com.diswares.breakupledger.backend.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.diswares.breakupledger.backend.po.Notice;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diswares.breakupledger.backend.po.ledger.Ledger;
+import com.diswares.breakupledger.backend.po.notice.Notice;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
+
+import java.util.List;
 
 /**
  * @author: z_true
@@ -36,4 +40,12 @@ public interface NoticeService extends IService<Notice> {
      * @return 通知信息
      */
     NoticeVo handleNoticeByType(NoticeDealQo noticeDealQo);
+
+    /**
+     * 创建 账本邀请 通知
+     * @param ledger 账本
+     * @param initiator 发起人
+     * @param memberIds 成员ids
+     */
+    void createLedgerInviteNotice(Ledger ledger, UserInfo initiator, List<Long> memberIds);
 }

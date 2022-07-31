@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.po;
+package com.diswares.breakupledger.backend.po.user;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -10,29 +10,38 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 朋友关系
- *
- * 一对正常的朋友关系，需要有两条Friend维护。
- * 她们彼此互为朋友，才能视为朋友关系成立
- *
- * @TableName friend
- * @author: z_true
- * @date: 2022/7/26 14:41
- * @version: 1.0.0
+ * 用户信息
+ * @TableName user_info
+ * @author z_true
  */
-@TableName(value ="friend")
+@TableName(value ="user_info")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Friend extends AncestorDomain implements Serializable {
+public class UserInfo extends AncestorDomain implements Serializable {
     /**
-     * 主用户
+     * 用户编号
      */
-    private Long leftUserId;
+    private String code;
 
     /**
-     * 对向用户
+     *
      */
-    private Long rightUserId;
+    private String nickname;
+
+    /**
+     *
+     */
+    private String avatarUrl;
+
+    /**
+     *
+     */
+    private String phone;
+
+    /**
+     *
+     */
+    private String wxOpenId;
 
     /**
      *

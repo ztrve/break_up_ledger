@@ -1,7 +1,7 @@
 package com.diswares.breakupledger.backend.helper.notice;
 
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
-import com.diswares.breakupledger.backend.po.Notice;
+import com.diswares.breakupledger.backend.po.notice.Notice;
 
 /**
  * 通知处理

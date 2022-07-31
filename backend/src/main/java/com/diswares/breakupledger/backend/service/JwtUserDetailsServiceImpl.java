@@ -1,10 +1,9 @@
 package com.diswares.breakupledger.backend.service;
 
 import com.diswares.breakupledger.backend.dto.AuthUser;
-import com.diswares.breakupledger.backend.po.UserInfo;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

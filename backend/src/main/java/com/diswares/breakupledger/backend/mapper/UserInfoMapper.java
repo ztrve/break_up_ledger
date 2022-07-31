@@ -1,6 +1,6 @@
 package com.diswares.breakupledger.backend.mapper;
 
-import com.diswares.breakupledger.backend.po.UserInfo;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

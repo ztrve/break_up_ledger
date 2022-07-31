@@ -1,8 +1,6 @@
 package com.diswares.breakupledger.backend.dto;
 
-import com.diswares.breakupledger.backend.po.UserInfo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

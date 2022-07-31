@@ -1,6 +1,6 @@
 package com.diswares.breakupledger.backend.service;
 
-import com.diswares.breakupledger.backend.po.Friend;
+import com.diswares.breakupledger.backend.po.friend.Friend;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 
@@ -27,5 +27,13 @@ public interface FriendService extends IService<Friend> {
      * @return true 是朋友 false 不是朋友
      */
     boolean u2IsU1Friend(Long uid1, Long uid2);
+
+    /**
+     * 是我的朋友
+     *
+     * @param userIds 待校验用户
+     * @return true都是我的朋友 false有一个或多个不是我的朋友
+     */
+    boolean isFriends(Long u1, List<Long> userIds);
 
 }

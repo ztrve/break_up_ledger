@@ -2,8 +2,8 @@ package com.diswares.breakupledger.backend.helper.notice.handler;
 
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
 import com.diswares.breakupledger.backend.helper.notice.NoticeHandler;
-import com.diswares.breakupledger.backend.po.Friend;
-import com.diswares.breakupledger.backend.po.Notice;
+import com.diswares.breakupledger.backend.po.friend.Friend;
+import com.diswares.breakupledger.backend.po.notice.Notice;
 import com.diswares.breakupledger.backend.service.FriendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

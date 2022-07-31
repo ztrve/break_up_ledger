@@ -3,7 +3,6 @@
 
 # 共享账单
 脑残项目，可以笑一笑，不接受批评  
-女拳师去这个网址颅内高潮 https://github.com/person-without-name/AntiChinaFeminist 
 
 ## 账号模型
 - 登陆
@@ -21,7 +20,6 @@
 - 邀请第四者
 - 查看我存在的 Team
 - 成立 Single Dog Team
-
 
 ## 饭卡账本
 该模式仅有一位财产 leader，需要交饭钱的人将钱交给 leader 就行了，不用在这个 App 里充值  

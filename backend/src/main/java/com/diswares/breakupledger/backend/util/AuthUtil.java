@@ -1,7 +1,7 @@
 package com.diswares.breakupledger.backend.util;
 
 import com.diswares.breakupledger.backend.dto.AuthUser;
-import com.diswares.breakupledger.backend.po.UserInfo;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**

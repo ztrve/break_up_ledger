@@ -13,33 +13,30 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum NoticeEnums {
+public enum LedgerTypeEnums {
     /**
-     * 。。。
+     * wx
      */
-    FRIEND_REQUEST("FRIEND_REQUEST", "好友申请", "{}想添加您为好友"),
-    LEDGER_INVITE("LEDGER_INVITE", "账本邀请", "{}想邀请您加入他的账本{}"),
+    NORMAL(0, "普通账本")
     ;
 
     @JsonValue
     @EnumValue
-    private final String type;
+    private final Integer code;
 
-    private final String name;
-
-    private final String strTmpl;
+    private final String desc;
 
     /**
      * 自定义反序列化enum方法
      */
     @JsonCreator
-    public static NoticeEnums getEnum(String type){
-        for(NoticeEnums item : values()){
-            if(item.getType().equals(type)){
+    public static LedgerTypeEnums getEnum(Integer code){
+        for(LedgerTypeEnums item : values()){
+            if(item.getCode().equals(code)){
                 return item;
             }
         }
         throw new IllegalArgumentException(
-                "Cannot convert code " + type + " to category type enums");
+                "Cannot convert code " + code + " to category type enums");
     }
 }

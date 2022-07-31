@@ -5,7 +5,7 @@ import com.diswares.breakupledger.backend.config.configurationproperties.WxConfi
 import com.diswares.breakupledger.backend.dto.AuthUser;
 import com.diswares.breakupledger.backend.enums.ReqPlatformEnums;
 import com.diswares.breakupledger.backend.exception.WxAuthException;
-import com.diswares.breakupledger.backend.po.UserInfo;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
 import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;
 import com.diswares.breakupledger.backend.remote.WxRemote;
@@ -21,16 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Objects;
 

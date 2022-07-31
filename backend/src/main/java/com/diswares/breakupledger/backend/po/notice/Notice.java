@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.po;
+package com.diswares.breakupledger.backend.po.notice;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

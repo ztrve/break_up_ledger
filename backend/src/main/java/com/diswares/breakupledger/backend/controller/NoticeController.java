@@ -2,7 +2,7 @@ package com.diswares.breakupledger.backend.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diswares.breakupledger.backend.kernel.proxy.response.annotions.Inclusion;
-import com.diswares.breakupledger.backend.po.Notice;
+import com.diswares.breakupledger.backend.po.notice.Notice;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
 import com.diswares.breakupledger.backend.service.NoticeService;

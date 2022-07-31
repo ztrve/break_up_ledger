@@ -2,9 +2,9 @@ package com.diswares.breakupledger.backend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.diswares.breakupledger.backend.po.Friend;
+import com.diswares.breakupledger.backend.po.friend.Friend;
 import com.diswares.breakupledger.backend.mapper.FriendMapper;
-import com.diswares.breakupledger.backend.po.UserInfo;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +57,14 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend>
         query.eq(Friend::getLeftUserId, uid1);
         query.eq(Friend::getRightUserId, uid2);
         return count(query) > 0;
+    }
+
+    @Override
+    public boolean isFriends(Long uid, List<Long> userIds) {
+        LambdaQueryWrapper<Friend> query = new LambdaQueryWrapper<>();
+        query.eq(Friend::getLeftUserId, uid);
+        query.in(Friend::getRightUserId, userIds);
+        return count(query) == userIds.size();
     }
 }
 

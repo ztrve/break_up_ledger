@@ -1,6 +1,6 @@
 package com.diswares.breakupledger.backend.mapper;
 
-import com.diswares.breakupledger.backend.po.Notice;
+import com.diswares.breakupledger.backend.po.notice.Notice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

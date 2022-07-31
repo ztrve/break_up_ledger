@@ -1,5 +1,7 @@
 package com.diswares.breakupledger.backend.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,9 +9,10 @@ import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
 import com.diswares.breakupledger.backend.enums.NoticeDealResultEnums;
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
 import com.diswares.breakupledger.backend.helper.notice.NoticeHandler;
-import com.diswares.breakupledger.backend.po.Notice;
+import com.diswares.breakupledger.backend.po.ledger.Ledger;
+import com.diswares.breakupledger.backend.po.notice.Notice;
 import com.diswares.breakupledger.backend.mapper.NoticeMapper;
-import com.diswares.breakupledger.backend.po.UserInfo;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
@@ -160,6 +163,37 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         NoticeVo noticeVo = new NoticeVo();
         BeanUtils.copyProperties(notice, noticeVo);
         return noticeVo;
+    }
+
+    @Override
+    public void createLedgerInviteNotice(Ledger ledger, UserInfo initiator, List<Long> memberIds) {
+        boolean isRealUsers = userInfoService.isRealUsers(memberIds);
+        org.springframework.util.Assert.isTrue(isRealUsers, "用户不存在");
+        Assert.notNull(initiator, "发起人人不存在");
+        boolean initiatorHasAuth = ledger.getOwnerId().equals(initiator.getId()) || ledger.getLeaderId().equals(initiator.getId());
+        Assert.isTrue(initiatorHasAuth, "账本拥有人和账门人才能邀请");
+        boolean isFriends = friendService.isFriends(initiator.getId(), memberIds);
+        Assert.isTrue(isFriends, "你们不是朋友");
+
+        NoticeEnums ledgerInvite = NoticeEnums.LEDGER_INVITE;
+        String noticeMsg = StringReplacer.build(ledgerInvite.getStrTmpl(), ledger.getName());
+
+        List<Notice> notices = memberIds.stream()
+                .map(memberId -> {
+                    Notice notice = new Notice();
+                    notice.setNoticeType(ledgerInvite);
+                    notice.setNoticeName(ledgerInvite.getName());
+                    notice.setNoticeMsg(noticeMsg);
+                    JSONObject noticeData = new JSONObject();
+                    noticeData.put("ledgerId", ledger.getId());
+                    notice.setNoticeData(JSON.toJSONString(noticeData));
+                    notice.setInitiatorId(initiator.getId());
+                    notice.setHandlerId(memberId);
+                    return notice;
+                })
+                .collect(Collectors.toList());
+
+        saveBatch(notices);
     }
 }
 
