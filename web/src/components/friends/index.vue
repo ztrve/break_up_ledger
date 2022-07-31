@@ -13,7 +13,7 @@
       </template>
     </nut-empty>
     <!-- 好友列表 -->
-    <nut-cell-group>
+    <nut-cell-group v-if="undefined !== friendList && friendList.length !== 0" class="friends">
       <nut-cell v-for="(friend, index) in friendList" :key="index" :is-link="true" :center="true">
         <template v-slot:icon>
           <nut-avatar
@@ -27,6 +27,12 @@
         </template>
       </nut-cell>
     </nut-cell-group>
+    <nut-button
+        class="global-add-friend" shape="square" type="primary" icon="add"
+        v-if="undefined !== friendList && friendList.length !== 0"
+        @click="showAddFriendPopup = true">
+      添加好友
+    </nut-button>
 
     <nut-popup position="bottom" :style="{ height: '80%' }" v-model:visible="showAddFriendPopup">
       <div class="friend-request-pop-wrapper">
@@ -46,6 +52,7 @@
         </nut-button>
       </div>
     </nut-popup>
+
   </div>
 </template>
 
@@ -111,12 +118,18 @@ onMounted(() => {
 .friends-wrapper {
   height: 100%;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .friends-index-first-letter {
   background: #b9b9b9;
   padding: 5px 10px;
   color: #404040;
+}
+
+.friends {
+  flex-grow: 1;
 }
 
 .friend-title {

@@ -28,7 +28,6 @@ defineComponent({
 })
 
 const userInfo = ref({
-  // TODO 进入页面后头像路径需要重新加载
   avatarUrl: Taro.getStorageSync(LOCAL_STORAGE_KEYS.user).avatarUrl
 })
 
