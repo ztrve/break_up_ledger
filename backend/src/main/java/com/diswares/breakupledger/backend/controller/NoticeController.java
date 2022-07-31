@@ -1,16 +1,21 @@
 package com.diswares.breakupledger.backend.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.diswares.breakupledger.backend.kernel.proxy.response.annotions.Inclusion;
+import com.diswares.breakupledger.backend.po.Notice;
+import com.diswares.breakupledger.backend.po.UserInfo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.service.NoticeService;
+import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.diswares.breakupledger.backend.kernel.proxy.response.InclusionStrategy.PAGE;
 
 /**
  * @author: z_true
@@ -22,6 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class NoticeController {
     private final NoticeService noticeService;
+
+    @GetMapping()
+    @Inclusion(PAGE)
+    public Page<NoticeVo> page(Page<Notice> page) {
+        return noticeService.pageOfMine(page);
+    }
 
     @PostMapping("/friend")
     public NoticeVo createNewFriendNotice(@RequestBody @Validated NoticeCreateFriendQo noticeCreateNewFriendQo) {

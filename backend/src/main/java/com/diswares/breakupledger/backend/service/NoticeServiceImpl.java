@@ -1,6 +1,7 @@
 package com.diswares.breakupledger.backend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
@@ -11,13 +12,16 @@ import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.util.StringReplacer;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author: z_true
@@ -27,11 +31,50 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
-    implements NoticeService{
+        implements NoticeService {
 
     private final UserInfoService userInfoService;
 
     private final FriendService friendService;
+
+    @Override
+    public Page<NoticeVo> pageOfMine(Page<Notice> page) {
+        UserInfo me = AuthUtil.currentUserInfo();
+        LambdaQueryWrapper<Notice> noticeQuery = new LambdaQueryWrapper<>();
+        noticeQuery.eq(Notice::getHandlerId, me.getId())
+                .orderByDesc(Notice::getCreateTime);
+        page = page(page, noticeQuery);
+
+        Page<NoticeVo> voPage = new Page<>();
+        BeanUtils.copyProperties(page, voPage, "records");
+        if (ObjectUtils.isEmpty(page.getRecords())) {
+            return voPage;
+        }
+        voPage.setRecords(page.getRecords().stream().map(notice -> {
+            NoticeVo noticeVo = new NoticeVo();
+            BeanUtils.copyProperties(notice, noticeVo);
+            return noticeVo;
+        }).collect(Collectors.toList()));
+
+        List<Long> initiatorIds = voPage.getRecords().stream().map(NoticeVo::getInitiatorId).collect(Collectors.toList());
+        LambdaQueryWrapper<UserInfo> userInfoQuery = new LambdaQueryWrapper<>();
+        userInfoQuery.in(UserInfo::getId, initiatorIds);
+        Map<Long, UserInfoVo> userIdMap = userInfoService.list(userInfoQuery)
+                .stream()
+                .map(userInfo -> {
+                    UserInfoVo userInfoVo = new UserInfoVo();
+                    BeanUtils.copyProperties(userInfo, userInfoVo);
+                    return userInfoVo;
+                })
+                .collect(Collectors.toMap(UserInfoVo::getId, v -> v, (k1, k2) -> k1));
+
+        voPage.getRecords()
+                .forEach(vo -> {
+                    UserInfoVo userInfoVo = userIdMap.get(vo.getInitiatorId());
+                    vo.setInitiator(userInfoVo);
+                });
+        return voPage;
+    }
 
     @Override
     public NoticeVo createNewFriendNotice(NoticeCreateFriendQo noticeCreateNewFriendQo) {

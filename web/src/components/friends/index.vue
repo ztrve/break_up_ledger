@@ -99,7 +99,7 @@ function sendFriendRequest() {
       friendRequestInput.value = ''
     }
   }).catch(() => {
-    friendRequestButtonLoading.value = true
+    friendRequestButtonLoading.value = false
   })
 }
 

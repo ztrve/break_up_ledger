@@ -2,9 +2,10 @@ package com.diswares.breakupledger.backend.vo.notice;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author: z_true
@@ -53,13 +54,18 @@ public class NoticeVo {
     /**
      *
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      *
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 关联数据
+     */
+    private UserInfoVo initiator;
 }

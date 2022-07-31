@@ -64,4 +64,4 @@ env:
     appSecret: ${WX_APP_SECRET:<my_wx_app_secret>}
   jwt:
     secret: <my_jwt_secret>
-    expire-second: 300
+    expire-second: 3600

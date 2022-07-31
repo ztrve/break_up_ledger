@@ -3,7 +3,7 @@ import {
     Button, Toast, Tabbar, TabbarItem, Icon, Avatar, AvatarGroup, Empty,
     Cell, CellGroup, Menu, MenuItem, OverLay, Popup, Tag, Navbar, Tabs, TabPane,
     Price, Collapse, CollapseItem, Divider, Ellipsis, Checkbox, CheckboxGroup,
-    Input
+    Input, InfiniteLoading
 } from '@nutui/nutui-taro';
 import {createPinia} from 'pinia'
 import Taro from '@tarojs/taro'
@@ -20,7 +20,7 @@ const App = createApp({
         console.log('app.js onLaunch');
     },
     // 对应 onShow
-    onShow(options) {
+    onShow() {
         console.log('app.js onShow');
         const token = Taro.getStorageSync(LOCAL_STORAGE_KEYS.token)
         if (undefined === token || '' === token) {
@@ -38,6 +38,6 @@ App
     .use(Button).use(Toast).use(Tabbar).use(TabbarItem).use(Icon).use(Avatar).use(AvatarGroup).use(Empty)
     .use(Cell).use(CellGroup).use(Menu).use(MenuItem).use(OverLay).use(Popup).use(Tag).use(Navbar).use(Tabs).use(TabPane)
     .use(Price).use(Collapse).use(CollapseItem).use(Divider).use(Ellipsis).use(Checkbox).use(CheckboxGroup)
-    .use(Input)
+    .use(Input).use(InfiniteLoading)
 
 export default App
