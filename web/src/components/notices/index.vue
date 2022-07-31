@@ -14,6 +14,8 @@
         :use-window='false'
         :has-more="loadNoticesPageDeal"
         @load-more="loadNoticesPage"
+        pull-icon="loading"
+        load-more-txt="哎呀，这里是底部了啦"
     >
       <nut-cell-group>
         <nut-cell v-for="(notice, index) in notices" :key="index" :is-link="true" :center="true"
@@ -72,11 +74,11 @@ const notices = ref([
   // { ledgerId: 1, ledgerName: '账单4', noticeId: 1, noticeTitle: '配置BBB从开启修改到关闭dddddd', date: '07-17', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: false },
 ])
 const noticePage = {
-  total:0,
-  size: 0,
+  pages: 0,
+  size: 10,
   current: 0
 }
-const loadNoticesPageDeal = ref(false)
+const loadNoticesPageDeal = ref(true)
 
 const noticeDetailFlag = ref(false)
 
@@ -87,24 +89,28 @@ function openNoticeDetail(notice) {
   activeNotice.value = notice
 }
 
-function loadNoticesPage () {
+function loadNoticesPage(done) {
   console.log('load')
-  axios_plus.get("/notice", {
-    total: noticePage.total,
-    size: noticePage.size,
-    current: noticePage.current
-  }).then(resp => {
+  axios_plus.get(
+      `/notice?pages=${noticePage.pages}&size=${noticePage.size}&current=${noticePage.current + 1}`
+  ).then(resp => {
     if (resp.data.code === 'E0001') {
-      notices.value = resp.data.data
-      noticePage.total = resp.data.total
+      console.log(resp.data)
+      const data = resp.data.data
+      if (undefined !== data && null !== data && data.length > 0) {
+        notices.value = notices.value.concat(data)
+      }
+      noticePage.pages = resp.data.pages
       noticePage.size = resp.data.size
       noticePage.current = resp.data.current
 
-      if (noticePage.current === noticePage.total) {
-        loadNoticesPageDeal.value = true
+      if (noticePage.current === noticePage.pages) {
+        loadNoticesPageDeal.value = false
       }
     }
   }).catch(() => {
+  }).finally(() => {
+    done()
   })
 }
 
