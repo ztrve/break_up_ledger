@@ -15,7 +15,7 @@
         :has-more="loadNoticesPageDeal"
         @load-more="loadNoticesPage"
     >
-      <nut-cell-group >
+      <nut-cell-group>
         <nut-cell v-for="(notice, index) in notices" :key="index" :is-link="true" :center="true"
                   @click="openNoticeDetail(notice)">
           <template v-slot:icon>
@@ -41,7 +41,7 @@
             <div class="notice-link">
               <div class="date">{{ notice.createTime.substring(5, 10) }}</div>
               <nut-icon name="right"></nut-icon>
-              <img v-if="notice.isDeal" class="deal-img" :src="require('../../../assets/deal-img.png')">
+              <img v-if="notice.dealStatus !== 0" class="deal-img" :src="require('../../../assets/deal-img.png')">
             </div>
           </template>
         </nut-cell>

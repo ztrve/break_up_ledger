@@ -14,18 +14,15 @@
     </nut-empty>
     <!-- 好友列表 -->
     <nut-cell-group>
-      <!--      <template v-slot:title>-->
-      <!--        <div class="friends-index-first-letter nut-cell-group__title">A</div>-->
-      <!--      </template>-->
-      <nut-cell v-for="(friend, index) in friendList" :key="index" :is-link="true">
+      <nut-cell v-for="(friend, index) in friendList" :key="index" :is-link="true" :center="true">
         <template v-slot:icon>
           <nut-avatar
-              icon="https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png">
+              :icon="friend.avatarUrl">
           </nut-avatar>
         </template>
         <template v-slot:title>
           <div class="friend-title">
-            <div>{{ friend.name }}</div>
+            <div>{{ friend.nickname }}</div>
           </div>
         </template>
       </nut-cell>

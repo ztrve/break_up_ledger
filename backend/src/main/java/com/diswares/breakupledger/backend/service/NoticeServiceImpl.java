@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
+import com.diswares.breakupledger.backend.enums.NoticeDealResultEnums;
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
+import com.diswares.breakupledger.backend.helper.notice.NoticeHandler;
 import com.diswares.breakupledger.backend.po.Notice;
 import com.diswares.breakupledger.backend.mapper.NoticeMapper;
 import com.diswares.breakupledger.backend.po.UserInfo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
+import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.util.StringReplacer;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
@@ -16,9 +19,11 @@ import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +41,19 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
     private final UserInfoService userInfoService;
 
     private final FriendService friendService;
+
+    private Map<NoticeEnums, NoticeHandler> noticeHandlerMap = null;
+
+    private final ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void post () {
+        noticeHandlerMap = applicationContext.getBeansOfType(NoticeHandler.class)
+                .values()
+                .stream()
+                .collect(Collectors.toMap(NoticeHandler::noticeType, v -> v, (k1, k2) -> k1));
+
+    }
 
     @Override
     public Page<NoticeVo> pageOfMine(Page<Notice> page) {
@@ -81,7 +99,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         String searchVal = noticeCreateNewFriendQo.getUserCharacteristics();
         // 通过手机/用户编号匹配用户
         UserInfo maybeFriendUser = userInfoService.getByUserCharacteristics(searchVal);
-        Assert.notNull(maybeFriendUser, "无该用户，发起邀请");
+        Assert.notNull(maybeFriendUser, "查询不到该用户");
 
 
         // 是否已经是好友关系
@@ -94,7 +112,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         NoticeEnums friendRequest = NoticeEnums.FRIEND_REQUEST;
         // 创建通知
         Notice notice = new Notice();
-        notice.setNoticeType(friendRequest.getType());
+        notice.setNoticeType(friendRequest);
         notice.setNoticeName(friendRequest.getName());
         notice.setNoticeMsg(StringReplacer.build(friendRequest.getStrTmpl(), myInfo.getNickname()));
         notice.setNoticeData("");
@@ -116,6 +134,29 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
             notice = one;
         }
 
+        NoticeVo noticeVo = new NoticeVo();
+        BeanUtils.copyProperties(notice, noticeVo);
+        return noticeVo;
+    }
+
+    @Override
+    public NoticeVo handleNoticeByType(NoticeDealQo noticeDealQo) {
+        Notice notice = getById(noticeDealQo.getNoticeId());
+        Assert.notNull(notice, "通知不存在");
+        UserInfo me = AuthUtil.currentUserInfo();
+        Assert.isTrue(notice.getHandlerId().equals(me.getId()), "无法处理不属于你的通知");
+
+        notice.setDealResult(noticeDealQo.getDealResult());
+        notice.setDealStatus(NoticeDealEnums.DEAL);
+        updateById(notice);
+
+        NoticeHandler noticeHandler = noticeHandlerMap.get(notice.getNoticeType());
+
+        if (NoticeDealResultEnums.AGREE.equals(noticeDealQo.getDealResult())) {
+            noticeHandler.agreeCall(notice);
+        } else {
+            noticeHandler.disagreeCall(notice);
+        }
         NoticeVo noticeVo = new NoticeVo();
         BeanUtils.copyProperties(notice, noticeVo);
         return noticeVo;

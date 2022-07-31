@@ -3,6 +3,8 @@ package com.diswares.breakupledger.backend.po;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
+import com.diswares.breakupledger.backend.enums.NoticeDealResultEnums;
+import com.diswares.breakupledger.backend.enums.NoticeEnums;
 import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,7 +27,7 @@ public class Notice extends AncestorDomain implements Serializable {
     /**
      * 通知类型
      */
-    private String noticeType;
+    private NoticeEnums noticeType;
 
     /**
      * 通知名称
@@ -56,6 +58,11 @@ public class Notice extends AncestorDomain implements Serializable {
      * 处理状态 0未处理 1已处理
      */
     private NoticeDealEnums dealStatus;
+
+    /**
+     * 处理结果 0不同意 1同意
+     */
+    private NoticeDealResultEnums dealResult;
 
     /**
      *

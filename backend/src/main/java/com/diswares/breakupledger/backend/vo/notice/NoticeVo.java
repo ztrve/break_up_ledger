@@ -2,6 +2,7 @@ package com.diswares.breakupledger.backend.vo.notice;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diswares.breakupledger.backend.enums.NoticeDealEnums;
+import com.diswares.breakupledger.backend.enums.NoticeDealResultEnums;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.Data;
 
@@ -50,6 +51,11 @@ public class NoticeVo {
      * 处理状态 0未处理 1已处理
      */
     private NoticeDealEnums dealStatus;
+
+    /**
+     * 处理结果 0不同意 1同意
+     */
+    private NoticeDealResultEnums dealResult;
 
     /**
      *

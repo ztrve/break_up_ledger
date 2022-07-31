@@ -57,23 +57,23 @@ instance.interceptors.response.use(
             let res = error.response
             switch (res.status) {
                 case 400:
-                    showErrorToast(res.msg || '非法请求')
+                    showErrorToast(res.data.msg || '非法请求')
                     break
                 case 401:
                     authLogin()
                     break
                 case 403:
-                    showErrorToast(res.msg || '非法请求')
+                    showErrorToast(res.data.msg || '非法请求')
                     break
                 case 404:
-                    showErrorToast(res.msg || '请求资源不存在')
+                    showErrorToast(res.data.msg || '请求资源不存在')
                     break
                 case 500:
                 case 502:
-                    showErrorToast(res.msg || '服务器开小差啦')
+                    showErrorToast(res.data.msg || '服务器开小差啦')
                     break
                 default:
-                    showErrorToast(res.msg || res.statusText)
+                    showErrorToast(res.data.msg || res.statusText)
             }
         } else {
             console.log(error)

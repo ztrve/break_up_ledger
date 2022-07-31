@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diswares.breakupledger.backend.po.Notice;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
+import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
 
 /**
@@ -28,4 +29,11 @@ public interface NoticeService extends IService<Notice> {
      */
     NoticeVo createNewFriendNotice(NoticeCreateFriendQo noticeCreateNewFriendQo);
 
+    /**
+     * 根据通知类型 处理通知
+     *
+     * @param noticeDealQo 通知处理Qo
+     * @return 通知信息
+     */
+    NoticeVo handleNoticeByType(NoticeDealQo noticeDealQo);
 }
