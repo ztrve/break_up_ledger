@@ -1,11 +1,10 @@
 <template>
-  <nut-cell-group title="账单列表">
-    <nut-cell v-for="(ledger, index) in ledgers" :key="index"
-              :title="ledger.name"
-              @click="changeActiveLedger(index)"
+  <nut-cell-group title="账单列表" style="position: relative">
+    <nut-cell v-for="(ledger, index) in ledgers" :title="ledger.name"
               :class="{
                 'home-menu-active-ledger-title': ledger.id === activeLedger.id
               }"
+              @click="changeActiveLedger(index)"
     ></nut-cell>
     <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账单" @click="createNewLedger"></nut-cell>
   </nut-cell-group>
@@ -32,7 +31,7 @@ function changeActiveLedger(ledgerIndex) {
   emit('change', activeLedger)
 }
 
-function createNewLedger () {
+function createNewLedger() {
   emit('create-new-ledger')
 }
 

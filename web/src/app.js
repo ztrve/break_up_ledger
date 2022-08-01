@@ -33,8 +33,7 @@ const App = createApp({
     },
 })
 
-App
-    .use(createPinia())
+App.use(createPinia())
     .use(Button).use(Toast).use(Tabbar).use(TabbarItem).use(Icon).use(Avatar).use(AvatarGroup).use(Empty)
     .use(Cell).use(CellGroup).use(Menu).use(MenuItem).use(OverLay).use(Popup).use(Tag).use(Navbar).use(Tabs).use(TabPane)
     .use(Price).use(Collapse).use(CollapseItem).use(Divider).use(Ellipsis).use(Checkbox).use(CheckboxGroup)
