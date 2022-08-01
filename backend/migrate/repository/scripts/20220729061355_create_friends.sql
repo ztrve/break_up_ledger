@@ -17,17 +17,14 @@ alter table break_up_ledger.friend
     add constraint friend_pk
         primary key (id);
 
-alter table break_up_ledger.friend
-    add constraint friend_pk_2
-        unique (left_user_id);
+create index friend_left_user_id_index
+    on break_up_ledger.friend (left_user_id);
 
-alter table break_up_ledger.friend
-    add constraint friend_pk_3
-        unique (right_user_id);
+create index friend_left_user_id_right_user_id_index
+    on break_up_ledger.friend (left_user_id, right_user_id);
 
-alter table break_up_ledger.friend
-    add constraint friend_pk_4
-        unique (left_user_id, right_user_id);
+create index friend_right_user_id_index
+    on break_up_ledger.friend (right_user_id);
 
 CREATE TRIGGER update_time
     BEFORE UPDATE

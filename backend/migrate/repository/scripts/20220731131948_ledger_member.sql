@@ -26,9 +26,8 @@ CREATE TRIGGER update_time
     FOR EACH ROW
 EXECUTE PROCEDURE break_up_ledger.update_timestamp();
 
--- make index
-alter table break_up_ledger.ledger_member
-    add constraint ledger_member_pk_2 unique (ledger_id);
+create index ledger_member_ledger_id_index
+    on break_up_ledger.ledger_member (ledger_id);
 
 
 
