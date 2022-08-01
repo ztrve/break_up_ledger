@@ -48,12 +48,12 @@
         </nut-cell>
       </nut-cell-group>
       <div class="notice-detail-operate" v-if="props.notice.dealStatus === 0">
-        <nut-button class="notice-detail-operate-item" shape="square" type="danger" @click="reject"
-                    :loading="rejectLoading">
+        <nut-button class="notice-detail-operate-item" shape="square" type="danger"
+                    @click="reject" :loading="rejectLoading">
           拒绝
         </nut-button>
-        <nut-button class="notice-detail-operate-item" shape="square" type="primary" @click="allow"
-                    :loading="allowLoading">
+        <nut-button class="notice-detail-operate-item" shape="square" type="primary"
+                    @click="allow" :loading="allowLoading">
           同意
         </nut-button>
       </div>
@@ -101,7 +101,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:visible'])
+const emit = defineEmits(['update:visible', 'deal'])
 
 function close() {
   emit('update:visible', false)
@@ -125,9 +125,11 @@ function dealNotice(dealResult, responseCallback) {
       title: '处理完成',
       icon: 'success',
     })
+    emit('deal')
   }).catch(() => {
   }).finally(() => {
     responseCallback()
+    close()
   })
 }
 
@@ -135,7 +137,6 @@ function reject() {
   rejectLoading.value = true
   dealNotice(0, () => {
     rejectLoading.value = false
-    close()
   })
 }
 
@@ -143,7 +144,6 @@ function allow() {
   allowLoading.value = true
   dealNotice(1, () => {
     allowLoading.value = false
-    close()
   })
 }
 

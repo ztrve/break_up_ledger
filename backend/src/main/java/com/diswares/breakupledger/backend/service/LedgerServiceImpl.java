@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author A
+ * @author z_true
  * @description 针对表【ledger(账本)】的数据库操作Service实现
  * @createDate 2022-07-31 21:23:35
  */
@@ -34,6 +34,25 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
     private final UserInfoService userInfoService;
 
     private final NoticeService noticeService;
+
+    @Override
+    public List<LedgerVo> myLedgers() {
+        List<Long> myLedgerIds = ledgerMemberService.myLedgerIds();
+        if (ObjectUtils.isEmpty(myLedgerIds)) {
+            return null;
+        }
+        LambdaQueryWrapper<Ledger> query = new LambdaQueryWrapper<>();
+        query.in(Ledger::getId, myLedgerIds);
+        List<Ledger> ledgers = list(query);
+        if (ObjectUtils.isEmpty(ledgers)) {
+            return null;
+        }
+        return ledgers.stream().map(ledger -> {
+            LedgerVo ledgerVo = new LedgerVo();
+            BeanUtils.copyProperties(ledger, ledgerVo);
+            return ledgerVo;
+        }).collect(Collectors.toList());
+    }
 
     @Override
     public LedgerVo getDetailById(Long ledgerId) {
@@ -91,9 +110,9 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
 
         Ledger ledger = new Ledger();
         BeanUtils.copyProperties(ledgerCreateQo, ledger);
-        save(ledger);
         ledger.setOwnerId(me.getId());
         ledger.setLeaderId(me.getId());
+        save(ledger);
 
         LedgerMember ledgerMemberOfMe = new LedgerMember();
         ledgerMemberOfMe.setLedgerId(ledger.getId());
@@ -102,7 +121,9 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
 
         // 给 当前用户以外的所有用户 发送通知
         ledgerCreateQo.getLedgerMemberIds().removeIf(id -> id.equals(me.getId()));
-        noticeService.createLedgerInviteNotice(ledger, me, ledgerCreateQo.getLedgerMemberIds());
+        if (!ObjectUtils.isEmpty(ledgerCreateQo.getLedgerMemberIds())) {
+            noticeService.createLedgerInviteNotice(ledger, me, ledgerCreateQo.getLedgerMemberIds());
+        }
         return getDetailById(ledger.getId());
     }
 }

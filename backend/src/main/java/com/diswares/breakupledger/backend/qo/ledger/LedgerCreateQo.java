@@ -7,6 +7,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+/**
+ * @author z_true
+ */
 @Data
 public class LedgerCreateQo {
     /**

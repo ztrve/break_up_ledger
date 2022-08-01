@@ -146,6 +146,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
     public NoticeVo handleNoticeByType(NoticeDealQo noticeDealQo) {
         Notice notice = getById(noticeDealQo.getNoticeId());
         Assert.notNull(notice, "通知不存在");
+        Assert.isTrue(NoticeDealEnums.UN_DEAL.equals(notice.getDealStatus()), "已处理，不可重复处理");
         UserInfo me = AuthUtil.currentUserInfo();
         Assert.isTrue(notice.getHandlerId().equals(me.getId()), "无法处理不属于你的通知");
 
@@ -168,7 +169,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
     @Override
     public void createLedgerInviteNotice(Ledger ledger, UserInfo initiator, List<Long> memberIds) {
         boolean isRealUsers = userInfoService.isRealUsers(memberIds);
-        org.springframework.util.Assert.isTrue(isRealUsers, "用户不存在");
+        Assert.isTrue(isRealUsers, "用户不存在");
         Assert.notNull(initiator, "发起人人不存在");
         boolean initiatorHasAuth = ledger.getOwnerId().equals(initiator.getId()) || ledger.getLeaderId().equals(initiator.getId());
         Assert.isTrue(initiatorHasAuth, "账本拥有人和账门人才能邀请");
@@ -176,7 +177,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         Assert.isTrue(isFriends, "你们不是朋友");
 
         NoticeEnums ledgerInvite = NoticeEnums.LEDGER_INVITE;
-        String noticeMsg = StringReplacer.build(ledgerInvite.getStrTmpl(), ledger.getName());
+        String noticeMsg = StringReplacer.build(ledgerInvite.getStrTmpl(), initiator.getNickname(), ledger.getName());
 
         List<Notice> notices = memberIds.stream()
                 .map(memberId -> {

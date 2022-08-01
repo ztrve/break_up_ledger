@@ -6,12 +6,21 @@ import com.diswares.breakupledger.backend.qo.ledger.LedgerCreateQo;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerVo;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 /**
 * @author z_true
 * @description 针对表【ledger(账本)】的数据库操作Service
 * @createDate 2022-07-31 21:23:35
 */
 public interface LedgerService extends IService<Ledger> {
+    /**
+     * 我的账本列表
+     *
+     * @return 我的账本列表
+     */
+    List<LedgerVo> myLedgers ();
+
     /**
      * 获取账本详情
      * @param ledgerId 账本id

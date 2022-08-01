@@ -50,7 +50,7 @@
       </nut-cell-group>
     </nut-infiniteloading>
 
-    <notice-detail v-model:visible="noticeDetailFlag" :notice="activeNotice"></notice-detail>
+    <notice-detail v-model:visible="noticeDetailFlag" :notice="activeNotice" @deal="updateNotice"></notice-detail>
   </view>
 </template>
 
@@ -63,21 +63,19 @@ defineComponent({
   name: 'Notices'
 })
 
-const notices = ref([
-  // { ledgerId: 1, ledgerName: '账单1', noticeId: 1, noticeTitle: '配置AAA从开启修改到关闭修改到关闭修改到关闭修改到关闭dddddddd', date: '07-21', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: true },
-  // { ledgerId: 1, ledgerName: '账单3', noticeId: 1, noticeTitle: '配置BBB从开启', date: '07-20', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: false },
-  // { ledgerId: 1, ledgerName: '账单2', noticeId: 1, noticeTitle: '配置CCC从开启修改到关闭dddddd', date: '07-19', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: true },
-  // { ledgerId: 1, ledgerName: '账单2', noticeId: 1, noticeTitle: '配置BBB从开启修改到关闭dddddd', date: '07-18', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: false },
-  // { ledgerId: 1, ledgerName: '账单2', noticeId: 1, noticeTitle: '配置AAA从开启修改到关闭dddddd', date: '07-18', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: true },
-  // { ledgerId: 1, ledgerName: '账单3', noticeId: 1, noticeTitle: '配置DDD从开启修改到关闭dddddd', date: '07-18', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: false },
-  // { ledgerId: 1, ledgerName: '账单4', noticeId: 1, noticeTitle: '配置AAA从开启修改到关闭dddddd', date: '07-17', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: false },
-  // { ledgerId: 1, ledgerName: '账单4', noticeId: 1, noticeTitle: '配置BBB从开启修改到关闭dddddd', date: '07-17', initiatorUserId: 1, initiatorAvatarUrl: 'https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png', initiatorName: '张三', isDeal: false },
-])
+const notices = ref([])
 const noticePage = {
   pages: 0,
   size: 10,
   current: 0
 }
+function initNotices () {
+  notices.value = []
+  noticePage.pages = 0
+  noticePage.size = 10
+  noticePage.current = 0
+}
+
 const loadNoticesPageDeal = ref(true)
 
 const noticeDetailFlag = ref(false)
@@ -112,6 +110,12 @@ function loadNoticesPage(done) {
   }).finally(() => {
     done()
   })
+}
+
+function updateNotice() {
+  console.log('Notice page catch deal')
+  initNotices()
+  loadNoticesPage()
 }
 
 loadNoticesPage()

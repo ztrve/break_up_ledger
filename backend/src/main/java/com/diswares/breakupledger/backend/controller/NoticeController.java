@@ -24,7 +24,6 @@ import static com.diswares.breakupledger.backend.kernel.proxy.response.Inclusion
 public class NoticeController {
     private final NoticeService noticeService;
 
-
     @GetMapping()
     @Inclusion(PAGE)
     public Page<NoticeVo> page(Page<Notice> page) {

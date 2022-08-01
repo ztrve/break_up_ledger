@@ -7,8 +7,13 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author z_true
+ */
 @Data
 public class LedgerVo {
+    private Long id;
+
     /**
      * 账本名
      */

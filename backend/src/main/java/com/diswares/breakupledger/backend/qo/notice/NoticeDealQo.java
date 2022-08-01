@@ -5,6 +5,9 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author z_true
+ */
 @Data
 public class NoticeDealQo {
     @NotNull

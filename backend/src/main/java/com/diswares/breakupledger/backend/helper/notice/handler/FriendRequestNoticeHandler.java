@@ -12,6 +12,9 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author z_true
+ */
 @Component
 @RequiredArgsConstructor
 public class FriendRequestNoticeHandler implements NoticeHandler {

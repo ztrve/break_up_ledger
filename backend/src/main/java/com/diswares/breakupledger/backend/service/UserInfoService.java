@@ -6,7 +6,7 @@ import com.diswares.breakupledger.backend.po.user.UserInfo;
 import java.util.List;
 
 /**
-* @author A
+* @author z_true
 * @description 针对表【user_info(用户信息)】的数据库操作Service
 * @createDate 2022-07-26 23:14:26
 */

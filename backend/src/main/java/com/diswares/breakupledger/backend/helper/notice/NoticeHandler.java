@@ -5,6 +5,7 @@ import com.diswares.breakupledger.backend.po.notice.Notice;
 
 /**
  * 通知处理
+ * @author z_true
  */
 public interface NoticeHandler {
     /**
