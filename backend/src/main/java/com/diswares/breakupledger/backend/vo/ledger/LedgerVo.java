@@ -56,5 +56,7 @@ public class LedgerVo {
 
     private UserInfoVo leader;
 
+    private List<Long> memberIds;
+
     private List<UserInfoVo> members;
 }

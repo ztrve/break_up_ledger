@@ -3,7 +3,9 @@ package com.diswares.breakupledger.backend.service;
 import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerCreateQo;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerUpdateQo;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerVo;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -37,4 +39,19 @@ public interface LedgerService extends IService<Ledger> {
      */
     LedgerVo createLedger(LedgerCreateQo ledgerCreateQo);
 
+    /**
+     * 修改账本
+     *
+     * @param ledgerUpdateQo 修改账本 Qo
+     * @return 账本详情
+     */
+    LedgerVo updateLedger(LedgerUpdateQo ledgerUpdateQo);
+
+    /**
+     * 删除账本
+     *
+     * @param id 账本id
+     * @return 账本详情
+     */
+    LedgerVo removeLedger(Long id);
 }

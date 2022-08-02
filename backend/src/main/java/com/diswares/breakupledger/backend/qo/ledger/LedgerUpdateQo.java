@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -13,12 +14,14 @@ import java.util.List;
  * @author z_true
  */
 @Data
-public class LedgerCreateQo {
+public class LedgerUpdateQo {
+    @NotNull
+    private Long id;
+
     /**
      * 账本名
      */
-    @NotBlank
-    @Length(min = 1, max = 10, message = "账本名称不合法，请输入1-10个字符")
+    @Length(min = 1, max = 10)
     private String name;
 
     /**
@@ -31,7 +34,6 @@ public class LedgerCreateQo {
      */
     private Boolean canMemberCommit;
 
-    @NotEmpty
-    @Size(min = 1, max = 9, message = "成员不合法，账本中至少存在一个成员")
+    @Size(min = 1, max = 9)
     private List<Long> memberIds;
 }

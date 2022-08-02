@@ -7,6 +7,7 @@ import com.diswares.breakupledger.backend.mapper.LedgerMapper;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerCreateQo;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerUpdateQo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerVo;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
@@ -50,6 +51,8 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         return ledgers.stream().map(ledger -> {
             LedgerVo ledgerVo = new LedgerVo();
             BeanUtils.copyProperties(ledger, ledgerVo);
+            List<Long> memberIdsByLedgerId = ledgerMemberService.getMemberIdsByLedgerId(ledger.getId());
+            ledgerVo.setMemberIds(memberIdsByLedgerId);
             return ledgerVo;
         }).collect(Collectors.toList());
     }
@@ -77,12 +80,8 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         ledgerVo.setLeader(leaderVo);
 
         // 获取所有账本member
-        LambdaQueryWrapper<LedgerMember> ledgerMemberQuery = new LambdaQueryWrapper<>();
-        ledgerMemberQuery.eq(LedgerMember::getLedgerId, ledgerId);
-        List<Long> memberIds = ledgerMemberService.list(ledgerMemberQuery)
-                .stream()
-                .map(LedgerMember::getMemberId)
-                .collect(Collectors.toList());
+        List<Long> memberIds = ledgerMemberService.getMemberIdsByLedgerId(ledgerId);
+        ledgerVo.setMemberIds(memberIds);
         LambdaQueryWrapper<UserInfo> userInfoQuery = new LambdaQueryWrapper<>();
         userInfoQuery.in(UserInfo::getId, memberIds);
         List<UserInfoVo> memberVoList = userInfoService.list(userInfoQuery)
@@ -100,12 +99,12 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
 
     @Override
     public LedgerVo createLedger(LedgerCreateQo ledgerCreateQo) {
-        if (ObjectUtils.isEmpty(ledgerCreateQo.getLedgerMemberIds())) {
-            ledgerCreateQo.setLedgerMemberIds(new ArrayList<>());
+        if (ObjectUtils.isEmpty(ledgerCreateQo.getMemberIds())) {
+            ledgerCreateQo.setMemberIds(new ArrayList<>());
         }
         UserInfo me = AuthUtil.currentUserInfo();
-        if (!ledgerCreateQo.getLedgerMemberIds().contains(me.getId())) {
-            ledgerCreateQo.getLedgerMemberIds().add(me.getId());
+        if (!ledgerCreateQo.getMemberIds().contains(me.getId())) {
+            ledgerCreateQo.getMemberIds().add(me.getId());
         }
 
         Ledger ledger = new Ledger();
@@ -120,11 +119,44 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         ledgerMemberService.save(ledgerMemberOfMe);
 
         // 给 当前用户以外的所有用户 发送通知
-        ledgerCreateQo.getLedgerMemberIds().removeIf(id -> id.equals(me.getId()));
-        if (!ObjectUtils.isEmpty(ledgerCreateQo.getLedgerMemberIds())) {
-            noticeService.createLedgerInviteNotice(ledger, me, ledgerCreateQo.getLedgerMemberIds());
+        ledgerCreateQo.getMemberIds().removeIf(id -> id.equals(me.getId()));
+        if (!ObjectUtils.isEmpty(ledgerCreateQo.getMemberIds())) {
+            noticeService.createLedgerInviteNotice(ledger, me, ledgerCreateQo.getMemberIds());
         }
         return getDetailById(ledger.getId());
+    }
+
+    @Override
+    public LedgerVo updateLedger(LedgerUpdateQo ledgerUpdateQo) {
+        Ledger ledger = getById(ledgerUpdateQo.getId());
+        Assert.notNull(ledger, "账单不存在");
+        UserInfo me = AuthUtil.currentUserInfo();
+        Assert.isTrue(me.getId().equals(ledger.getOwnerId()) || me.getId().equals(ledger.getLeaderId()), "仅拥有者和掌门人可修改账本配置");
+        if (!ObjectUtils.isEmpty(ledgerUpdateQo.getMemberIds())) {
+            Assert.isTrue(ledgerUpdateQo.getMemberIds().contains(ledger.getOwnerId()), "不可删除拥有人");
+            Assert.isTrue(ledgerUpdateQo.getMemberIds().contains(ledger.getLeaderId()), "请先修改帐门人");
+        }
+
+        ledger = new Ledger();
+        BeanUtils.copyProperties(ledgerUpdateQo, ledger);
+        updateById(ledger);
+
+        // 修改成员
+        if (!ObjectUtils.isEmpty(ledgerUpdateQo.getMemberIds())) {
+            ledgerMemberService.updateLedgerMembers(ledgerUpdateQo.getId(), ledgerUpdateQo.getMemberIds());
+        }
+        return getDetailById(ledgerUpdateQo.getId());
+    }
+
+    @Override
+    public LedgerVo removeLedger(Long id) {
+        LedgerVo ledgerVo = getDetailById(id);
+        Assert.notNull(ledgerVo, "账本不存在");
+
+        removeById(id);
+        ledgerMemberService.removeByLedgerId(id);
+
+        return ledgerVo;
     }
 }
 

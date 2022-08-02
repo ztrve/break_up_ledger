@@ -19,4 +19,29 @@ public interface LedgerMemberService extends IService<LedgerMember> {
      */
     List<Long> myLedgerIds();
 
+    /**
+     * 根据 账本id 获取所有 成员id
+     *
+     * @param ledgerId 账本id
+     * @return 账本中所有 成员id
+     */
+    List<Long> getMemberIdsByLedgerId(Long ledgerId);
+
+    /**
+     * 更新账本成员
+     *
+     * @param ledgerId 账本id
+     * @param memberIds 成员ids
+     * @return 修改后的 LedgerMember
+     */
+    List<Long> updateLedgerMembers(Long ledgerId, List<Long> memberIds);
+
+    /**
+     * 通过 账本id 删除所有账单记录
+     *
+     * @param ledgerId 账单id
+     * @return true删除成功
+     */
+    boolean removeByLedgerId(Long ledgerId);
+
 }
