@@ -129,13 +129,14 @@ function changeActiveLedger(active) {
 }
 
 function changeLedgerSetting(ledger) {
-  let sameLedgerIndex = null
+  let sameLedgerIndex = -1
   ledgers.value.forEach((ledgerItem, index) => {
     if (ledgerItem.id === ledger.id) {
+      console.log('same ledger')
       sameLedgerIndex = index
     }
   })
-  if (sameLedgerIndex) {
+  if (sameLedgerIndex >= 0) {
     ledgers.value[sameLedgerIndex] = ledger
   } else {
     ledgers.value.push(ledger)

@@ -26,20 +26,35 @@
         <nut-form-item label="邀请成员" body-align="right">
           <nut-avatar-group max-count="15" zIndex="left" max-content="...">
             <nut-avatar
-                v-for="(f, index) in ledgerFormData.ledgerMembers"
+                v-for="(friend, index) in ledgerFormData.ledgerMembers"
                 :key="index"
-                :url="f.avatarUrl"
+                :url="friend.click ? '' : friend.avatarUrl"
+                @active-avatar="clickFriendAvatar(friend)"
             >
+              删
             </nut-avatar>
             <nut-avatar icon="add" @active-avatar="showInviteFriendPopup = true" v-if="canFormEdit"></nut-avatar>
           </nut-avatar-group>
+
+          <!-- 删除朋友提示 -->
+          <nut-dialog
+              teleport="#app"
+              title="移除朋友"
+              content="删除账本操作无法撤销，请谨慎操作！"
+              :close-on-click-overlay="true"
+              ok-text="删除"
+              @cancel="showRemoveFriendDialog = false"
+              @ok="removeLedgerMember"
+              v-model:visible="showRemoveFriendDialog"
+          ></nut-dialog>
         </nut-form-item>
       </nut-form>
+
       <div class="ledger-setting-popup-submit">
         <nut-button class="ledger-setting-popup-submit-item" shape="square" type="danger"
-                    @click="showRemoveDialog = true" :loading="removeLoading"
+                    @click="showRemoveDialog = true" :loading="removeLoading" :disabled="!canFormEdit"
                     v-if="props.type !== 'create'">
-          确认删除
+          删除
         </nut-button>
         <nut-button class="ledger-setting-popup-submit-item" shape="square" type="primary"
                     @click="submitLedger" :loading="submitLoading"
@@ -47,7 +62,7 @@
           提交
         </nut-button>
       </div>
-      <!-- 删除提示 -->
+      <!-- 删除账本提示 -->
       <nut-dialog
           teleport="#app"
           :title="'删除账本 ' + props.ledger.name"
@@ -57,13 +72,12 @@
           @cancel="showRemoveDialog = false"
           @ok="removeLedger"
           v-model:visible="showRemoveDialog"
-      >
-      </nut-dialog>
+      ></nut-dialog>
 
       <!-- 邀请好友 -->
       <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" v-model:visible="showInviteFriendPopup">
         <nut-cell-group>
-          <nut-cell v-for="(friend, index) in friendList" :key="index" :is-link="true" :center="true">
+          <nut-cell v-for="(friend, index) in friendList" :key="index" :center="true">
             <template v-slot:icon>
               <nut-avatar
                   :icon="friend.avatarUrl">
@@ -113,9 +127,17 @@ const props = defineProps({
     required: true
   }
 })
+
+const ledgerFormData = ref({})
+const waitRemoveLedgerFriend = ref({})
+
 const popupVisible = ref(false)
 const canFormEdit = ref(true)
 const showRemoveDialog = ref(false)
+const showRemoveFriendDialog = ref(false)
+const submitLoading = ref(false)
+const removeLoading = ref(false)
+const showInviteFriendPopup = ref(false)
 
 // 衔接父子组件弹出框开关
 const emit = defineEmits(['update:visible', 'change-ledger', 'remove-ledger'])
@@ -173,11 +195,6 @@ function createLedgerPopupTitle() {
   }
   return 'error'
 }
-
-const ledgerFormData = ref({})
-const submitLoading = ref(false)
-const removeLoading = ref(false)
-const showInviteFriendPopup = ref(false)
 
 function initCreateLedgerFormData(ledger) {
   if (undefined === ledger || null === ledger || '{}' === JSON.stringify(ledger)) {
@@ -271,6 +288,35 @@ function removeLedger() {
 function inviteFriend(friend) {
   ledgerFormData.value.memberIds.push(friend.id)
   ledgerFormData.value.ledgerMembers.push(friend)
+}
+
+function clickFriendAvatar(friend) {
+  if (!canFormEdit.value) {
+    return
+  }
+  if (friend.click) {
+    waitRemoveLedgerFriend.value = friend
+    showRemoveFriendDialog.value = true
+    friend.click = false
+  } else {
+    friend.click = true
+  }
+}
+
+function removeLedgerMember() {
+  const friend = waitRemoveLedgerFriend.value
+  const me = Taro.getStorageSync("user")
+  if (me.id === friend.id) {
+    Taro.showToast({ icon: 'none', title: '无法移除自己' })
+    return
+  }
+  if (friend.id === props.ledger.ownerId) {
+    Taro.showToast({ icon: 'none', title: '无法移除拥有人和账门人' })
+    return
+  }
+
+  ledgerFormData.value.ledgerMembers = ledgerFormData.value.ledgerMembers.filter(member => member.id !== friend.id)
+  ledgerFormData.value.memberIds = ledgerFormData.value.memberIds.filter(memberId => memberId !== friend.id)
 }
 
 initCreateLedgerFormData()

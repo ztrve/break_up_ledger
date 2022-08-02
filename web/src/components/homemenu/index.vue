@@ -12,7 +12,7 @@
       <div class="ledger-options-wrapper">
         <div class="ledger-options-title">账本 {{ activeLedger.name }}</div>
         <nut-button shape="square" icon="retweet" @click="changeActiveLedger">切换</nut-button>
-        <nut-button shape="square" icon="setting" @click="clickSetting">设置</nut-button>
+        <nut-button style="margin-top: -1px" shape="square" icon="setting" @click="clickSetting">设置</nut-button>
       </div>
     </nut-popup>
   </nut-cell-group>
