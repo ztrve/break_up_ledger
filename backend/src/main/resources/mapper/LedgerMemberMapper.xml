@@ -5,10 +5,11 @@
 <mapper namespace="com.diswares.breakupledger.backend.mapper.LedgerMemberMapper">
 
     <resultMap id="BaseResultMap" type="com.diswares.breakupledger.backend.po.ledger.LedgerMember">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="memberId" column="member_id" jdbcType="BIGINT"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="memberId" column="member_id" jdbcType="BIGINT"/>
+        <result property="walletAmount" column="wallet_amount" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">

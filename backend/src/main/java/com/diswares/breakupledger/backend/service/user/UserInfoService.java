@@ -13,6 +13,14 @@ import java.util.List;
 */
 public interface UserInfoService extends IService<UserInfo> {
     /**
+     * 获取详情
+     *
+     * @param id 用户id
+     * @return 用户详情
+     */
+    UserInfoVo getOneDetail(Long id);
+
+    /**
      * 通过 OpenId 查询用户信息
      *
      * @param wxOpenId wxOpenId

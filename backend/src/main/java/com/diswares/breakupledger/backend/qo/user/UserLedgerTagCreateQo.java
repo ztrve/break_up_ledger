@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.po.user;
+package com.diswares.breakupledger.backend.qo.user;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -6,6 +6,8 @@ import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -14,18 +16,14 @@ import java.time.LocalDateTime;
  * @author z_true
  * @TableName user_ledger_tag
  */
-@TableName(value ="user_ledger_tag")
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UserLedgerTag extends AncestorDomain implements Serializable {
-    /**
-     * 用户id
-     */
-    private Long userId;
+@EqualsAndHashCode
+public class UserLedgerTagCreateQo implements Serializable {
 
     /**
      * 标签
      */
+    @NotEmpty
     private String tag;
 
     /**
@@ -33,17 +31,8 @@ public class UserLedgerTag extends AncestorDomain implements Serializable {
      *
      * 默认 false
      */
+    @NotNull
     private Boolean isDefaultTag;
-
-    /**
-     *
-     */
-    private LocalDateTime updateTime;
-
-    /**
-     *
-     */
-    private LocalDateTime createTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

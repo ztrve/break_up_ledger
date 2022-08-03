@@ -5,16 +5,17 @@
 <mapper namespace="com.diswares.breakupledger.backend.mapper.NoticeMapper">
 
     <resultMap id="BaseResultMap" type="com.diswares.breakupledger.backend.po.notice.Notice">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="noticeType" column="notice_type" jdbcType="VARCHAR"/>
-            <result property="noticeName" column="notice_name" jdbcType="VARCHAR"/>
-            <result property="noticeMsg" column="notice_msg" jdbcType="VARCHAR"/>
-            <result property="noticeData" column="notice_data" jdbcType="VARCHAR"/>
-            <result property="initiatorId" column="initiator_id" jdbcType="BIGINT"/>
-            <result property="handlerId" column="handler_id" jdbcType="BIGINT"/>
-            <result property="dealStatus" column="deal_status" jdbcType="INTEGER"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="noticeType" column="notice_type" jdbcType="VARCHAR"/>
+        <result property="noticeName" column="notice_name" jdbcType="VARCHAR"/>
+        <result property="noticeMsg" column="notice_msg" jdbcType="VARCHAR"/>
+        <result property="noticeData" column="notice_data" jdbcType="VARCHAR"/>
+        <result property="initiatorId" column="initiator_id" jdbcType="BIGINT"/>
+        <result property="handlerId" column="handler_id" jdbcType="BIGINT"/>
+        <result property="dealStatus" column="deal_status" jdbcType="INTEGER"/>
+        <result property="dealResult" column="deal_result" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">

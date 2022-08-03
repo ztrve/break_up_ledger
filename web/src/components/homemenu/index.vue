@@ -12,7 +12,7 @@
               }"
                 @click="clickLedger(index)"
       ></nut-cell>
-      <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账单"
+      <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账本"
                 @click="clickCreateNewLedger"></nut-cell>
     </nut-cell-group>
   </nut-popup>

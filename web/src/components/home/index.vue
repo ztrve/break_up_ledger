@@ -47,7 +47,7 @@
 
       <!-- 账本多功能按钮 -->
       <div style="position: absolute; bottom: 0; right: 6px">
-        <nut-button type="primary" icon="uploader" shape="square" size="mini">记一笔</nut-button>
+        <nut-button type="primary" icon="uploader" shape="square" size="mini" @click="showLedgerRecordSetting = true">记一笔</nut-button>
       </div>
     </div>
     <!-- 账单详情 -->
@@ -66,6 +66,12 @@
                     :ledger="ledgerSettingOptions.ledger" @change-ledger="changeLedgerSetting"
                     @remove-ledger="removeLedger"
     ></ledger-setting>
+
+    <!--  -->
+    <ledger-record-setting
+        v-model:visible="showLedgerRecordSetting" :type="'create'"
+        :ledger="activeLedger" @submit-success="addActiveLedgerRecord"
+    ></ledger-record-setting>
   </div>
 </template>
 
@@ -73,6 +79,7 @@
 import {defineComponent, ref} from 'vue';
 import LedgerDetail from '../ledgerdetail'
 import HomeMenu from '/src/components/homemenu'
+import LedgerRecordSetting from '/src/components/ledgerrecordsetting'
 import axios_plus from "../../config/axios_plus"
 import LedgerSetting from '/src/components/ledgersetting'
 import {dateFormat} from "../../util/DateUtil";
@@ -81,9 +88,19 @@ defineComponent({
   name: 'Home'
 })
 
+const showLedgerRecordDetail = ref(false)
+const showHomeMenu = ref(false)
+const showLedgerRecordSetting = ref(false)
+
 const homeWrapperRef = ref(null)
 const ledgers = ref([])
 const activeLedger = ref({})
+const ledgerSettingOptions = ref({
+  show: false,
+  type: 'create',
+  ledger: {}
+})
+
 /**
  * 格式：
  * [{ text: '买菜', time: '2022-07-21' }]
@@ -91,6 +108,7 @@ const activeLedger = ref({})
 const activeLedgerRecords = ref([
   // {id: 10, text: '买菜', time: '2022-07-21'},
 ])
+
 const activeLedgerRecordsPage = {
   pages: 0,
   size: 10,
@@ -104,13 +122,10 @@ function initActiveLedgerRecords() {
   activeLedgerRecordsPage.current = 0
 }
 
-const showLedgerRecordDetail = ref(false)
-const showHomeMenu = ref(false)
-const ledgerSettingOptions = ref({
-  show: false,
-  type: 'create',
-  ledger: {}
-})
+function addActiveLedgerRecord(activeLedgerRecord) {
+  translateToLedgerRecordView(activeLedgerRecord)
+  activeLedgerRecords.value.unshift(activeLedgerRecord)
+}
 
 function openLedgerSettingPopup(ledger) {
   ledgerSettingOptions.value = {
@@ -142,6 +157,11 @@ function loadLedgers() {
       })
 }
 
+function translateToLedgerRecordView (record) {
+  record.text = record.tag
+  record.time = dateFormat("mm-dd HH:MM", new Date(record.createTime))
+}
+
 function loadActiveLedgerRecords(ledger) {
   axios_plus.get(
       `/ledger/record?ledgerId=${ledger.id}`
@@ -152,8 +172,7 @@ function loadActiveLedgerRecords(ledger) {
         activeLedgerRecords.value = []
       } else {
         resp.data.forEach(record => {
-          record.text = record.tag
-          record.time = dateFormat(record.createTime)
+          translateToLedgerRecordView(record)
         })
         activeLedgerRecords.value = activeLedgerRecords.value.concat(resp.data)
         console.log(activeLedgerRecords.value)

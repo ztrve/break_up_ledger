@@ -1,6 +1,7 @@
 package com.diswares.breakupledger.backend.service.ledger;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.enums.LedgerRecordModelEnums;
@@ -42,6 +43,9 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
         LedgerRecord ledgerRecord = getById(id);
         LedgerRecordVo ledgerRecordVo = new LedgerRecordVo();
         BeanUtils.copyProperties(ledgerRecord, ledgerRecordVo);
+
+        UserInfoVo creator = userInfoService.getOneDetail(ledgerRecord.getCreatorId());
+        ledgerRecordVo.setCreator(creator);
         return ledgerRecordVo;
     }
 
@@ -71,6 +75,8 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
 
     @Override
     public Page<LedgerRecordVo> pageByLedgerId(Page<LedgerRecord> page, Long ledgerId) {
+        page.addOrder(OrderItem.desc("create_time"));
+
         LambdaQueryWrapper<LedgerRecord> query = new LambdaQueryWrapper<>();
         query.eq(LedgerRecord::getLedgerId, ledgerId);
         page = page(page, query);

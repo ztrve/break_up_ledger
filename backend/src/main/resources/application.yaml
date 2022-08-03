@@ -4,7 +4,7 @@ server:
     context-path: /api/bul
 spring:
   jackson:
-    default-property-inclusion: use_defaults
+    default-property-inclusion: NON_NULL
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   profiles:

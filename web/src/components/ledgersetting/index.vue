@@ -5,14 +5,12 @@
       <div class="ledger-setting-popup-title-wrapper">
         <div class="ledger-setting-popup-title">{{ createLedgerPopupTitle() }}</div>
         <nut-icon
-            v-if="props.type !== 'create'"
-            name="edit" size="15px"
+            v-if="props.type !== 'create'" @click="canFormEdit = !canFormEdit" name="edit" size="15px"
             :class="{
               'create-ledger-popup-edit': true,
               'can-edit': canFormEdit,
               'cant-edit': !canFormEdit
             }"
-            @click="canFormEdit = !canFormEdit"
         ></nut-icon>
       </div>
       <nut-form class="ledger-setting-popup-form" :model-value="ledgerFormData">
@@ -191,7 +189,11 @@ function createLedgerPopupTitle() {
   if ('create' === props.type) {
     return '新建账本'
   } else if ('setting' === props.type) {
-    return '账本配置'
+    if (canFormEdit.value) {
+      return '修改账本'
+    } else {
+      return '账本详情'
+    }
   }
   return 'error'
 }

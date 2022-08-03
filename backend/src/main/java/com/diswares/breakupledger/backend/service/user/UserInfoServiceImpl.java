@@ -22,6 +22,17 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     implements UserInfoService{
 
     @Override
+    public UserInfoVo getOneDetail(Long id) {
+        UserInfo po = getById(id);
+        if (ObjectUtils.isEmpty(po)) {
+            return null;
+        }
+        UserInfoVo vo = new UserInfoVo();
+        BeanUtils.copyProperties(po, vo);
+        return vo;
+    }
+
+    @Override
     public UserInfo getByWxOpenId(String wxOpenId) {
         LambdaQueryWrapper<UserInfo> query = new LambdaQueryWrapper<>();
         query.eq(UserInfo::getWxOpenId, wxOpenId)
