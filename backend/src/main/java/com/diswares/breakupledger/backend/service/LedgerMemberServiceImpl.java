@@ -2,16 +2,19 @@ package com.diswares.breakupledger.backend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.mapper.LedgerMemberMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -49,19 +52,37 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
     }
 
     @Override
-    public List<Long> updateLedgerMembers(Long ledgerId, List<Long> memberIds) {
+    public List<Long> updateLedgerMembers(Ledger ledger, List<Long> memberIds) {
+        Assert.notNull(ledger, "账本不存在");
+        final Long ledgerId = ledger.getId();
+        Assert.isTrue(memberIds.contains(ledger.getOwnerId()), "不可删除拥有人");
+        Assert.isTrue(memberIds.contains(ledger.getLeaderId()), "请先修改帐门人");
+
         LambdaQueryWrapper<LedgerMember> ledgerMemberQuery = new LambdaQueryWrapper<>();
         ledgerMemberQuery.eq(LedgerMember::getLedgerId, ledgerId);
-        remove(ledgerMemberQuery);
+        List<LedgerMember> ledgerMembers = list(ledgerMemberQuery);
 
-        List<LedgerMember> newLedgerMembers = new ArrayList<>();
-        for (Long memberId : memberIds) {
-            LedgerMember ledgerMember = new LedgerMember();
-            ledgerMember.setLedgerId(ledgerId);
-            ledgerMember.setMemberId(memberId);
-            newLedgerMembers.add(ledgerMember);
+        List<Long> removeIdList = ledgerMembers.stream()
+                .filter(ledgerMember -> !memberIds.contains(ledgerMember.getMemberId()))
+                .map(LedgerMember::getId)
+                .collect(Collectors.toList());
+        if (!ObjectUtils.isEmpty(removeIdList)) {
+            removeByIds(removeIdList);
         }
-        saveBatch(newLedgerMembers);
+
+        List<Long> ledgerMemberIds = ledgerMembers.stream().map(LedgerMember::getMemberId).collect(Collectors.toList());
+        List<LedgerMember> addLedgerMemberList = memberIds.stream()
+                .filter(memberId -> !ledgerMemberIds.contains(memberId))
+                .map(memberId -> {
+                    LedgerMember ledgerMember = new LedgerMember();
+                    ledgerMember.setLedgerId(ledgerId);
+                    ledgerMember.setMemberId(memberId);
+                    return ledgerMember;
+                })
+                .collect(Collectors.toList());
+        if (!ObjectUtils.isEmpty(addLedgerMemberList)) {
+            saveBatch(addLedgerMemberList);
+        }
         return getMemberIdsByLedgerId(ledgerId);
     }
 

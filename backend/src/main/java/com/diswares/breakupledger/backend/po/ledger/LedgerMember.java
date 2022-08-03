@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * 账本成员
+ * @author z_true
  * @TableName ledger_member
  */
 @TableName(value ="ledger_member")
@@ -28,12 +29,17 @@ public class LedgerMember extends AncestorDomain implements Serializable {
     private Long memberId;
 
     /**
-     * 
+     * 钱包余额 单位分
+     */
+    private Integer walletAmount;
+
+    /**
+     *
      */
     private Date updateTime;
 
     /**
-     * 
+     *
      */
     private Date createTime;
 

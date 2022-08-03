@@ -1,15 +1,16 @@
 package com.diswares.breakupledger.backend.service;
 
+import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
 /**
-* @author z_true
-* @description 针对表【ledger_member(账本成员)】的数据库操作Service
-* @createDate 2022-07-31 21:23:35
-*/
+ * @author z_true
+ * @description 针对表【ledger_member(账本成员)】的数据库操作Service
+ * @createDate 2022-07-31 21:23:35
+ */
 public interface LedgerMemberService extends IService<LedgerMember> {
 
     /**
@@ -30,11 +31,11 @@ public interface LedgerMemberService extends IService<LedgerMember> {
     /**
      * 更新账本成员
      *
-     * @param ledgerId 账本id
+     * @param ledger    账本
      * @param memberIds 成员ids
      * @return 修改后的 LedgerMember
      */
-    List<Long> updateLedgerMembers(Long ledgerId, List<Long> memberIds);
+    List<Long> updateLedgerMembers(Ledger ledger, List<Long> memberIds);
 
     /**
      * 通过 账本id 删除所有账单记录

@@ -85,7 +85,10 @@ defineComponent({
 })
 
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: {
+    type: Boolean,
+    default: false
+  }
 })
 // modelValue处理
 const emit = defineEmits(['update:modelValue'])

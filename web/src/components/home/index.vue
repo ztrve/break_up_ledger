@@ -49,14 +49,12 @@
     <ledger-detail v-model="showLedgerRecordDetail"></ledger-detail>
 
     <!-- 首页菜单弹出 -->
-    <nut-popup class="home-menu-wrapper"
-               position="right"
-               :style="{ width: '60%', height: '100%' }"
-               v-model:visible="showHomeMenu">
-      <home-menu :ledgers="ledgers" @change="changeActiveLedger"
-                 @click-create-ledger="openCreateLedgerSettingPopup" @click-setting="openLedgerSettingPopup"
-      ></home-menu>
-    </nut-popup>
+    <home-menu v-model:visible="showHomeMenu"
+               :ledgers="ledgers"
+               @click-change="changeActiveLedger"
+               @click-create-ledger="openCreateLedgerSettingPopup"
+               @click-setting="openLedgerSettingPopup"
+    ></home-menu>
 
     <!-- 创建账单 -->
     <ledger-setting :type="ledgerSettingOptions.type" v-model:visible="ledgerSettingOptions.show"
@@ -115,6 +113,7 @@ function loadLedgers() {
       .then(response => {
         const resp = response.data
         if ('E0001' === resp.code && resp.data) {
+          console.log('ledgers loaded')
           ledgers.value = resp.data
         }
       })
@@ -124,6 +123,7 @@ function loadLedgers() {
 }
 
 function changeActiveLedger(active) {
+  console.log('触发变更 active')
   activeLedger.value = active.value
   showHomeMenu.value = false
 }
@@ -132,12 +132,15 @@ function changeLedgerSetting(ledger) {
   let sameLedgerIndex = -1
   ledgers.value.forEach((ledgerItem, index) => {
     if (ledgerItem.id === ledger.id) {
-      console.log('same ledger')
       sameLedgerIndex = index
     }
   })
+  console.log('sameLedgerIndex is ' + sameLedgerIndex)
   if (sameLedgerIndex >= 0) {
     ledgers.value[sameLedgerIndex] = ledger
+    if (activeLedger.value.id === ledger.id) {
+      activeLedger.value = ledger
+    }
   } else {
     ledgers.value.push(ledger)
   }

@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 账本
+ * @author z_true
  * @TableName ledger
  */
 @TableName(value ="ledger")
@@ -45,12 +46,12 @@ public class Ledger extends AncestorDomain implements Serializable {
     private Boolean canMemberCommit;
 
     /**
-     * 
+     *
      */
     private Date updateTime;
 
     /**
-     * 
+     *
      */
     private Date createTime;
 

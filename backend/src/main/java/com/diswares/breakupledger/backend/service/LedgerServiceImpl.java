@@ -132,18 +132,14 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         Assert.notNull(ledger, "账单不存在");
         UserInfo me = AuthUtil.currentUserInfo();
         Assert.isTrue(me.getId().equals(ledger.getOwnerId()) || me.getId().equals(ledger.getLeaderId()), "仅拥有者和掌门人可修改账本配置");
-        if (!ObjectUtils.isEmpty(ledgerUpdateQo.getMemberIds())) {
-            Assert.isTrue(ledgerUpdateQo.getMemberIds().contains(ledger.getOwnerId()), "不可删除拥有人");
-            Assert.isTrue(ledgerUpdateQo.getMemberIds().contains(ledger.getLeaderId()), "请先修改帐门人");
-        }
 
-        ledger = new Ledger();
-        BeanUtils.copyProperties(ledgerUpdateQo, ledger);
-        updateById(ledger);
+        Ledger updateLedger = new Ledger();
+        BeanUtils.copyProperties(ledgerUpdateQo, updateLedger);
+        updateById(updateLedger);
 
         // 修改成员
         if (!ObjectUtils.isEmpty(ledgerUpdateQo.getMemberIds())) {
-            ledgerMemberService.updateLedgerMembers(ledgerUpdateQo.getId(), ledgerUpdateQo.getMemberIds());
+            ledgerMemberService.updateLedgerMembers(ledger, ledgerUpdateQo.getMemberIds());
         }
         return getDetailById(ledgerUpdateQo.getId());
     }
