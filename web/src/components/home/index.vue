@@ -46,9 +46,9 @@
       </div>
 
       <!-- 账本多功能按钮 -->
-      <nut-drag :style="{ position: 'absolute', bottom: '100px', right: '50px' }" direction="y">
+      <div style="position: absolute; bottom: 0; right: 6px">
         <nut-button type="primary" icon="uploader" shape="square" size="mini">记一笔</nut-button>
-      </nut-drag>
+      </div>
     </div>
     <!-- 账单详情 -->
     <ledger-detail v-model="showLedgerRecordDetail"></ledger-detail>
