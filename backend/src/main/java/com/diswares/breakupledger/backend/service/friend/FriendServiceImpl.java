@@ -1,10 +1,11 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.friend;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.po.friend.Friend;
 import com.diswares.breakupledger.backend.mapper.FriendMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
+import com.diswares.breakupledger.backend.service.user.UserInfoService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.RequiredArgsConstructor;

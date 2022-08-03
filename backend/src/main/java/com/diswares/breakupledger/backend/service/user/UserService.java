@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.user;
 
 import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
 import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;

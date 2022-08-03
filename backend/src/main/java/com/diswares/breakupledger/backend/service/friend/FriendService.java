@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.friend;
 
 import com.diswares.breakupledger.backend.po.friend.Friend;
 import com.baomidou.mybatisplus.extension.service.IService;

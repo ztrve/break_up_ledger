@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.ledger;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,14 +7,11 @@ import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.mapper.LedgerMemberMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.util.AuthUtil;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -52,6 +49,13 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
     }
 
     @Override
+    public List<LedgerMember> getLedgerMembersByLedgerId(Long ledgerId) {
+        LambdaQueryWrapper<LedgerMember> ledgerMemberQuery = new LambdaQueryWrapper<>();
+        ledgerMemberQuery.eq(LedgerMember::getLedgerId, ledgerId);
+        return list(ledgerMemberQuery);
+    }
+
+    @Override
     public List<Long> updateLedgerMembers(Ledger ledger, List<Long> memberIds) {
         Assert.notNull(ledger, "账本不存在");
         final Long ledgerId = ledger.getId();
@@ -62,24 +66,37 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
         ledgerMemberQuery.eq(LedgerMember::getLedgerId, ledgerId);
         List<LedgerMember> ledgerMembers = list(ledgerMemberQuery);
 
-        List<Long> removeIdList = ledgerMembers.stream()
-                .filter(ledgerMember -> !memberIds.contains(ledgerMember.getMemberId()))
-                .map(LedgerMember::getId)
-                .collect(Collectors.toList());
-        if (!ObjectUtils.isEmpty(removeIdList)) {
-            removeByIds(removeIdList);
+
+        List<LedgerMember> addLedgerMemberList;
+        if (!ObjectUtils.isEmpty(ledgerMembers)) {
+            List<Long> removeIdList = ledgerMembers.stream()
+                    .filter(ledgerMember -> !memberIds.contains(ledgerMember.getMemberId()))
+                    .map(LedgerMember::getId)
+                    .collect(Collectors.toList());
+            if (!ObjectUtils.isEmpty(removeIdList)) {
+                removeByIds(removeIdList);
+            }
+            List<Long> ledgerMemberIds = ledgerMembers.stream().map(LedgerMember::getMemberId).collect(Collectors.toList());
+            addLedgerMemberList = memberIds.stream()
+                    .filter(memberId -> !ledgerMemberIds.contains(memberId))
+                    .map(memberId -> {
+                        LedgerMember ledgerMember = new LedgerMember();
+                        ledgerMember.setLedgerId(ledgerId);
+                        ledgerMember.setMemberId(memberId);
+                        return ledgerMember;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            addLedgerMemberList = memberIds.stream()
+                    .map(memberId -> {
+                        LedgerMember ledgerMember = new LedgerMember();
+                        ledgerMember.setLedgerId(ledgerId);
+                        ledgerMember.setMemberId(memberId);
+                        return ledgerMember;
+                    })
+                    .collect(Collectors.toList());
         }
 
-        List<Long> ledgerMemberIds = ledgerMembers.stream().map(LedgerMember::getMemberId).collect(Collectors.toList());
-        List<LedgerMember> addLedgerMemberList = memberIds.stream()
-                .filter(memberId -> !ledgerMemberIds.contains(memberId))
-                .map(memberId -> {
-                    LedgerMember ledgerMember = new LedgerMember();
-                    ledgerMember.setLedgerId(ledgerId);
-                    ledgerMember.setMemberId(memberId);
-                    return ledgerMember;
-                })
-                .collect(Collectors.toList());
         if (!ObjectUtils.isEmpty(addLedgerMemberList)) {
             saveBatch(addLedgerMemberList);
         }

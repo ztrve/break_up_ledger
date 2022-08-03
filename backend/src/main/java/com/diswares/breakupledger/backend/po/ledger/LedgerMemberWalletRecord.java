@@ -10,28 +10,53 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 账本成员
+ * 账本成员钱包记录
  * @author z_true
- * @TableName ledger_member
+ * @TableName ledger_member_wallet_record
  */
-@TableName(value ="ledger_member")
+@TableName(value ="ledger_member_wallet_record")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LedgerMember extends AncestorDomain implements Serializable {
+public class LedgerMemberWalletRecord extends AncestorDomain implements Serializable {
     /**
      * 账本id
      */
     private Long ledgerId;
 
     /**
-     * 成员用户id
+     * 账本成员id
      */
-    private Long memberId;
+    private Long ledgerMemberId;
 
     /**
-     * 钱包余额 单位分
+     * 记账金额 单位分 可正可副
      */
-    private Integer walletAmount;
+    private Integer amount;
+
+    /**
+     * 标签
+     */
+    private String tag;
+
+    /**
+     * 描述
+     */
+    private String extra;
+
+    /**
+     * 记账前钱包余额 单位分
+     */
+    private Integer prevWalletAmount;
+
+    /**
+     * 记账后钱包余额 单位分
+     */
+    private Integer afterWalletAmount;
+
+    /**
+     * 记录人id
+     */
+    private Long creatorId;
 
     /**
      *

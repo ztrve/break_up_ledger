@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.user;
 
 import com.alibaba.fastjson.JSON;
 import com.diswares.breakupledger.backend.config.configurationproperties.WxConfigurationProperties;

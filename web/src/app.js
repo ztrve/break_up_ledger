@@ -3,7 +3,7 @@ import {
     Button, Toast, Tabbar, TabbarItem, Icon, Avatar, AvatarGroup, Empty,
     Cell, CellGroup, Menu, MenuItem, OverLay, Popup, Tag, Navbar, Tabs, TabPane,
     Price, Collapse, CollapseItem, Divider, Ellipsis, Checkbox, CheckboxGroup,
-    Input, InfiniteLoading, Form, FormItem, Switch, Dialog
+    Input, InfiniteLoading, Form, FormItem, Switch, Dialog, Drag
 } from '@nutui/nutui-taro';
 import {createPinia} from 'pinia'
 import Taro from '@tarojs/taro'
@@ -37,6 +37,6 @@ App.use(createPinia())
     .use(Button).use(Toast).use(Tabbar).use(TabbarItem).use(Icon).use(Avatar).use(AvatarGroup).use(Empty)
     .use(Cell).use(CellGroup).use(Menu).use(MenuItem).use(OverLay).use(Popup).use(Tag).use(Navbar).use(Tabs).use(TabPane)
     .use(Price).use(Collapse).use(CollapseItem).use(Divider).use(Ellipsis).use(Checkbox).use(CheckboxGroup)
-    .use(Input).use(InfiniteLoading).use(Form).use(FormItem).use(Switch).use(Dialog)
+    .use(Input).use(InfiniteLoading).use(Form).use(FormItem).use(Switch).use(Dialog).use(Drag)
 
 export default App

@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.ledger;
 
 import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.baomidou.mybatisplus.extension.service.IService;

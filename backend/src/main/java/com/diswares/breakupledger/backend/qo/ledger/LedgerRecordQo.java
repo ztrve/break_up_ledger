@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.po.ledger;
+package com.diswares.breakupledger.backend.qo.ledger;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -6,42 +6,39 @@ import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 账本成员
+ *
  * @author z_true
- * @TableName ledger_member
  */
-@TableName(value ="ledger_member")
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class LedgerMember extends AncestorDomain implements Serializable {
+@EqualsAndHashCode()
+public class LedgerRecordQo implements Serializable {
     /**
-     * 账本id
+     * 账本
      */
+    @NotNull
     private Long ledgerId;
 
     /**
-     * 成员用户id
+     * 金额 单位分 可为正数或者负数
      */
-    private Long memberId;
+    @NotNull
+    private Integer amount;
 
     /**
-     * 钱包余额 单位分
+     * 标签
      */
-    private Integer walletAmount;
+    @NotNull
+    private String tag;
 
     /**
-     *
+     * 描述
      */
-    private LocalDateTime updateTime;
-
-    /**
-     *
-     */
-    private LocalDateTime createTime;
+    private String extra;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrapper">
+  <div class="home-wrapper" ref="homeWrapperRef">
     <div class="empty-wrapper" v-if="ledgers.length === 0">
       <nut-empty image="network" description="你不会还没有账本吧?">
         <template v-slot:default>
@@ -44,6 +44,11 @@
           </nut-cell>
         </nut-cell-group>
       </div>
+
+      <!-- 账本多功能按钮 -->
+      <nut-drag :style="{ position: 'absolute', bottom: '100px', right: '50px' }" direction="y">
+        <nut-button type="primary" icon="uploader" shape="square" size="mini">记一笔</nut-button>
+      </nut-drag>
     </div>
     <!-- 账单详情 -->
     <ledger-detail v-model="showLedgerRecordDetail"></ledger-detail>
@@ -70,10 +75,13 @@ import LedgerDetail from '../ledgerdetail'
 import HomeMenu from '/src/components/homemenu'
 import axios_plus from "../../config/axios_plus"
 import LedgerSetting from '/src/components/ledgersetting'
+import {dateFormat} from "../../util/DateUtil";
 
 defineComponent({
   name: 'Home'
 })
+
+const homeWrapperRef = ref(null)
 const ledgers = ref([])
 const activeLedger = ref({})
 /**
@@ -83,6 +91,18 @@ const activeLedger = ref({})
 const activeLedgerRecords = ref([
   // {id: 10, text: '买菜', time: '2022-07-21'},
 ])
+const activeLedgerRecordsPage = {
+  pages: 0,
+  size: 10,
+  current: 0
+}
+
+function initActiveLedgerRecords() {
+  activeLedgerRecords.value = []
+  activeLedgerRecordsPage.pages = 0
+  activeLedgerRecordsPage.size = 10
+  activeLedgerRecordsPage.current = 0
+}
 
 const showLedgerRecordDetail = ref(false)
 const showHomeMenu = ref(false)
@@ -122,8 +142,30 @@ function loadLedgers() {
       })
 }
 
+function loadActiveLedgerRecords(ledger) {
+  axios_plus.get(
+      `/ledger/record?ledgerId=${ledger.id}`
+  ).then(response => {
+    const resp = response.data
+    if ('E0001' === resp.code) {
+      if (resp.data === undefined || resp.data === null || resp.data.length === 0) {
+        activeLedgerRecords.value = []
+      } else {
+        resp.data.forEach(record => {
+          record.text = record.tag
+          record.time = dateFormat(record.createTime)
+        })
+        activeLedgerRecords.value = activeLedgerRecords.value.concat(resp.data)
+        console.log(activeLedgerRecords.value)
+      }
+    }
+  })
+
+}
+
 function changeActiveLedger(active) {
   console.log('触发变更 active')
+  loadActiveLedgerRecords(active.value)
   activeLedger.value = active.value
   showHomeMenu.value = false
 }
@@ -157,6 +199,7 @@ loadLedgers()
 <style lang="scss">
 .home-wrapper {
   height: 100%;
+  position: relative;
 }
 
 .home-title {

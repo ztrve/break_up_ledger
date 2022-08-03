@@ -1,15 +1,14 @@
 package com.diswares.breakupledger.backend.po.ledger;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.diswares.breakupledger.backend.enums.LedgerTypeEnums;
 import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 账本
@@ -48,12 +47,12 @@ public class Ledger extends AncestorDomain implements Serializable {
     /**
      *
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      *
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

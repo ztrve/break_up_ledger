@@ -2,7 +2,7 @@ package com.diswares.breakupledger.backend.controller;
 
 import com.diswares.breakupledger.backend.qo.ledger.LedgerCreateQo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerUpdateQo;
-import com.diswares.breakupledger.backend.service.LedgerService;
+import com.diswares.breakupledger.backend.service.ledger.LedgerService;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

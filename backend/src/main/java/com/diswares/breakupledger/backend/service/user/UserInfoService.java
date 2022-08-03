@@ -1,7 +1,8 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.user;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 
 import java.util.List;
 
@@ -34,4 +35,21 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return true 全是 false 有的不是
      */
     boolean isRealUsers(List<Long> userIds);
+
+    /**
+     * 通过 userId 列表获取 用户信息
+     *
+     * @param userIds userIds
+     * @return 用户信息
+     */
+    List<UserInfoVo> listVoByUserIds(List<Long> userIds);
+
+    /**
+     * 通过 userId 列表获取 用户信息
+     *
+     * @param userIds userIds
+     * @return 用户信息
+     */
+    List<UserInfo> listByUserIds(List<Long> userIds);
+
 }

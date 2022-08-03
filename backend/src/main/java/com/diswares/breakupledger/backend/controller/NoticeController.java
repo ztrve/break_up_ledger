@@ -5,7 +5,7 @@ import com.diswares.breakupledger.backend.kernel.proxy.response.annotions.Inclus
 import com.diswares.breakupledger.backend.po.notice.Notice;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
-import com.diswares.breakupledger.backend.service.NoticeService;
+import com.diswares.breakupledger.backend.service.notice.NoticeService;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

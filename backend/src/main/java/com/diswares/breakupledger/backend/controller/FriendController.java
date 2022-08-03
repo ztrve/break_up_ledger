@@ -1,6 +1,6 @@
 package com.diswares.breakupledger.backend.controller;
 
-import com.diswares.breakupledger.backend.service.FriendService;
+import com.diswares.breakupledger.backend.service.friend.FriendService;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

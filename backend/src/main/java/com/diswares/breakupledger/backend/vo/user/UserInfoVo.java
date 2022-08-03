@@ -1,13 +1,10 @@
 package com.diswares.breakupledger.backend.vo.user;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户信息

@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.ledger;
 
 import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
@@ -27,6 +27,14 @@ public interface LedgerMemberService extends IService<LedgerMember> {
      * @return 账本中所有 成员id
      */
     List<Long> getMemberIdsByLedgerId(Long ledgerId);
+
+    /**
+     * 根据 账本id 获取所有 成员
+     *
+     * @param ledgerId 账本id
+     * @return 成员信息
+     */
+    List<LedgerMember> getLedgerMembersByLedgerId(Long ledgerId);
 
     /**
      * 更新账本成员

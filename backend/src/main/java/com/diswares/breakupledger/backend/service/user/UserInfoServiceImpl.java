@@ -1,13 +1,16 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.mapper.UserInfoMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author z_true
@@ -45,6 +48,32 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         userInfoQuery.in(UserInfo::getId, userIds);
         int userCount = count(userInfoQuery);
         return userIds.size() == userCount;
+    }
+
+    @Override
+    public List<UserInfoVo> listVoByUserIds(List<Long> userIds) {
+        List<UserInfo> userInfos = listByUserIds(userIds);
+        if (ObjectUtils.isEmpty(userInfos)) {
+            return null;
+        }
+        return userInfos
+                .stream()
+                .map(userInfo -> {
+                    UserInfoVo userInfoVo = new UserInfoVo();
+                    BeanUtils.copyProperties(userInfo, userInfoVo);
+                    return userInfoVo;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserInfo> listByUserIds(List<Long> userIds) {
+        if (ObjectUtils.isEmpty(userIds)) {
+            return null;
+        }
+        LambdaQueryWrapper<UserInfo> userInfoQuery = new LambdaQueryWrapper<>();
+        userInfoQuery.in(UserInfo::getId, userIds);
+        return list(userInfoQuery);
     }
 }
 

@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.notice;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -15,6 +15,8 @@ import com.diswares.breakupledger.backend.mapper.NoticeMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeCreateFriendQo;
 import com.diswares.breakupledger.backend.qo.notice.NoticeDealQo;
+import com.diswares.breakupledger.backend.service.user.UserInfoService;
+import com.diswares.breakupledger.backend.service.friend.FriendService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.util.StringReplacer;
 import com.diswares.breakupledger.backend.vo.notice.NoticeVo;

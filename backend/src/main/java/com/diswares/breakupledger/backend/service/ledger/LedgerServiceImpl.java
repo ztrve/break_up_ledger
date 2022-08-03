@@ -1,13 +1,14 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.ledger;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.mapper.LedgerMapper;
-import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerCreateQo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerUpdateQo;
+import com.diswares.breakupledger.backend.service.notice.NoticeService;
+import com.diswares.breakupledger.backend.service.user.UserInfoService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerVo;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
@@ -18,6 +19,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,16 +84,7 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         // 获取所有账本member
         List<Long> memberIds = ledgerMemberService.getMemberIdsByLedgerId(ledgerId);
         ledgerVo.setMemberIds(memberIds);
-        LambdaQueryWrapper<UserInfo> userInfoQuery = new LambdaQueryWrapper<>();
-        userInfoQuery.in(UserInfo::getId, memberIds);
-        List<UserInfoVo> memberVoList = userInfoService.list(userInfoQuery)
-                .stream()
-                .map(userInfo -> {
-                    UserInfoVo userInfoVo = new UserInfoVo();
-                    BeanUtils.copyProperties(userInfo, userInfoVo);
-                    return userInfoVo;
-                })
-                .collect(Collectors.toList());
+        List<UserInfoVo> memberVoList = userInfoService.listVoByUserIds(memberIds);
         ledgerVo.setMembers(memberVoList);
 
         return ledgerVo;
@@ -113,10 +106,7 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         ledger.setLeaderId(me.getId());
         save(ledger);
 
-        LedgerMember ledgerMemberOfMe = new LedgerMember();
-        ledgerMemberOfMe.setLedgerId(ledger.getId());
-        ledgerMemberOfMe.setMemberId(me.getId());
-        ledgerMemberService.save(ledgerMemberOfMe);
+        ledgerMemberService.updateLedgerMembers(ledger, Collections.singletonList(me.getId()));
 
         // 给 当前用户以外的所有用户 发送通知
         ledgerCreateQo.getMemberIds().removeIf(id -> id.equals(me.getId()));
@@ -151,7 +141,6 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
 
         removeById(id);
         ledgerMemberService.removeByLedgerId(id);
-
         return ledgerVo;
     }
 }

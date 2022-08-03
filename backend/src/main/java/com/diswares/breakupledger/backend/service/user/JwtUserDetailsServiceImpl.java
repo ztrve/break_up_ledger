@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.service;
+package com.diswares.breakupledger.backend.service.user;
 
 import com.diswares.breakupledger.backend.dto.AuthUser;
 import com.diswares.breakupledger.backend.po.user.UserInfo;

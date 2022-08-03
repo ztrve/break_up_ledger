@@ -106,14 +106,13 @@ function loadNoticesPage(done) {
         loadNoticesPageDeal.value = false
       }
     }
-  }).catch(() => {
-  }).finally(() => {
-    done()
+    if (done) {
+      done()
+    }
   })
 }
 
 function updateNotice() {
-  console.log('Notice page catch deal')
   initNotices()
   loadNoticesPage()
 }

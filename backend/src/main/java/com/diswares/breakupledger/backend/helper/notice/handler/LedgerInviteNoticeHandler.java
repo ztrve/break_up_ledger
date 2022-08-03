@@ -5,18 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diswares.breakupledger.backend.enums.NoticeEnums;
 import com.diswares.breakupledger.backend.helper.notice.NoticeHandler;
-import com.diswares.breakupledger.backend.po.friend.Friend;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.po.notice.Notice;
-import com.diswares.breakupledger.backend.service.FriendService;
-import com.diswares.breakupledger.backend.service.LedgerMemberService;
+import com.diswares.breakupledger.backend.service.ledger.LedgerMemberService;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 账本邀请

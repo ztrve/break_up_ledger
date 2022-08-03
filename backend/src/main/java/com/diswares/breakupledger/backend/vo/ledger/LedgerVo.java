@@ -4,6 +4,7 @@ import com.diswares.breakupledger.backend.enums.LedgerTypeEnums;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -42,12 +43,12 @@ public class LedgerVo {
     /**
      *
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      *
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 额外信息
