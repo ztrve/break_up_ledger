@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
  * @TableName ledger_record
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class LedgerRecordVo extends AncestorDomain implements Serializable {
+@EqualsAndHashCode
+public class LedgerRecordVo implements Serializable {
+    private Long id;
 
     /**
      * 账本

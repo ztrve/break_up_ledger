@@ -6,7 +6,7 @@
       <nut-cell title="账本" :desc="props.ledger.name"></nut-cell>
       <nut-cell title="金额变化">
         <template v-slot:link>
-          <nut-price :price="props.ledgerRecord.amount" size="normal" :need-symbol="false" :thousands="true"/>
+          <nut-price :price="props.ledgerRecord.amount / 100" size="normal" :need-symbol="false" :thousands="true"/>
         </template>
       </nut-cell>
       <!--      不可删除 后面有用-->
@@ -23,7 +23,7 @@
             <nut-avatar size="small"
                         :icon="props.ledgerRecord.creator.avatarUrl">
             </nut-avatar>
-            <div class="ledger-desc-item">{{ props.ledgerRecord.creator.nickname }}</div>
+<!--            <div class="ledger-desc-item">{{ props.ledgerRecord.creator.nickname }}</div>-->
             <nut-tag v-if="false" class="ledger-desc-item" type="primary">单</nut-tag>
           </div>
         </template>
@@ -36,7 +36,7 @@
           </div>
         </template>
         <template v-slot:link>
-          <nut-price :price="props.ledgerRecord.prevWalletAmount" size="normal" :need-symbol="false"
+          <nut-price :price="props.ledgerRecord.prevWalletAmount / 100" size="normal" :need-symbol="false"
                      :thousands="true"/>
         </template>
       </nut-cell>
@@ -48,7 +48,7 @@
           </div>
         </template>
         <template v-slot:link>
-          <nut-price :price="props.ledgerRecord.afterWalletAmount" size="normal" :need-symbol="false"
+          <nut-price :price="props.ledgerRecord.afterWalletAmount / 100" size="normal" :need-symbol="false"
                      :thousands="true"/>
         </template>
       </nut-cell>
@@ -56,7 +56,7 @@
         <template v-slot:link>
           <nut-avatar-group size="small" :max-count="8">
             <nut-avatar v-for="user in ledger.members" :key="user.id" :icon="user.avatarUrl"
-                        @active-avatar="openUserLedgerDetail = true">
+                        @active-avatar="openUserLedgerWalletRecord(user)">
             </nut-avatar>
           </nut-avatar-group>
         </template>
@@ -64,9 +64,9 @@
     </nut-cell-group>
 
     <!-- 成员钱包弹出框 -->
-    <nut-popup position="bottom" :style="{ height: '50%' }" v-model:visible="openUserLedgerDetail">
+    <nut-popup position="bottom" :style="{ height: '50%' }" v-model:visible="showUserLedgerWalletRecord">
       <div class="user-ledger-detail-wrapper">
-        <h3 class="user-ledger-detail-title">ztrue的钱包</h3>
+        <h3 class="user-ledger-detail-title">{{ activeUser.nickname }}的钱包</h3>
       </div>
       <nut-cell-group>
         <nut-cell title="支出金额">
@@ -122,7 +122,7 @@ function close() {
   emit('update:visible', false)
 }
 
-const openUserLedgerDetail = ref(false)
+const showUserLedgerWalletRecord = ref(false)
 
 const userLedgerDetail = ref({
   payAmount: 33.30,
@@ -131,11 +131,30 @@ const userLedgerDetail = ref({
     now: 53.00,
   },
 })
-
 const computeModeTagTypeList = [
   {id: 0, name: '个人支出', tagType: 'primary'},
   {id: 0, name: '共同支出', tagType: 'success'},
 ]
+const activeUser = ref({})
+const activeLedgerMemberWalletRecordDetail = ref({})
+
+function loadLedgerMemberWalletRecordDetail() {
+  console.log(props.ledgerRecord)
+  axios_plus.get(
+      `/ledger/member/wallet/record/one?ledgerMemberId=${activeUser.value.id}&ledgerRecordId=${props.ledgerRecord.id}`
+  ).then(({data}) => {
+    if (data.code === 'E0001') {
+      activeLedgerMemberWalletRecordDetail.value = data.data
+    }
+  })
+}
+
+function openUserLedgerWalletRecord(user) {
+  activeLedgerMemberWalletRecordDetail.value = {}
+  activeUser.value = user
+  loadLedgerMemberWalletRecordDetail()
+  showUserLedgerWalletRecord.value = true
+}
 
 function computeModeAsTagType(computeModeId) {
   return computeModeTagTypeList.filter(item => item.id === computeModeId)[0]

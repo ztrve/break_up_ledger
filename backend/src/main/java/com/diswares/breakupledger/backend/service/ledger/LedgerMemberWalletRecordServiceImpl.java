@@ -1,26 +1,41 @@
 package com.diswares.breakupledger.backend.service.ledger;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMemberWalletRecord;
 import com.diswares.breakupledger.backend.mapper.LedgerMemberWalletRecordMapper;
 import com.diswares.breakupledger.backend.po.ledger.LedgerRecord;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerMemberWalletRecordGetOneQo;
+import com.diswares.breakupledger.backend.vo.ledger.LedgerMemberWalletRecordVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author z_true
  */
 @Service
 @RequiredArgsConstructor
 public class LedgerMemberWalletRecordServiceImpl extends ServiceImpl<LedgerMemberWalletRecordMapper, LedgerMemberWalletRecord>
-    implements LedgerMemberWalletRecordService{
+        implements LedgerMemberWalletRecordService {
     private final LedgerMemberService ledgerMemberService;
+
+    @Override
+    public LedgerMemberWalletRecordVo getOneDetail(LedgerMemberWalletRecordGetOneQo qo) {
+        LambdaQueryWrapper<LedgerMemberWalletRecord> query = new LambdaQueryWrapper<>();
+        query.eq(LedgerMemberWalletRecord::getLedgerRecordId, qo.getLedgerRecordId())
+                .eq(LedgerMemberWalletRecord::getLedgerMemberId, qo.getLedgerMemberId())
+                .last("limit 1");
+        LedgerMemberWalletRecord po = getOne(query);
+        LedgerMemberWalletRecordVo vo = new LedgerMemberWalletRecordVo();
+        BeanUtils.copyProperties(po, vo);
+        return vo;
+    }
 
     @Override
     public void createRecordsByLedgerRecord(LedgerRecord ledgerRecord) {
@@ -49,6 +64,7 @@ public class LedgerMemberWalletRecordServiceImpl extends ServiceImpl<LedgerMembe
             LedgerMemberWalletRecord record = new LedgerMemberWalletRecord();
             record.setLedgerId(ledgerRecord.getLedgerId());
             record.setLedgerMemberId(ledgerMember.getMemberId());
+            record.setLedgerRecordId(ledgerRecord.getId());
             record.setAmount(amount);
             record.setTag(ledgerRecord.getTag());
             record.setExtra(ledgerRecord.getExtra());

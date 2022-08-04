@@ -1,4 +1,4 @@
-package com.diswares.breakupledger.backend.po.ledger;
+package com.diswares.breakupledger.backend.vo.ledger;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,10 +14,9 @@ import java.time.LocalDateTime;
  * @author z_true
  * @TableName ledger_member_wallet_record
  */
-@TableName(value ="ledger_member_wallet_record")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LedgerMemberWalletRecord extends AncestorDomain implements Serializable {
+public class LedgerMemberWalletRecordVo extends AncestorDomain implements Serializable {
     /**
      * 账本id
      */
