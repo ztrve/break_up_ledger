@@ -53,4 +53,14 @@ public interface LedgerMemberService extends IService<LedgerMember> {
      */
     boolean removeByLedgerId(Long ledgerId);
 
+    /**
+     * 通过 账本id 获取 账本钱包余额
+     *
+     * 单位分
+     *
+     * @param ledgerId 账本id
+     * @return 账本钱包余额 单位分
+     */
+    int getLedgerWalletAmount(Long ledgerId);
+
 }

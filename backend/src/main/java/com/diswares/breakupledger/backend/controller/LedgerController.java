@@ -24,6 +24,11 @@ public class LedgerController {
         return ledgerService.myLedgers();
     }
 
+    @GetMapping("/{id}")
+    public LedgerVo getOneDetail(@PathVariable Long id) {
+        return ledgerService.getDetailById(id);
+    }
+
     @PostMapping
     public LedgerVo createLedger(@RequestBody @Validated LedgerCreateQo ledgerCreateQo) {
         return ledgerService.createLedger(ledgerCreateQo);

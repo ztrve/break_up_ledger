@@ -36,6 +36,8 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
 
     private final LedgerMemberWalletRecordService ledgerMemberWalletRecordService;
 
+    private final LedgerMemberService ledgerMemberService;
+
     private final UserInfoService userInfoService;
 
     @Override
@@ -59,6 +61,8 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
             Assert.isTrue(ledger.getLeaderId().equals(me.getId()), "账本" + ledger.getName() + "仅允许帐门人提交");
         }
 
+        int ledgerWalletAmount = ledgerMemberService.getLedgerWalletAmount(ledger.getId());
+
         // 创建账单记录
         LedgerRecord ledgerRecord = new LedgerRecord();
         ledgerRecord.setLedgerId(ledgerRecordQo.getLedgerId());
@@ -66,6 +70,8 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
         ledgerRecord.setTag(ledgerRecordQo.getTag());
         ledgerRecord.setExtra(ledgerRecordQo.getExtra());
         ledgerRecord.setCreatorId(me.getId());
+        ledgerRecord.setPrevWalletAmount(ledgerWalletAmount);
+        ledgerRecord.setAfterWalletAmount(ledgerWalletAmount + ledgerRecord.getAmount());
         save(ledgerRecord);
 
         // 创建成员账户扣款记录

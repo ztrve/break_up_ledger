@@ -19,63 +19,74 @@
         ></nut-icon>
       </div>
       <!-- 账本表单 -->
-      <nut-form class="ledger-record-setting-form" :model-value="form">
+      <nut-form class="ledger-record-setting-form" :model-value="form" ref="formRef">
         <nut-form-item label="账本名称">
-          <input class="nut-input-text" placeholder="账本名称" type="text" v-model="props.ledger.name"
-                 :disabled="true"/>
+          <input class="nut-input-text" placeholder="账本名称" type="text" v-model="props.ledger.name" :disabled="true"/>
         </nut-form-item>
         <nut-form-item
             label="账单标签" :required="true"
+            prop="tag"
             :rules="[
               { required: true, message: '请选择账单标签, 统计账单时以此为依据' },
               { regex: /^\S+$/, message: '请选择账单标签, 统计账单时以此为依据' }
             ]"
         >
-          <input class="nut-input-text" placeholder="请选择账本标签" type="text" v-model="form.tag" :disabled="true"/>
+          <input class="nut-input-text" placeholder="请选择账本标签" type="text" v-model="form.tag" :disabled="true"
+                 @click="showTagPicker = true"
+          />
         </nut-form-item>
-        <nut-form-item
-            label="默认标签"
+        <nut-picker
+            v-model:value="tagPickerValue"
+            v-model:visible="showTagPicker"
+            :columns="tagPickerColumns"
+            title="选择标签"
+            @confirm="confirmTagPicker"
         >
-          <div class="ledger-record-setting-form-tag-wrapper">
-            <nut-tag class="ledger-record-setting-form-tag" type="primary" :plain="true"
-                     v-for="tag in defaultTags" :key="tag.id"
-                     @click="form.tag = tag.tag"
-            >
-              {{ tag.tag }}
-            </nut-tag>
-            <nut-tag class="ledger-record-setting-form-tag" type="primary"
-                     @click="showTagPicker = true">
-              ...
-            </nut-tag>
-            <nut-picker
-                v-model:value="tagPickerValue"
-                v-model:visible="showTagPicker"
-                :columns="tagPickerColumns"
-                title="账单标签"
-                @confirm="confirmTagPicker"
-            >
-              <template #default>
-                <nut-button style="width: 100%" @click="" shape="square" type="primary">没有想要的? 新建一个吧</nut-button>
-              </template>
-            </nut-picker>
+          <template #top>
+            <div class="ledger-record-setting-form-tag-wrapper">
+              <nut-tag class="ledger-record-setting-form-tag" type="primary" :plain="true"
+                       v-for="tag in defaultTags" :key="tag.id" @click="clickTag(tag)"
+              >
+                {{ tag.tag }}
+              </nut-tag>
+            </div>
+          </template>
+          <template #default>
+            <nut-button style="width: 100%" @click="showUserLedgerTagSetting = true" shape="square" type="primary">
+              没有想要的? 新建一个吧
+            </nut-button>
+          </template>
+        </nut-picker>
+        <nut-form-item
+            label="账单金额" body-align="right" :required="true"
+            prop="amount"
+            :rules="[
+              { required: true, message: '请输入账单金额' },
+              { regex: /^(0*[1-9]+\d*(\.\d{1,2})?)|(0+\.0[1-9])|(0+\.[1-9]\d?)$/, message: '请输入正确的账单金额。小数点后最多两位' },
+            ]"
+        >
+          <div style="display: flex; justify-content: flex-end">
+            <nut-inputnumber v-model="form.amount" decimal-places="2"/>
           </div>
         </nut-form-item>
         <nut-form-item label="账单备注">
-          <input class="nut-input-text" placeholder="请输入账本备注" type="text" v-model="props.ledger.extra"/>
+          <input class="nut-input-text" placeholder="请输入账本备注" type="text" v-model="form.extra"/>
         </nut-form-item>
       </nut-form>
-      <nut-button style="width: 100%;" shape="square" type="primary"
-                  :loading="commitLoading"
-                  @click="commit">
+      <nut-button style="width: 100%;" shape="square" type="primary" :loading="commitLoading" @click="commit">
         提交
       </nut-button>
     </div>
   </nut-popup>
+
+  <user-ledger-tag-setting type="create" v-model:visible="showUserLedgerTagSetting" @submit-success="addUserLedgerTag"
+  ></user-ledger-tag-setting>
 </template>
 
 <script setup>
 import {defineComponent, defineProps, ref, defineEmits} from 'vue';
 import axios_plus from "../../config/axios_plus";
+import UserLedgerTagSetting from '/src/components/userledgertagsetting'
 
 defineComponent({
   name: 'LedgerRecordSetting'
@@ -115,9 +126,11 @@ function close() {
 
 const canFormEdit = ref(true)
 const showTagPicker = ref(false)
+const showUserLedgerTagSetting = ref(false)
 const commitLoading = ref(false)
 
 const form = ref({})
+const formRef = ref(null);
 const defaultTags = ref([])
 const notDefaultTags = ref([])
 const tagPickerColumns = ref([])
@@ -131,26 +144,45 @@ function initForm() {
   }
 }
 
-function commit () {
-  commitLoading.value = true
-  console.log(props.ledger.id)
-  axios_plus.post("/ledger/record", {
-    ledgerId: props.ledger.id,
-    amount: form.value.amount,
-    tag: form.value.tag,
-    extra: form.value.extra,
-  }).then(response => {
-    const resp = response.data
-    if (resp.code === 'E0001') {
-      emit('submit-success', resp.data)
-      close()
-    }
-  }).finally(() => {
-    commitLoading.value = false
-  })
+function customBlurValidate (prop) {
+  formRef.value.validate(prop)
 }
 
-function confirmTagPicker (val) {
+function clickTag(tag) {
+  form.value.tag = tag.tag
+  showTagPicker.value = false
+}
+
+function addUserLedgerTag(tag) {
+  transRespTagToLocalTag(tag)
+}
+
+function commit() {
+  formRef.value.validate().then(({ valid, errors }) => {
+    if (valid) {
+      console.log('success', form);
+      commitLoading.value = true
+      axios_plus.post("/ledger/record", {
+        ledgerId: props.ledger.id,
+        amount: parseFloat(form.value.amount) * 100,
+        tag: form.value.tag,
+        extra: form.value.extra,
+      }).then(response => {
+        const resp = response.data
+        if (resp.code === 'E0001') {
+          emit('submit-success', resp.data)
+          close()
+        }
+      }).finally(() => {
+        commitLoading.value = false
+      })
+    } else {
+      console.log('error submit!!', errors);
+    }
+  });
+}
+
+function confirmTagPicker(val) {
   if (undefined === val.selectedValue[0]) {
     form.value.tag = tagPickerColumns.value[0].value
   } else {
@@ -171,6 +203,22 @@ function createLedgerPopupTitle() {
   return 'error'
 }
 
+function transRespTagToLocalTag(respTag) {
+  if (tagPickerValue.value === '') {
+    tagPickerValue.value = respTag.tag
+  }
+
+  if (respTag.isDefaultTag) {
+    defaultTags.value.push(respTag)
+  } else {
+    notDefaultTags.value.push(respTag)
+    tagPickerColumns.value.push({
+      text: respTag.tag,
+      value: respTag.tag
+    })
+  }
+}
+
 function loadMyLedgerTag() {
   defaultTags.value = []
   notDefaultTags.value = []
@@ -180,21 +228,9 @@ function loadMyLedgerTag() {
     const resp = response.data
     if ('E0001' === resp.code) {
       if (resp.data) {
-        resp.data.forEach((tag, index) => {
-          if (tag.isDefaultTag) {
-            defaultTags.value.push(tag)
-          } else {
-            notDefaultTags.value.push(tag)
-          }
-          if (index === 0) {
-            tagPickerValue.value = tag.tag
-          }
-          tagPickerColumns.value.push({
-            text: tag.tag,
-            value: tag.tag
-          })
+        resp.data.forEach((tag) => {
+          transRespTagToLocalTag(tag)
         })
-        defaultTags.value = resp.data
       }
     }
   })

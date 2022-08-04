@@ -25,16 +25,19 @@
         <nut-cell-group>
           <nut-cell v-for="(ledgerRecord, index) in activeLedgerRecords" :key="index"
                     :is-link="true" :center="true"
-                    @click="showLedgerRecordDetail = true">
+                    @click="clickLedgerRecordDetail(ledgerRecord)">
             <template v-slot:icon>
               <nut-avatar size="small"
-                          icon="https://img12.360buyimg.com/imagetools/jfs/t1/143702/31/16654/116794/5fc6f541Edebf8a57/4138097748889987.png">
+                          :icon="ledgerRecord.creator.avatarUrl">
               </nut-avatar>
             </template>
             <template v-slot:title>
               <div class="ledger-desc">
-                <div class="ledger-desc-item">{{ ledgerRecord.text }}</div>
-                <nut-tag class="ledger-desc-item" type="primary">单</nut-tag>
+                <div class="ledger-desc-item">
+                  <div>{{ ledgerRecord.text }}</div>
+                  <div style="font-size: 12px">{{ ledgerRecord.amount / 100 }} 软妹币</div>
+                </div>
+                <nut-tag v-if="false" class="ledger-desc-item" type="primary">单</nut-tag>
               </div>
             </template>
             <template v-slot:link>
@@ -51,7 +54,8 @@
       </div>
     </div>
     <!-- 账单详情 -->
-    <ledger-detail v-model="showLedgerRecordDetail"></ledger-detail>
+    <ledger-record v-model:visible="showLedgerRecordDetail" :ledger-record="activeLedgerRecord" :ledger="activeLedger"
+    ></ledger-record>
 
     <!-- 首页菜单弹出 -->
     <home-menu v-model:visible="showHomeMenu"
@@ -77,7 +81,7 @@
 
 <script setup>
 import {defineComponent, ref} from 'vue';
-import LedgerDetail from '../ledgerdetail'
+import LedgerRecord from '/src/components/ledgerrecord'
 import HomeMenu from '/src/components/homemenu'
 import LedgerRecordSetting from '/src/components/ledgerrecordsetting'
 import axios_plus from "../../config/axios_plus"
@@ -95,6 +99,7 @@ const showLedgerRecordSetting = ref(false)
 const homeWrapperRef = ref(null)
 const ledgers = ref([])
 const activeLedger = ref({})
+const activeLedgerRecord = ref({})
 const ledgerSettingOptions = ref({
   show: false,
   type: 'create',
@@ -105,9 +110,7 @@ const ledgerSettingOptions = ref({
  * 格式：
  * [{ text: '买菜', time: '2022-07-21' }]
  */
-const activeLedgerRecords = ref([
-  // {id: 10, text: '买菜', time: '2022-07-21'},
-])
+const activeLedgerRecords = ref([])
 
 const activeLedgerRecordsPage = {
   pages: 0,
@@ -122,9 +125,28 @@ function initActiveLedgerRecords() {
   activeLedgerRecordsPage.current = 0
 }
 
-function addActiveLedgerRecord(activeLedgerRecord) {
-  translateToLedgerRecordView(activeLedgerRecord)
-  activeLedgerRecords.value.unshift(activeLedgerRecord)
+function loadLedgerDetail (ledger) {
+  console.log(ledger.value)
+  activeLedger.value = ledger.value
+  axios_plus.get(
+      `/ledger/${ledger.value.id}`
+  ).then(response => {
+    const resp = response.data
+    if (resp.code === 'E0001' && undefined !== resp.data) {
+      activeLedger.value = resp.data
+    }
+  })
+
+}
+
+function clickLedgerRecordDetail (ledgerRecord) {
+  activeLedgerRecord.value = ledgerRecord
+  showLedgerRecordDetail.value = true
+}
+
+function addActiveLedgerRecord(ledgerRecord) {
+  translateToLedgerRecordView(ledgerRecord)
+  activeLedgerRecords.value.unshift(ledgerRecord)
 }
 
 function openLedgerSettingPopup(ledger) {
@@ -175,17 +197,15 @@ function loadActiveLedgerRecords(ledger) {
           translateToLedgerRecordView(record)
         })
         activeLedgerRecords.value = activeLedgerRecords.value.concat(resp.data)
-        console.log(activeLedgerRecords.value)
       }
     }
   })
-
 }
 
-function changeActiveLedger(active) {
+function changeActiveLedger(ledger) {
   console.log('触发变更 active')
-  loadActiveLedgerRecords(active.value)
-  activeLedger.value = active.value
+  loadLedgerDetail(ledger)
+  loadActiveLedgerRecords(ledger.value)
   showHomeMenu.value = false
 }
 
@@ -243,6 +263,7 @@ loadLedgers()
   padding: 0 10px;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .ledger-desc-item {

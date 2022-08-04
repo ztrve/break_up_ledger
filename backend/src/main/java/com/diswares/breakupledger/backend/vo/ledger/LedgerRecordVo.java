@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- *
  * @author z_true
  * @TableName ledger_record
  */
@@ -43,6 +42,16 @@ public class LedgerRecordVo extends AncestorDomain implements Serializable {
      *
      */
     private Long creatorId;
+
+    /**
+     * 结算前共同账户余额 单位分
+     */
+    private Integer prevWalletAmount;
+
+    /**
+     * 结算后共同账户余额 单位分
+     */
+    private Integer afterWalletAmount;
 
     /**
      *

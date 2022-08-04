@@ -110,6 +110,20 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
         return remove(query);
     }
 
+    @Override
+    public int getLedgerWalletAmount(Long ledgerId) {
+        LambdaQueryWrapper<LedgerMember> query = new LambdaQueryWrapper<>();
+        query.eq(LedgerMember::getLedgerId, ledgerId);
+        List<LedgerMember> ledgerMembers = list(query);
+
+        if (ObjectUtils.isEmpty(ledgerMembers)) {
+            return 0;
+        }
+        return ledgerMembers.stream()
+                .mapToInt(LedgerMember::getWalletAmount)
+                .sum();
+    }
+
 }
 
 
