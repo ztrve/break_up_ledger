@@ -2,14 +2,13 @@ package com.diswares.breakupledger.backend.controller;
 
 import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
 import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;
+import com.diswares.breakupledger.backend.qo.user.UserUpdatePhoneQo;
 import com.diswares.breakupledger.backend.service.user.UserService;
 import com.diswares.breakupledger.backend.vo.user.UserLoginVo;
 import com.diswares.breakupledger.backend.vo.user.UserRegisterVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -32,4 +31,10 @@ public class UserController {
     public UserLoginVo loginVo(@RequestBody UserLoginQo loginQo) {
         return userService.login(loginQo);
     }
+
+    @PutMapping("/phone")
+    public void updatePhone(@RequestBody @Validated UserUpdatePhoneQo userUpdatePhoneQo) {
+        userService.updatePhone(userUpdatePhoneQo);
+    }
+
 }

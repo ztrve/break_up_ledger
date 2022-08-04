@@ -2,6 +2,7 @@ package com.diswares.breakupledger.backend.service.user;
 
 import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
 import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;
+import com.diswares.breakupledger.backend.qo.user.UserUpdatePhoneQo;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import com.diswares.breakupledger.backend.vo.user.UserLoginVo;
 import com.diswares.breakupledger.backend.vo.user.UserRegisterVo;
@@ -30,4 +31,12 @@ public interface UserService {
      * @return 用户信息
      */
     UserLoginVo login(UserLoginQo loginQo);
+
+    /**
+     * 更新手机号
+     *
+     * @param userUpdatePhoneQo qo
+     * @return 用户信息
+     */
+    void updatePhone(UserUpdatePhoneQo userUpdatePhoneQo);
 }

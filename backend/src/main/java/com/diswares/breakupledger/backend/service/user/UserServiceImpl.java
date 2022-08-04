@@ -1,6 +1,7 @@
 package com.diswares.breakupledger.backend.service.user;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diswares.breakupledger.backend.config.configurationproperties.WxConfigurationProperties;
 import com.diswares.breakupledger.backend.dto.AuthUser;
 import com.diswares.breakupledger.backend.enums.ReqPlatformEnums;
@@ -8,13 +9,16 @@ import com.diswares.breakupledger.backend.exception.WxAuthException;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.user.UserLoginQo;
 import com.diswares.breakupledger.backend.qo.user.UserRegisterQo;
+import com.diswares.breakupledger.backend.qo.user.UserUpdatePhoneQo;
 import com.diswares.breakupledger.backend.remote.WxRemote;
+import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.util.JwtTokenUtil;
 import com.diswares.breakupledger.backend.util.SnowFlake;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import com.diswares.breakupledger.backend.vo.user.UserLoginVo;
 import com.diswares.breakupledger.backend.vo.user.UserRegisterVo;
 import com.diswares.breakupledger.backend.vo.wx.WxJsCode2SessionVo;
+import io.jsonwebtoken.lang.Assert;
 import jodd.bean.BeanCopy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +113,18 @@ public class UserServiceImpl implements UserService {
         userLoginVo.setToken(token);
         userLoginVo.setUser(userInfoVo);
         return userLoginVo;
+    }
+
+    @Override
+    public void updatePhone(UserUpdatePhoneQo userUpdatePhoneQo) {
+        LambdaQueryWrapper<UserInfo> userQuery = new LambdaQueryWrapper<>();
+        userQuery.eq(UserInfo::getPhone, userUpdatePhoneQo.getPhone());
+        boolean existsPhone = userInfoService.count(userQuery) > 0;
+        Assert.isTrue(!existsPhone, "手机号已存在");
+
+        UserInfo me = AuthUtil.currentUserInfo();
+        me.setPhone(userUpdatePhoneQo.getPhone());
+        userInfoService.updateById(me);
     }
 
     /**
