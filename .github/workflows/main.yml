@@ -18,23 +18,12 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-#       - name: maven-settings-xml-action
-#         uses: whelk-io/maven-settings-xml-action@v4
-#         with:
-#           servers: '[{ "id": "releases", "username": "admin", "password": "wuchuan@" }, { "id": "snapshots", "username": "admin", "password": "wuchuan@" }]'
-#           mirrors: '[{ "id": "nexus", "mirrorOf": "*", "url": "https://nexus.wuchuangroup.com/repository/maven-public/" }]'
+          cache: 'maven'
       - name: maven-settings-action
-        # You may pin to the exact commit or the version.
-        # uses: s4u/maven-settings-action@326c8f3f4bf3c7b17c99a748fdc6d722bcd86da7
         uses: s4u/maven-settings-action@v2.6.0
         with:
-          # override default path to settings.xml which is $HOME/.m2/settings.xml
-          #path: # optional
-          # servers definition in json array, eg: [{"id": "serverId", "username": "username", "password": "password"}]
           servers: '[{ "id": "releases", "username": "admin", "password": "wuchuan@" }, { "id": "snapshots", "username": "admin", "password": "wuchuan@" }]'
           mirrors: '[{ "id": "nexus", "name": "wuchuan nexus", "mirrorOf": "*", "url": "https://nexus.wuchuangroup.com/repository/maven-public/" }]'
-      - name: Cat setting.xml
-        run: cat $HOME/.m2/settings.xml
       - name: Build backend with Maven
         run: mvn -B package --file backend/pom.xml
       - name: Build the Docker image
