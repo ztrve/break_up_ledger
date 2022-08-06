@@ -18,7 +18,12 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v4
+        with:
+          servers: '[{ "id": "releases", "username": "admin", "password": "wuchuan@" }, { "id": "snapshots", "username": "admin", "password": "wuchuan@" }]'
+          mirrors: '[{ "id": "nexus", "mirrorOf": "*", "url": "https://nexus.wuchuangroup.com/repository/maven-public/" }]'
       - name: Build backend with Maven
-        run: cd backend && mvn --batch-mode --update-snapshots package
+        run: mvn -B package --file backend/pom.xml
       - name: Build the Docker image
         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
