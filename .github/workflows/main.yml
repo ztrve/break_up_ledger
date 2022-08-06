@@ -23,6 +23,8 @@ jobs:
         with:
           servers: '[{ "id": "releases", "username": "admin", "password": "wuchuan@" }, { "id": "snapshots", "username": "admin", "password": "wuchuan@" }]'
           mirrors: '[{ "id": "nexus", "mirrorOf": "*", "url": "https://nexus.wuchuangroup.com/repository/maven-public/" }]'
+      - name: Cat setting.xml
+        run: cat /home/runner/.m2/settings.xml
       - name: Build backend with Maven
         run: mvn -B package --file backend/pom.xml
       - name: Build the Docker image
