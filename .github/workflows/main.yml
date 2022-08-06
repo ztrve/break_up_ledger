@@ -33,26 +33,20 @@ jobs:
           # 账号密码在Setting/secrets/Actions  New repository secret  如果命名不合规提交不会保存
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-#       - name: Build the Docker image
-#         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
-      - name: test
-        run: |
-          ls
-          cd backend
-          ls
-          
+      - name: Build the Docker image
+        run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
       - name: Build and push
         # 开始构建 在当前目录下找Dockerfile,也可以指定Dockerfile位置
         uses: docker/build-push-action@v3
         with:
-          directory: ${HOME}/backend
-          dockerfile: Dockerfile
+          file: backend/Dockerfile
           # 当前工作目录
           context: .
           # 构建完成后 push
           push: true
           # github账号 tag
           tags: ${{ secrets.DOCKER_USERNAME }}/break_up_ledger_backend:latest
+          no-cache: true
       - name: SSH REMOTE
         uses: appleboy/ssh-action@master
         with:
