@@ -37,5 +37,5 @@ jobs:
         run: cat $HOME/.m2/settings.xml
       - name: Build backend with Maven
         run: mvn -B package --file backend/pom.xml
-#       - name: Build the Docker image
-#         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
+      - name: Build the Docker image
+        run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
