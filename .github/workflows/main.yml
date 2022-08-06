@@ -26,5 +26,5 @@ jobs:
           mirrors: '[{ "id": "nexus", "name": "wuchuan nexus", "mirrorOf": "*", "url": "https://nexus.wuchuangroup.com/repository/maven-public/" }]'
       - name: Build backend with Maven
         run: mvn -B package --file backend/pom.xml
-#       - name: Build the Docker image
-#         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
+       - name: Build the Docker image
+         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
