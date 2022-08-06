@@ -19,6 +19,6 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build backend with Maven
-        run: mvn --batch-mode --update-snapshots package
+        run: cd backend && mvn --batch-mode --update-snapshots package
       - name: Build the Docker image
         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
