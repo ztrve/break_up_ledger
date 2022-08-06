@@ -17,6 +17,8 @@
         <mybatis-plus.version>3.4.3.1</mybatis-plus.version>
         <postgresql.version>42.2.5</postgresql.version>
         <guava-version>30.1.1-jre</guava-version>
+        <p3c-pmd.version>2.1.1</p3c-pmd.version>
+        <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
         <redisson-starter.version>3.16.4</redisson-starter.version>
         <openfeign.version>2.2.6.RELEASE</openfeign.version>
         <feign-okhttp.version>11.0</feign-okhttp.version>
@@ -144,6 +146,26 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.p3c</groupId>
+            <artifactId>p3c-pmd</artifactId>
+            <version>${p3c-pmd.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>${maven-pmd-plugin.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
