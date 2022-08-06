@@ -39,7 +39,8 @@ jobs:
         # 开始构建 在当前目录下找Dockerfile,也可以指定Dockerfile位置
         uses: docker/build-push-action@v3
         with:
-          dockerfile: backend/
+          directory: backend
+          dockerfile: Dockerfile
           # 当前工作目录
           context: .
           # 构建完成后 push
