@@ -35,6 +35,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 #       - name: Build the Docker image
 #         run: docker build . --file backend/Dockerfile --tag break_up_ledger_backend:latest
+      - name: test
+        run: |
+          ls
+          cd backend
+          ls
+          
       - name: Build and push
         # 开始构建 在当前目录下找Dockerfile,也可以指定Dockerfile位置
         uses: docker/build-push-action@v3
