@@ -1,6 +1,6 @@
 FROM        openjdk:8-jre-alpine
 
-ARG         SOURCE_DIR=.
+ARG         SOURCE_DIR=./backend
 ARG         PREFIX=/opt/java
 
 RUN         echo ${SOURCE_DIR}
