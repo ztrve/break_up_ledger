@@ -23,7 +23,7 @@
             <nut-avatar size="small"
                         :icon="props.ledgerRecord.creator.avatarUrl">
             </nut-avatar>
-<!--            <div class="ledger-desc-item">{{ props.ledgerRecord.creator.nickname }}</div>-->
+            <!--            <div class="ledger-desc-item">{{ props.ledgerRecord.creator.nickname }}</div>-->
             <nut-tag v-if="false" class="ledger-desc-item" type="primary">单</nut-tag>
           </div>
         </template>
@@ -52,6 +52,16 @@
                      :thousands="true"/>
         </template>
       </nut-cell>
+      <nut-cell>
+        <template v-slot:title>
+          <div class="flex-inline">
+            <div>结算时间</div>
+          </div>
+        </template>
+        <template v-slot:link>
+          {{ dateFormat('YYYY-mm-dd HH:MM:SS', new Date(props.ledgerRecord.createTime)) }}
+        </template>
+      </nut-cell>
       <nut-cell title="成员钱包" :center="true">
         <template v-slot:link>
           <nut-avatar-group size="small" :max-count="8">
@@ -66,24 +76,35 @@
     <!-- 成员钱包弹出框 -->
     <nut-popup position="bottom" :style="{ height: '50%' }" v-model:visible="showUserLedgerWalletRecord">
       <div class="user-ledger-detail-wrapper">
-        <h3 class="user-ledger-detail-title">{{ activeUser.nickname }}的钱包</h3>
+        <h3 class="user-ledger-detail-title">{{ activeUser.nickname }}的钱包变化</h3>
       </div>
       <nut-cell-group>
         <nut-cell title="支出金额">
           <template v-slot:link>
-            <nut-price :price="userLedgerDetail.payAmount" size="normal" :need-symbol="false" :thousands="true"/>
-          </template>
-        </nut-cell>
-        <nut-cell title="付前余额">
-          <template v-slot:link>
-            <nut-price :price="userLedgerDetail.privateWalletBalance.prev" size="normal" :need-symbol="false"
+            <nut-price :price="activeLedgerMemberWalletRecordDetail.amount / 100" size="normal" :need-symbol="false"
                        :thousands="true"/>
           </template>
         </nut-cell>
-        <nut-cell title="付后余额">
+        <nut-cell title="结算前">
           <template v-slot:link>
-            <nut-price :price="userLedgerDetail.privateWalletBalance.now" size="normal" :need-symbol="false"
+            <nut-price :price="activeLedgerMemberWalletRecordDetail.prevWalletAmount / 100" size="normal" :need-symbol="false"
                        :thousands="true"/>
+          </template>
+        </nut-cell>
+        <nut-cell title="结算后">
+          <template v-slot:link>
+            <nut-price :price="activeLedgerMemberWalletRecordDetail.afterWalletAmount / 100" size="normal" :need-symbol="false"
+                       :thousands="true"/>
+          </template>
+        </nut-cell>
+        <nut-cell>
+          <template v-slot:title>
+            <div class="flex-inline">
+              <div>结算时间</div>
+            </div>
+          </template>
+          <template v-slot:link>
+            {{ dateFormat('YYYY-mm-dd HH:MM:SS', new Date(activeLedgerMemberWalletRecordDetail.createTime)) }}
           </template>
         </nut-cell>
       </nut-cell-group>
@@ -96,6 +117,7 @@
 import {showToast} from '@tarojs/taro'
 import {defineComponent, defineProps, defineEmits, ref} from 'vue';
 import axios_plus from "../../config/axios_plus";
+import {dateFormat} from "../../util/DateUtil";
 
 defineComponent({
   name: 'LedgerRecord'
@@ -124,13 +146,6 @@ function close() {
 
 const showUserLedgerWalletRecord = ref(false)
 
-const userLedgerDetail = ref({
-  payAmount: 33.30,
-  privateWalletBalance: {
-    prev: 99.89,
-    now: 53.00,
-  },
-})
 const computeModeTagTypeList = [
   {id: 0, name: '个人支出', tagType: 'primary'},
   {id: 0, name: '共同支出', tagType: 'success'},
@@ -139,6 +154,7 @@ const activeUser = ref({})
 const activeLedgerMemberWalletRecordDetail = ref({})
 
 function loadLedgerMemberWalletRecordDetail() {
+  activeLedgerMemberWalletRecordDetail.value
   console.log(props.ledgerRecord)
   axios_plus.get(
       `/ledger/member/wallet/record/one?ledgerMemberId=${activeUser.value.id}&ledgerRecordId=${props.ledgerRecord.id}`

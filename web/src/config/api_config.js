@@ -5,7 +5,7 @@ function getBaseUrl () {
         case 'development':
             return 'http://10.0.2.62:3000/api/bul'
         case 'production':
-            return 'http://10.0.2.62:3000/api/bul'
+            return 'https://bul.diswares.cn/api/bul'
     }
     return ''
 }

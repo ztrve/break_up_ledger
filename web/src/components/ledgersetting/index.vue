@@ -126,6 +126,10 @@ const props = defineProps({
   }
 })
 
+watch(props, (newVal, oldVal) => {
+  console.log(newVal)
+})
+
 const ledgerFormData = ref({})
 const waitRemoveLedgerFriend = ref({})
 

@@ -27,7 +27,7 @@
       </nut-cell>
       <nut-cell title="手机号">
         <template #link>
-          <div v-if="hasUserPhone" @click="showEditPhone = true">{{ userInfo.phone }}</div>
+          <div v-if="hasUserPhone(userInfo.phone)" @click="showEditPhone = true">{{ userInfo.phone }}</div>
           <div v-else @click="showEditPhone = true">点击更新手机号</div>
         </template>
       </nut-cell>
@@ -77,10 +77,10 @@ function commitEditPhone() {
   }).then(({data}) => {
     if ('E0001' === data.code) {
       userInfo.value.phone = formPhone.value
-      formPhone.value = ''
-      showEditPhone.value = false
       Taro.setStorageSync(LOCAL_STORAGE_KEYS.user, userInfo.value)
     }
+  }).finally(() => {
+    formPhone.value = ''
   })
 }
 
@@ -89,8 +89,9 @@ function cancelEditPhone() {
   formPhone.value = ''
 }
 
-function hasUserPhone() {
-  const phone = userInfo.value.phone
+function hasUserPhone(phone) {
+  // const phone = userInfo.value.phone
+  console.log(undefined !== phone && null !== phone && '' !== phone)
   return undefined !== phone && null !== phone && '' !== phone
 }
 
@@ -103,7 +104,7 @@ function clickCode() {
 function computeBackground() {
   const systemInfo = Taro.getSystemInfoSync()
   const windowWidth = systemInfo.windowWidth
-  // bg 1170 × 954
+  // bg
   const bgw = windowWidth
   const bgh = 954 / 1170 * bgw
   avatarCssOptions.value.bgWidth = bgw + 'px'

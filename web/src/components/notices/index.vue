@@ -7,7 +7,6 @@
       </template>
     </nut-empty>
     <!-- 通知列表 -->
-
     <nut-infiniteloading
         v-else
         containerId='notices-wrapper'

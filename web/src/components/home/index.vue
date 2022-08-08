@@ -4,7 +4,7 @@
       <nut-empty image="network" description="你不会还没有账本吧?">
         <template v-slot:default>
           <div style="margin-top: 10px">
-            <nut-button icon="order" type="primary" @click="openLedgerSettingPopup">新建账本</nut-button>
+            <nut-button icon="order" type="primary" @click="openCreateLedgerSettingPopup">新建账本</nut-button>
           </div>
         </template>
       </nut-empty>
