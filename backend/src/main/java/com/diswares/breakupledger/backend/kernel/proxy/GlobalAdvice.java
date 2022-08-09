@@ -22,6 +22,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -126,6 +127,10 @@ public class GlobalAdvice implements ResponseBodyAdvice<Object> {
                 msg.set("无法将" + m.group(3) + "从" + m.group(1) + "类型转换为" + m.group(2) + "类型");
             }
             responseCode = ResponseCode.TRANSFORM_ERROR;
+        } else if (e instanceof UsernameNotFoundException) {
+            if ("No user!".equals(e.getMessage())) {
+                responseCode = ResponseCode.NO_LOGIN_ERROR;
+            }
         } else {
             final Throwable cause = e.getCause();
             if (null != cause) {

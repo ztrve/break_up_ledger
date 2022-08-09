@@ -10,16 +10,27 @@
     <nut-tabbar :value="activePageIndex" @change="changeActivePageIndex" :bottom="true" @tab-switch="activePage">
       <nut-tabbar-item v-for="tabbar in tabbarList" :key="tabbar.name" :tab-title="tabbar.name" :icon="tabbar.icon"/>
     </nut-tabbar>
+
+    <nut-dialog
+        teleport="#app"
+        title="注册后体验后续功能"
+        :close-on-click-overlay="true"
+        ok-text="去注册"
+        @cancel="showLoginDialog = false"
+        @ok="pageToLogin"
+        v-model:visible="showLoginDialog"
+    ></nut-dialog>
   </view>
 </template>
 
 <script>
-import Taro, {eventCenter, getCurrentInstance} from '@tarojs/taro'
-import {reactive, onMounted, toRefs} from 'vue';
+import Taro, { eventCenter, getCurrentInstance } from '@tarojs/taro'
+import { reactive, onMounted, toRefs, ref, watch } from 'vue';
 import Home from '/src/components/home'
 import Friends from '/src/components/friends'
 import Notices from '/src/components/notices'
 import Mine from '/src/components/mine'
+import { LoginDialogStore } from '/store/index'
 
 export default {
   name: 'Index',
@@ -27,6 +38,7 @@ export default {
     Home, Friends, Notices, Mine
   },
   setup() {
+
     const state = reactive({
       indexHeight: '0px',
       mainWrapperHeight: '0px',
@@ -36,8 +48,10 @@ export default {
         {name: "好友", icon: "people"},
         {name: "通知", icon: "notice"},
         {name: "我的", icon: "my"}
-      ]
+      ],
     })
+
+    const showLoginDialog = ref(false)
 
     const methods = {
       activePage: (obj) => {
@@ -53,7 +67,24 @@ export default {
       changeActivePageIndex: (index) => {
         state.activePageIndex = index
       },
+      pageToLogin: () => {
+        Taro.redirectTo({url: '/packageA/pages/login/index'})
+      }
     }
+
+    const loginDialogStore = LoginDialogStore()
+    watch(showLoginDialog, (newVal, oldValue) => {
+      if (loginDialogStore.show === newVal.value) return
+      loginDialogStore.changeShow(newVal.value)
+    })
+    loginDialogStore.$subscribe((mutation, state) => {  // state变化时回调。有变化信息和状态两个参数
+      if (state.show === undefined || state.show === showLoginDialog.value) return
+      showLoginDialog.value = state.show
+    }, {
+      detached: false,  // 在组件卸载时是否继续监听
+      deep: true,  // 是否深度监听
+      flush: 'post',  // post:组件更新后执行；sync:始终同步触发；pre:组件更新前执行
+    })
 
     onMounted(() => {
       eventCenter.once(getCurrentInstance().router.onReady, () => {
@@ -71,7 +102,8 @@ export default {
 
     return {
       ...methods,
-      ...toRefs(state)
+      ...toRefs(state),
+      showLoginDialog
     }
   }
 }

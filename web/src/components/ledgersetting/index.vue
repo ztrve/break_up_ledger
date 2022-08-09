@@ -103,6 +103,7 @@
 import {defineComponent, defineProps, ref, watch, defineEmits} from 'vue';
 import axios_plus from "../../config/axios_plus";
 import Taro from "@tarojs/taro";
+import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
 
 defineComponent({
   name: 'LedgerSetting'
@@ -180,7 +181,7 @@ function loadFriends() {
       .then(resp => {
         if (resp.data.code === 'E0001') {
           friendList.value = resp.data.data
-          friendList.value.push(Taro.getStorageSync("user"))
+          friendList.value.push(Taro.getStorageSync(LOCAL_STORAGE_KEYS.user))
         } else {
           friendList.value = []
         }
@@ -204,7 +205,7 @@ function createLedgerPopupTitle() {
 
 function initCreateLedgerFormData(ledger) {
   if (undefined === ledger || null === ledger || '{}' === JSON.stringify(ledger)) {
-    const me = Taro.getStorageSync("user")
+    const me = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
     ledgerFormData.value = {
       id: null,
       name: '',
@@ -311,7 +312,7 @@ function clickFriendAvatar(friend) {
 
 function removeLedgerMember() {
   const friend = waitRemoveLedgerFriend.value
-  const me = Taro.getStorageSync("user")
+  const me = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
   if (me.id === friend.id) {
     Taro.showToast({ icon: 'none', title: '无法移除自己' })
     return

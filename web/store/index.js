@@ -1,24 +1,20 @@
 import { defineStore } from 'pinia'
 
-export const useUserInfoStore = defineStore('user-profile', {
+export const LoginDialogStore = defineStore('login-dialog', {
   state: () => {
     return {
-      user: {},
-      token: ''
+      show: false
     }
   },
   actions: {
-    setUser(user) {
-      this.user = user
+    open () {
+      this.show = true
     },
-    userIsEmpty () {
-      return undefined === this.user || null === this.user || {} === this.user
+    close () {
+      this.show = false
     },
-    setToken (token) {
-      this.token = token
-    },
-    tokenIsEmpty () {
-      return undefined === this.token || null === this.token || '' === this.token
+    changeShow (newShow) {
+      this.show = newShow
     }
   }
 })

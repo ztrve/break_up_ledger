@@ -8,7 +8,7 @@
       </template>
       <template v-slot:default>
         <div style="margin-top: 10px">
-          <nut-button icon="add" type="primary" @click="showAddFriendPopup = true">添加好友</nut-button>
+          <nut-button icon="add" type="primary" @click="clickAddFriend">添加好友</nut-button>
         </div>
       </template>
     </nut-empty>
@@ -60,6 +60,8 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import axios_plus from "../../config/axios_plus";
 import Taro from "@tarojs/taro";
+import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
+import {LoginDialogStore} from "../../../store";
 
 defineComponent({
   name: 'Friends'
@@ -105,6 +107,17 @@ function sendFriendRequest() {
   }).catch(() => {
     friendRequestButtonLoading.value = false
   })
+}
+
+const loginDialogStore = LoginDialogStore()
+function clickAddFriend () {
+  const userInfo = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
+  if (undefined === userInfo || '' === userInfo || JSON.stringify(userInfo) === '{}') {
+    loginDialogStore.open()
+    return
+  }
+
+  showAddFriendPopup.value = true
 }
 
 loadFriends()

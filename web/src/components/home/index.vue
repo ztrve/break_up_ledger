@@ -50,7 +50,9 @@
 
       <!-- 账本多功能按钮 -->
       <div style="position: absolute; bottom: 0; right: 6px">
-        <nut-button type="primary" icon="uploader" shape="square" size="mini" @click="showLedgerRecordSetting = true">记一笔</nut-button>
+        <nut-button type="primary" icon="uploader" shape="square" size="mini" @click="showLedgerRecordSetting = true">
+          记一笔
+        </nut-button>
       </div>
     </div>
     <!-- 账单详情 -->
@@ -84,9 +86,12 @@ import {defineComponent, ref} from 'vue';
 import LedgerRecord from '/src/components/ledgerrecord'
 import HomeMenu from '/src/components/homemenu'
 import LedgerRecordSetting from '/src/components/ledgerrecordsetting'
-import axios_plus from "../../config/axios_plus"
+import axios_plus from '../../config/axios_plus'
 import LedgerSetting from '/src/components/ledgersetting'
-import {dateFormat} from "../../util/DateUtil";
+import {dateFormat} from '../../util/DateUtil'
+import {LoginDialogStore} from '../../../store'
+import Taro from '@tarojs/taro'
+import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
 
 defineComponent({
   name: 'Home'
@@ -125,7 +130,7 @@ function initActiveLedgerRecords() {
   activeLedgerRecordsPage.current = 0
 }
 
-function loadLedgerDetail (ledger) {
+function loadLedgerDetail(ledger) {
   console.log(ledger.value)
   activeLedger.value = ledger.value
   axios_plus.get(
@@ -139,7 +144,7 @@ function loadLedgerDetail (ledger) {
 
 }
 
-function clickLedgerRecordDetail (ledgerRecord) {
+function clickLedgerRecordDetail(ledgerRecord) {
   activeLedgerRecord.value = ledgerRecord
   showLedgerRecordDetail.value = true
 }
@@ -157,7 +162,14 @@ function openLedgerSettingPopup(ledger) {
   }
 }
 
+const loginDialogStore = LoginDialogStore()
 function openCreateLedgerSettingPopup() {
+  const userInfo = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
+  if (undefined === userInfo || '' === userInfo || JSON.stringify(userInfo) === '{}') {
+    loginDialogStore.open()
+    return
+  }
+
   ledgerSettingOptions.value = {
     show: true,
     type: 'create',
@@ -166,7 +178,7 @@ function openCreateLedgerSettingPopup() {
 }
 
 function loadLedgers() {
-  axios_plus.get("/ledger/list")
+  axios_plus.get('/ledger/list')
       .then(response => {
         const resp = response.data
         if ('E0001' === resp.code && resp.data) {
@@ -179,9 +191,9 @@ function loadLedgers() {
       })
 }
 
-function translateToLedgerRecordView (record) {
+function translateToLedgerRecordView(record) {
   record.text = record.tag
-  record.time = dateFormat("mm-dd HH:MM", new Date(record.createTime))
+  record.time = dateFormat('mm-dd HH:MM', new Date(record.createTime))
 }
 
 function loadActiveLedgerRecords(ledger) {

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public class UserLedgerTagCreateQo implements Serializable {
      * 标签
      */
     @NotEmpty
+    @Length(min = 1, max = 10, message = "最多十个字")
     private String tag;
 
     /**

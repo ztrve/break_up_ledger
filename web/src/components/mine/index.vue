@@ -14,7 +14,14 @@
       }" :src="userInfo.avatarUrl">
     </div>
 
-    <nut-cell-group>
+    <nut-cell-group v-if="userInfo.nickname === undefined || userInfo.nickname === null || JSON.stringify(userInfo.nickname) === ''">
+      <nut-cell title="未注册">
+        <template #link>
+          <div v-else @click="clickToLogin">点击注册/登陆</div>
+        </template>
+      </nut-cell>
+    </nut-cell-group>
+    <nut-cell-group v-else>
       <nut-cell title="昵称">
         <template #link>
           {{ userInfo.nickname }}
@@ -52,6 +59,7 @@ import Taro from '@tarojs/taro'
 import {defineComponent, onMounted, ref} from 'vue';
 import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
 import axios_plus from "../../config/axios_plus";
+import {LoginDialogStore} from "../../../store";
 
 defineComponent({
   name: 'Mine'
@@ -84,14 +92,17 @@ function commitEditPhone() {
   })
 }
 
+const loginDialogStore = LoginDialogStore()
+function clickToLogin () {
+  loginDialogStore.open()
+}
+
 function cancelEditPhone() {
   showEditPhone.value = false
   formPhone.value = ''
 }
 
 function hasUserPhone(phone) {
-  // const phone = userInfo.value.phone
-  console.log(undefined !== phone && null !== phone && '' !== phone)
   return undefined !== phone && null !== phone && '' !== phone
 }
 
