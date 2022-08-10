@@ -15,8 +15,11 @@
       </div>
       <nut-form class="ledger-setting-popup-form" :model-value="ledgerFormData">
         <nut-form-item label="账本名称" :required="true">
-          <input class="nut-input-text" placeholder="请输入账本名称" type="text" v-model="ledgerFormData.name"
-                 :disabled="!canFormEdit"/>
+          <div  @click="randomLedgerName" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+            <input style="flex-grow: 1" class="nut-input-text" placeholder="请输入账本名称" type="text" v-model="ledgerFormData.name"
+                   :disabled="true"/>
+            <nut-icon name="refresh" v-if="canFormEdit"></nut-icon>
+          </div>
         </nut-form-item>
         <nut-form-item label="所有成员可以提交账单" body-align="right">
           <nut-switch v-model="ledgerFormData.canMemberCommit" :disable="!canFormEdit"></nut-switch>
@@ -100,7 +103,7 @@
 </template>
 
 <script setup>
-import {defineComponent, defineProps, ref, watch, defineEmits} from 'vue';
+import {defineComponent, defineEmits, defineProps, ref, watch} from 'vue';
 import axios_plus from "../../config/axios_plus";
 import Taro from "@tarojs/taro";
 import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
@@ -127,12 +130,15 @@ const props = defineProps({
   }
 })
 
-watch(props, (newVal, oldVal) => {
-  console.log(newVal)
-})
-
 const ledgerFormData = ref({})
 const waitRemoveLedgerFriend = ref({})
+const friendList = ref([])
+const ledgerNamePool = [
+  '风雨同舟', '金戈铁马', '斗转星移', '乾坤一掷', '华山论剑', '唯我独尊',
+  '满江红', '侠客行', '梦江南', '如梦令', '枫泾古镇', '幽月轮', '圣墓山',
+  '笑傲江湖', '山雨欲来', '剑胆琴心', '金榜题名', '致青春', '战无不胜',
+  '侠骨柔情', '中华乾', '唯满侠', '双梦', '白帝', '长安', '鹅满峡'
+]
 
 const popupVisible = ref(false)
 const canFormEdit = ref(true)
@@ -167,14 +173,13 @@ watch(props, (newVal, oldValue) => {
   }
 })
 
-watch(popupVisible, (newVal, oldValue) => {
-  if (newVal !== props.visible) {
-    initCreateLedgerFormData()
-    emit('update:visible', newVal)
+function randomLedgerName() {
+  if (!canFormEdit.value) {
+    return
   }
-})
-
-const friendList = ref([])
+  const randomIndex = parseInt(Math.random() * ledgerNamePool.length + '', 0)
+  ledgerFormData.value.name = ledgerNamePool[randomIndex]
+}
 
 function loadFriends() {
   axios_plus.get("/friend/my")
@@ -213,6 +218,7 @@ function initCreateLedgerFormData(ledger) {
       memberIds: [me.id],
       ledgerMembers: [me]
     }
+    randomLedgerName()
   } else {
     ledgerFormData.value = {
       id: ledger.id,

@@ -57,4 +57,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /usr/local/docker/
+            docker-compose -f break_up_docker_compose.yml pull
             docker-compose -f break_up_docker_compose.yml up -d

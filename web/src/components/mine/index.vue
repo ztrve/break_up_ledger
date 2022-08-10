@@ -13,32 +13,47 @@
         'border-radius': avatarCssOptions.borderRadius
       }" :src="userInfo.avatarUrl">
     </div>
+    <div class="mine-options"
+         :style="{
+            width: mineOptions.width,
+            height: mineOptions.height
+         }"
+    >
+      <nut-cell-group
+          v-if="userInfo.nickname === undefined || userInfo.nickname === null || JSON.stringify(userInfo.nickname) === ''">
+        <nut-cell title="未注册">
+          <template #link>
+            <div @click="clickToLogin">点击注册/登陆</div>
+          </template>
+        </nut-cell>
+      </nut-cell-group>
+      <div v-else>
+        <nut-cell-group>
+          <nut-cell title="昵称">
+            <template #link>
+              {{ userInfo.nickname }}
+            </template>
+          </nut-cell>
+          <nut-cell title="好友码" :is-link="true" @click="clickCode">
+            <template #link>
+              {{ userInfo.code }}
+            </template>
+          </nut-cell>
+          <nut-cell title="手机号">
+            <template #link>
+              <div v-if="hasUserPhone(userInfo.phone)" @click="showEditPhone = true">{{ userInfo.phone }}</div>
+              <div v-else @click="showEditPhone = true">点击更新手机号</div>
+            </template>
+          </nut-cell>
+        </nut-cell-group>
 
-    <nut-cell-group v-if="userInfo.nickname === undefined || userInfo.nickname === null || JSON.stringify(userInfo.nickname) === ''">
-      <nut-cell title="未注册">
-        <template #link>
-          <div @click="clickToLogin">点击注册/登陆</div>
-        </template>
-      </nut-cell>
-    </nut-cell-group>
-    <nut-cell-group v-else>
-      <nut-cell title="昵称">
-        <template #link>
-          {{ userInfo.nickname }}
-        </template>
-      </nut-cell>
-      <nut-cell title="好友码" :is-link="true" @click="clickCode">
-        <template #link>
-          {{ userInfo.code }}
-        </template>
-      </nut-cell>
-      <nut-cell title="手机号">
-        <template #link>
-          <div v-if="hasUserPhone(userInfo.phone)" @click="showEditPhone = true">{{ userInfo.phone }}</div>
-          <div v-else @click="showEditPhone = true">点击更新手机号</div>
-        </template>
-      </nut-cell>
-    </nut-cell-group>
+<!--        <nut-button style="width: 100%" type="primary" icon="uploader" shape="square" size="mini" @click="clickLoginOut">-->
+<!--          退出登陆-->
+<!--        </nut-button>-->
+      </div>
+    </div>
+
+
     <!-- 删除朋友提示 -->
     <nut-dialog
         teleport="#app"
@@ -77,7 +92,17 @@ const avatarCssOptions = ref({
   bgWidth: '0px',
   bgHeight: '0px'
 })
+const mineOptions = ref({
+  width: '0',
+  height: '0'
+})
+
 const formPhone = ref('')
+
+function clickLoginOut() {
+  Taro.clearStorageSync()
+  Taro.redirectTo({url: '/pages/index/index'})
+}
 
 function commitEditPhone() {
   axios_plus.put('/user/phone', {
@@ -93,7 +118,8 @@ function commitEditPhone() {
 }
 
 const loginDialogStore = LoginDialogStore()
-function clickToLogin () {
+
+function clickToLogin() {
   loginDialogStore.open()
 }
 
@@ -120,21 +146,42 @@ function computeBackground() {
   const bgh = 954 / 1170 * bgw
   avatarCssOptions.value.bgWidth = bgw + 'px'
   avatarCssOptions.value.bgHeight = bgh + 'px'
-  Taro.createSelectorQuery().select('.user-display > .mine-avatar-bg')
+  const avaw = bgw * 0.26
+  avatarCssOptions.value.width = avaw + 'px'
+  avatarCssOptions.value.height = avaw + 'px'
+  avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
+  avatarCssOptions.value.top = bgh * 0.525 + 'px'
+  avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
+  // Taro.createSelectorQuery().select('.user-display > .mine-avatar-bg')
+  //     .boundingClientRect()
+  //     .exec(bgs => {
+  //
+  //     })
+}
+
+function computeMineOption() {
+  const systemInfo = Taro.getSystemInfoSync()
+  const windowWidth = systemInfo.windowWidth
+
+  Taro.createSelectorQuery().select('.mine-wrapper')
       .boundingClientRect()
-      .exec(bgs => {
-        const avaw = bgw * 0.26
-        avatarCssOptions.value.width = avaw + 'px'
-        avatarCssOptions.value.height = avaw + 'px'
-        avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
-        avatarCssOptions.value.top = bgh * 0.525 + 'px'
-        avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
+      .exec(mineWrappers => {
+        const mineWrapperHeight = mineWrappers[0].height
+
+        Taro.createSelectorQuery().select('.mine-wrapper > .mine-user-display')
+            .boundingClientRect()
+            .exec(mineUserDisplays => {
+              const mineUserDisplayHeight = mineUserDisplays[0].height
+              mineOptions.value.width = windowWidth + 'px'
+              mineOptions.value.height = mineWrapperHeight - mineUserDisplayHeight + 'px'
+            })
       })
 }
 
 onMounted(() => {
   Taro.nextTick(() => {
     computeBackground()
+    computeMineOption()
   })
 })
 </script>
@@ -143,12 +190,18 @@ onMounted(() => {
 .mine-wrapper {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .mine-user-display {
   position: relative;
+  display: flex;
+}
+
+.mine-options {
+  flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .mine-avatar-bg {
@@ -159,4 +212,6 @@ onMounted(() => {
   position: absolute;
   z-index: 10;
 }
+
+
 </style>
