@@ -45,6 +45,8 @@
               <div v-else @click="showEditPhone = true">点击更新手机号</div>
             </template>
           </nut-cell>
+          <nut-cell title="标签配置" is-link @click="openUserLedgerTagTable">
+          </nut-cell>
         </nut-cell-group>
 
 <!--        <nut-button style="width: 100%" type="primary" icon="uploader" shape="square" size="mini" @click="clickLoginOut">-->
@@ -53,7 +55,7 @@
       </div>
     </div>
 
-
+    <user-ledger-tag-table v-model:visible="showUserLedgerTagTable"></user-ledger-tag-table>
     <!-- 删除朋友提示 -->
     <nut-dialog
         teleport="#app"
@@ -75,12 +77,14 @@ import {defineComponent, onMounted, ref} from 'vue';
 import {LOCAL_STORAGE_KEYS} from "../../config/local_storage_keys";
 import axios_plus from "../../config/axios_plus";
 import {LoginDialogStore} from "../../../store";
+import UserLedgerTagTable from '/src/components/userledgertagtable'
 
 defineComponent({
   name: 'Mine'
 })
 
 const showEditPhone = ref(false)
+const showUserLedgerTagTable = ref(false)
 
 const userInfo = ref(Taro.getStorageSync(LOCAL_STORAGE_KEYS.user))
 const avatarCssOptions = ref({
@@ -98,6 +102,10 @@ const mineOptions = ref({
 })
 
 const formPhone = ref('')
+
+function openUserLedgerTagTable() {
+  showUserLedgerTagTable.value = true
+}
 
 function clickLoginOut() {
   Taro.clearStorageSync()
@@ -152,11 +160,6 @@ function computeBackground() {
   avatarCssOptions.value.left = (bgw - avaw) / 2 + 'px'
   avatarCssOptions.value.top = bgh * 0.525 + 'px'
   avatarCssOptions.value.borderRadius = avaw / 2 + 'px'
-  // Taro.createSelectorQuery().select('.user-display > .mine-avatar-bg')
-  //     .boundingClientRect()
-  //     .exec(bgs => {
-  //
-  //     })
 }
 
 function computeMineOption() {

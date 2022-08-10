@@ -2,6 +2,7 @@ package com.diswares.breakupledger.backend.controller;
 
 
 import com.diswares.breakupledger.backend.qo.user.UserLedgerTagCreateQo;
+import com.diswares.breakupledger.backend.qo.user.UserLedgerTagUpdateQo;
 import com.diswares.breakupledger.backend.service.user.UserLedgerTagService;
 import com.diswares.breakupledger.backend.vo.user.UserLedgerTagVo;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,11 @@ public class UserLedgerTagController {
     public UserLedgerTagVo createOne (@RequestBody @Validated UserLedgerTagCreateQo userLedgerTagCreateQo){
         return userLedgerTagService.createOne(userLedgerTagCreateQo);
     }
+
+    @PutMapping
+    public List<UserLedgerTagVo> changeUserLedgerTags(@RequestBody @Validated List<UserLedgerTagUpdateQo> userLedgerTagUpdateQoList) {
+        return userLedgerTagService.updateUserDefaultLedgerTags(userLedgerTagUpdateQoList);
+    }
+
 
 }
