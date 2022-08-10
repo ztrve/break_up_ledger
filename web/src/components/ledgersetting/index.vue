@@ -1,6 +1,6 @@
 <template>
   <!-- 账本配置弹出 -->
-  <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" v-model:visible="popupVisible">
+  <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" :visible="popupVisible" @update:visible="close()">
     <div class="ledger-setting-popup-wrapper">
       <div class="ledger-setting-popup-title-wrapper">
         <div class="ledger-setting-popup-title">{{ createLedgerPopupTitle() }}</div>
