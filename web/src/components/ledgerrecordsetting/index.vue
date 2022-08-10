@@ -51,11 +51,11 @@
               </nut-tag>
             </div>
           </template>
-          <template #default>
-            <nut-button style="width: 100%" @click="showUserLedgerTagSetting = true" shape="square" type="primary">
-              没有想要的? 新建一个吧
-            </nut-button>
-          </template>
+<!--          <template #default>-->
+<!--            <nut-button style="width: 100%" @click="showUserLedgerTagSetting = true" shape="square" type="primary">-->
+<!--              没有想要的? 新建一个吧-->
+<!--            </nut-button>-->
+<!--          </template>-->
         </nut-picker>
         <nut-form-item
             label="账单金额" body-align="right" :required="true"
@@ -69,7 +69,7 @@
             <nut-inputnumber v-model="form.amount" decimal-places="2"/>
           </div>
         </nut-form-item>
-        <nut-form-item label="账单备注">
+        <nut-form-item label="账单备注" v-if="false">
           <input class="nut-input-text" placeholder="请输入账本备注" type="text" v-model="form.extra"/>
         </nut-form-item>
       </nut-form>

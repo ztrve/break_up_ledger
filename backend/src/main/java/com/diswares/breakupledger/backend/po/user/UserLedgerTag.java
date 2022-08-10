@@ -24,9 +24,9 @@ public class UserLedgerTag extends AncestorDomain implements Serializable {
     private Long userId;
 
     /**
-     * 标签
+     * 账本标签id
      */
-    private String tag;
+    private Long ledgerTagId;
 
     /**
      * 是否为默认标签

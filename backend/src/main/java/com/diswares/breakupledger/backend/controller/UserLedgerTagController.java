@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/ledger/tag")
 @RequiredArgsConstructor
-public class UserTagController {
+public class UserLedgerTagController {
     private final UserLedgerTagService userLedgerTagService;
 
     @GetMapping("/list")
@@ -27,6 +27,7 @@ public class UserTagController {
     }
 
     @PostMapping
+    @Deprecated
     public UserLedgerTagVo createOne (@RequestBody @Validated UserLedgerTagCreateQo userLedgerTagCreateQo){
         return userLedgerTagService.createOne(userLedgerTagCreateQo);
     }
