@@ -17,7 +17,7 @@
     <nut-cell-group v-if="userInfo.nickname === undefined || userInfo.nickname === null || JSON.stringify(userInfo.nickname) === ''">
       <nut-cell title="未注册">
         <template #link>
-          <div v-else @click="clickToLogin">点击注册/登陆</div>
+          <div @click="clickToLogin">点击注册/登陆</div>
         </template>
       </nut-cell>
     </nut-cell-group>

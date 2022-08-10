@@ -21,31 +21,40 @@
         </template>
       </nut-navbar>
       <!-- 账单列表 -->
-      <div class="ledgers">
-        <nut-cell-group>
-          <nut-cell v-for="(ledgerRecord, index) in activeLedgerRecords" :key="index"
-                    :is-link="true" :center="true"
-                    @click="clickLedgerRecordDetail(ledgerRecord)">
-            <template v-slot:icon>
-              <nut-avatar size="small"
-                          :icon="ledgerRecord.creator.avatarUrl">
-              </nut-avatar>
-            </template>
-            <template v-slot:title>
-              <div class="ledger-desc">
-                <div class="ledger-desc-item">
-                  <div>{{ ledgerRecord.text }}</div>
-                  <div style="font-size: 12px">{{ ledgerRecord.amount / 100 }} 软妹币</div>
+      <div class="ledgers" id="ledger-list">
+        <!-- 通知列表 -->
+        <nut-infiniteloading
+            containerId='ledger-list'
+            :use-window='false'
+            :has-more="hasMoreLedgerRecords"
+            @load-more="loadActiveLedgerRecords"
+            pull-icon="loading"
+            load-more-txt="哎呀，这里是底部了啦">
+          <nut-cell-group>
+            <nut-cell v-for="(ledgerRecord, index) in activeLedgerRecords" :key="index"
+                      :is-link="true" :center="true"
+                      @click="clickLedgerRecordDetail(ledgerRecord)">
+              <template v-slot:icon>
+                <nut-avatar size="small"
+                            :icon="ledgerRecord.creator.avatarUrl">
+                </nut-avatar>
+              </template>
+              <template v-slot:title>
+                <div class="ledger-desc">
+                  <div class="ledger-desc-item">
+                    <div>{{ ledgerRecord.text }}</div>
+                    <div style="font-size: 12px">{{ ledgerRecord.amount / 100 }} 软妹币</div>
+                  </div>
+                  <nut-tag v-if="false" class="ledger-desc-item" type="primary">单</nut-tag>
                 </div>
-                <nut-tag v-if="false" class="ledger-desc-item" type="primary">单</nut-tag>
-              </div>
-            </template>
-            <template v-slot:link>
-              <div>{{ ledgerRecord.time }}</div>
-              <nut-icon name="right"></nut-icon>
-            </template>
-          </nut-cell>
-        </nut-cell-group>
+              </template>
+              <template v-slot:link>
+                <div>{{ ledgerRecord.time }}</div>
+                <nut-icon name="right"></nut-icon>
+              </template>
+            </nut-cell>
+          </nut-cell-group>
+        </nut-infiniteloading>
       </div>
 
       <!-- 账本多功能按钮 -->
@@ -82,7 +91,7 @@
 </template>
 
 <script setup>
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, watch} from 'vue';
 import LedgerRecord from '/src/components/ledgerrecord'
 import HomeMenu from '/src/components/homemenu'
 import LedgerRecordSetting from '/src/components/ledgerrecordsetting'
@@ -100,6 +109,7 @@ defineComponent({
 const showLedgerRecordDetail = ref(false)
 const showHomeMenu = ref(false)
 const showLedgerRecordSetting = ref(false)
+const hasMoreLedgerRecords = ref(true)
 
 const homeWrapperRef = ref(null)
 const ledgers = ref([])
@@ -110,20 +120,23 @@ const ledgerSettingOptions = ref({
   type: 'create',
   ledger: {}
 })
-
 /**
  * 格式：
  * [{ text: '买菜', time: '2022-07-21' }]
  */
 const activeLedgerRecords = ref([])
-
 const activeLedgerRecordsPage = {
   pages: 0,
   size: 10,
   current: 0
 }
 
+watch(hasMoreLedgerRecords, (newVal) => {
+  console.log(newVal)
+})
+
 function initActiveLedgerRecords() {
+  hasMoreLedgerRecords.value = true
   activeLedgerRecords.value = []
   activeLedgerRecordsPage.pages = 0
   activeLedgerRecordsPage.size = 10
@@ -131,7 +144,6 @@ function initActiveLedgerRecords() {
 }
 
 function loadLedgerDetail(ledger) {
-  console.log(ledger.value)
   activeLedger.value = ledger.value
   axios_plus.get(
       `/ledger/${ledger.value.id}`
@@ -196,9 +208,11 @@ function translateToLedgerRecordView(record) {
   record.time = dateFormat('mm-dd HH:MM', new Date(record.createTime))
 }
 
-function loadActiveLedgerRecords(ledger) {
+function loadActiveLedgerRecords(done) {
+  const ledgerId = activeLedger.value.id
+  const page = activeLedgerRecordsPage
   axios_plus.get(
-      `/ledger/record?ledgerId=${ledger.id}`
+      `/ledger/record?ledgerId=${ledgerId}&current=${page.current + 1}&size=${page.size}&pages=${page.pages}`
   ).then(response => {
     const resp = response.data
     if ('E0001' === resp.code) {
@@ -210,14 +224,26 @@ function loadActiveLedgerRecords(ledger) {
         })
         activeLedgerRecords.value = activeLedgerRecords.value.concat(resp.data)
       }
+
+      activeLedgerRecordsPage.pages = resp.pages
+      activeLedgerRecordsPage.size = resp.size
+      activeLedgerRecordsPage.current = resp.current
+      if (activeLedgerRecordsPage.current === activeLedgerRecordsPage.pages) {
+        hasMoreLedgerRecords.value = false
+      }
+    }
+  }).finally(() => {
+    if (done) {
+      done()
     }
   })
 }
 
 function changeActiveLedger(ledger) {
   console.log('触发变更 active')
+  initActiveLedgerRecords()
   loadLedgerDetail(ledger)
-  loadActiveLedgerRecords(ledger.value)
+  loadActiveLedgerRecords()
   showHomeMenu.value = false
 }
 
