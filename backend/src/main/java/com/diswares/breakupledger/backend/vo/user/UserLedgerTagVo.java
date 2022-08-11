@@ -12,8 +12,14 @@ import java.io.Serializable;
  * @TableName user_ledger_tag
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UserLedgerTagVo extends AncestorDomain implements Serializable {
+@EqualsAndHashCode
+public class UserLedgerTagVo implements Serializable {
+
+    /**
+     * 账本标签id
+     */
+    private Long ledgerTagId;
+
     /**
      * 标签
      */

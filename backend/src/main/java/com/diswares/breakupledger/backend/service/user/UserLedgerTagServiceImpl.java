@@ -7,6 +7,7 @@ import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.po.user.UserLedgerTag;
 import com.diswares.breakupledger.backend.mapper.UserLedgerTagMapper;
 import com.diswares.breakupledger.backend.qo.user.UserLedgerTagCreateQo;
+import com.diswares.breakupledger.backend.qo.user.UserLedgerTagUpdateQo;
 import com.diswares.breakupledger.backend.service.ledger.LedgerTagService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.user.UserLedgerTagVo;
@@ -51,15 +52,16 @@ public class UserLedgerTagServiceImpl extends ServiceImpl<UserLedgerTagMapper, U
         List<UserLedgerTag> userLedgerTags = list(query);
         Map<Long, UserLedgerTag> userLedgerTagMap;
         if (ObjectUtils.isEmpty(userLedgerTags)) {
+            userLedgerTagMap = new HashMap<>(16);
+        } else {
             userLedgerTagMap= userLedgerTags.stream()
                     .collect(Collectors.toMap(UserLedgerTag::getLedgerTagId, v -> v, (a, b) -> a));
-        } else {
-            userLedgerTagMap = new HashMap<>();
         }
 
         return ledgerTags.stream()
                 .map(ledgerTag -> {
                     UserLedgerTagVo vo = new UserLedgerTagVo();
+                    vo.setLedgerTagId(ledgerTag.getId());
                     vo.setTag(ledgerTag.getTag());
                     UserLedgerTag userLedgerTag = userLedgerTagMap.get(ledgerTag.getId());
                     if (ObjectUtils.isEmpty(userLedgerTag)) {
@@ -90,6 +92,29 @@ public class UserLedgerTagServiceImpl extends ServiceImpl<UserLedgerTagMapper, U
         save(userLedgerTag);
 
         return getOneDetail(userLedgerTag.getId());
+    }
+
+    @Override
+    public List<UserLedgerTagVo> updateUserDefaultLedgerTags(List<UserLedgerTagUpdateQo> userLedgerTagUpdateQoList) {
+        UserInfo me = AuthUtil.currentUserInfo();
+
+        LambdaQueryWrapper<UserLedgerTag> query = new LambdaQueryWrapper<>();
+        query.eq(UserLedgerTag::getUserId, me.getId());
+        remove(query);
+
+        List<UserLedgerTag> userLedgerTags = userLedgerTagUpdateQoList.stream()
+                .filter(UserLedgerTagUpdateQo::getIsDefaultTag)
+                .map(qo -> {
+                    UserLedgerTag po = new UserLedgerTag();
+                    po.setUserId(me.getId());
+                    po.setLedgerTagId(qo.getLedgerTagId());
+                    po.setIsDefaultTag(qo.getIsDefaultTag());
+                    return po;
+                })
+                .collect(Collectors.toList());
+        saveBatch(userLedgerTags);
+
+        return myList();
     }
 }
 
