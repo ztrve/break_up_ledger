@@ -49,9 +49,9 @@
           </nut-cell>
         </nut-cell-group>
 
-<!--        <nut-button style="width: 100%" type="primary" icon="uploader" shape="square" size="mini" @click="clickLoginOut">-->
-<!--          退出登陆-->
-<!--        </nut-button>-->
+        <!--        <nut-button style="width: 100%" type="primary" icon="uploader" shape="square" size="mini" @click="clickLoginOut">-->
+        <!--          退出登陆-->
+        <!--        </nut-button>-->
       </div>
     </div>
 
@@ -165,15 +165,17 @@ function computeBackground() {
 function computeMineOption() {
   const systemInfo = Taro.getSystemInfoSync()
   const windowWidth = systemInfo.windowWidth
-
   Taro.createSelectorQuery().select('.mine-wrapper')
       .boundingClientRect()
       .exec(mineWrappers => {
+        console.log('mineWrappers: ' + mineWrappers)
+        console.log(mineWrappers)
         const mineWrapperHeight = mineWrappers[0].height
 
         Taro.createSelectorQuery().select('.mine-wrapper > .mine-user-display')
             .boundingClientRect()
             .exec(mineUserDisplays => {
+              console.log('mineUserDisplays: ' + mineUserDisplays)
               const mineUserDisplayHeight = mineUserDisplays[0].height
               mineOptions.value.width = windowWidth + 'px'
               mineOptions.value.height = mineWrapperHeight - mineUserDisplayHeight + 'px'
@@ -182,10 +184,18 @@ function computeMineOption() {
 }
 
 onMounted(() => {
-  Taro.nextTick(() => {
-    computeBackground()
-    computeMineOption()
-  })
+  const intervalId = setInterval(() => {
+    let getDomSuccess = false
+    let getDomCount = 0
+    do {
+      try {
+        computeBackground()
+        computeMineOption()
+        getDomSuccess = true
+      } catch (ignore) {}
+    } while (!getDomSuccess && getDomCount++ < 255)
+    clearInterval(intervalId)
+  }, 50)
 })
 </script>
 
