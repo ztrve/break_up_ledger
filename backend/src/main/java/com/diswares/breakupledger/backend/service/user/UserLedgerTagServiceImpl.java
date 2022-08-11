@@ -52,10 +52,10 @@ public class UserLedgerTagServiceImpl extends ServiceImpl<UserLedgerTagMapper, U
         List<UserLedgerTag> userLedgerTags = list(query);
         Map<Long, UserLedgerTag> userLedgerTagMap;
         if (ObjectUtils.isEmpty(userLedgerTags)) {
+            userLedgerTagMap = new HashMap<>(16);
+        } else {
             userLedgerTagMap= userLedgerTags.stream()
                     .collect(Collectors.toMap(UserLedgerTag::getLedgerTagId, v -> v, (a, b) -> a));
-        } else {
-            userLedgerTagMap = new HashMap<>(16);
         }
 
         return ledgerTags.stream()
@@ -101,15 +101,14 @@ public class UserLedgerTagServiceImpl extends ServiceImpl<UserLedgerTagMapper, U
         LambdaQueryWrapper<UserLedgerTag> query = new LambdaQueryWrapper<>();
         query.eq(UserLedgerTag::getUserId, me.getId());
         remove(query);
-        query.clear();
 
         List<UserLedgerTag> userLedgerTags = userLedgerTagUpdateQoList.stream()
-                .filter(qo -> !qo.getIsDefaultTag())
+                .filter(UserLedgerTagUpdateQo::getIsDefaultTag)
                 .map(qo -> {
                     UserLedgerTag po = new UserLedgerTag();
                     po.setUserId(me.getId());
                     po.setLedgerTagId(qo.getLedgerTagId());
-                    po.setIsDefaultTag(true);
+                    po.setIsDefaultTag(qo.getIsDefaultTag());
                     return po;
                 })
                 .collect(Collectors.toList());

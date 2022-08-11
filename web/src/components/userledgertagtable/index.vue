@@ -1,27 +1,40 @@
 <template>
   <nut-popup position="right" :style="{ width: '100%', height: '100%' }" :visible="props.visible" @close="close">
-    <nut-navbar @on-click-back="close" title="标签配置" />
-    <div class="tag-table-title">
-      <div title="tag">标签</div>
-      <div title="default-tag">默认标签</div>
+    <div class="user-ledger-tag-table-wrapper">
+      <nut-navbar class="" @on-click-back="close" title="标签配置"/>
+      <div class="tag-table-title">
+        <div title="tag">标签</div>
+        <div title="default-tag">默认标签</div>
+      </div>
+      <nut-form class="user-ledger-tag-table" :model-value="tags"
+                :style="{
+                  height: tableHeight
+                }"
+      >
+        <nut-form-item
+            v-for="tag in tags"
+            :label="tag.tag"
+            body-align="right"
+        >
+          <nut-switch v-model="tag.isDefaultTag" active-text="开" @change="changeIsDefaultTagSwitch(tag)"/>
+        </nut-form-item>
+      </nut-form>
+
+      <nut-button
+          class="user-ledger-tag-table-submit" type="primary" shape="square"
+          :loading="submitLoading" @click="submit"
+      >
+        保存
+      </nut-button>
     </div>
 
-    <nut-form class="user-ledger-tag-setting-form" :model-value="tags">
-      <nut-form-item
-          v-for="tag in tags"
-          :label="tag.tag"
-          body-align="right"
-      >
-        <nut-switch v-model="tag.isDefaultTag" active-text="开" />
-      </nut-form-item>
-    </nut-form>
-    <nut-button>保存</nut-button>
   </nut-popup>
 </template>
 
 <script setup>
-import {defineComponent, defineProps, ref, defineEmits} from 'vue';
+import {defineComponent, defineProps, ref, defineEmits, onMounted, watch} from 'vue';
 import axios_plus from "../../config/axios_plus";
+import Taro from "@tarojs/taro";
 
 defineComponent({
   name: 'UserLedgerTagTable'
@@ -41,7 +54,36 @@ function close() {
   emit('update:visible', false)
 }
 
+const submitLoading = ref(false)
 const tags = ref([])
+const tableHeight = ref('0')
+
+function submit() {
+  submitLoading.value = true
+  // 校验
+  const defaultTags = tags.value.filter(item => item.isDefaultTag)
+  if (defaultTags.length > 5) {
+    Taro.showToast({title: '最多五个默认标签', icon: 'none'})
+    submitLoading.value = false
+    return
+  }
+
+  // 发送请求
+  axios_plus.put(
+      '/user/ledger/tag', defaultTags
+  ).then(({ data }) => {
+  }).finally(() => {
+    submitLoading.value = false
+  })
+}
+
+function changeIsDefaultTagSwitch(tag) {
+  const defaultTags = tags.value.filter(item => item.isDefaultTag)
+  if (defaultTags.length > 5) {
+    Taro.showToast({title: '最多五个默认标签', icon: 'none'})
+    tag.isDefaultTag = false
+  }
+}
 
 function loadMyLedgerTag() {
   tags.value = []
@@ -57,44 +99,51 @@ function loadMyLedgerTag() {
   })
 }
 
+function computeTableHeight() {
+  Taro.nextTick(() => {
+    Taro.createSelectorQuery().select('.user-ledger-tag-table-wrapper')
+        .boundingClientRect()
+        .exec(wrappers => {
+          const wrapperHeight = wrappers[0].height
+          Taro.createSelectorQuery().select('.user-ledger-tag-table-wrapper > .tag-table-title')
+              .boundingClientRect()
+              .exec(titles => {
+                const titleHeight = titles[0].height
+                Taro.createSelectorQuery().select('.user-ledger-tag-table-wrapper > .user-ledger-tag-table-submit')
+                    .boundingClientRect()
+                    .exec(submits => {
+                      const submitHeight = submits[0].height
+                      tableHeight.value = wrapperHeight - titleHeight - submitHeight + 'px'
+                    })
+              })
+
+        })
+  })
+}
+
 loadMyLedgerTag()
+
+watch(props, (newVal, oldVal) => {
+  if (newVal.visible && tableHeight.value === '0') {
+    computeTableHeight()
+  }
+})
 </script>
 
 <style lang="scss">
-.user-ledger-tag-setting-wrapper {
+.user-ledger-tag-table-wrapper {
   display: flex;
+  overflow: hidden;
   flex-direction: column;
   height: 100%;
 }
 
-.user-ledger-tag-setting-title-wrapper {
-  width: 100%;
-  margin: 10px 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-end;
+
+.user-ledger-tag-table {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.user-ledger-tag-setting-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #000;
-}
-
-.user-ledger-tag-setting-tag-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.user-ledger-tag-setting-form {
-  flex-grow: 1;
-}
-
-.user-ledger-tag-setting-tag {
-  margin: 2px 2px;
-}
 
 .tag-table-title {
   display: flex;
