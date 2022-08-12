@@ -120,4 +120,5 @@ export default {
 .main-wrapper {
   overflow: hidden;
 }
+
 </style>

@@ -5,7 +5,7 @@
              :visible="props.visible"
              @close="close"
   >
-    <nut-cell-group title="我的账本" style="position: relative">
+    <nut-cell-group title="我的账本">
       <nut-cell v-for="(ledger, index) in ledgers" :title="ledger.name"
                 :class="{
                 'home-menu-active-ledger-title': ledger.id === activeLedger.id
@@ -15,13 +15,9 @@
       <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账本"
                 @click="clickCreateNewLedger"></nut-cell>
     </nut-cell-group>
-  </nut-popup>
-  <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" v-model:visible="showLedgerOptions">
-    <div class="ledger-options-wrapper">
-      <div class="ledger-options-title">账本 {{ activeLedger.name }}</div>
-      <nut-button shape="square" icon="retweet" @click="changeActiveLedger">切换</nut-button>
-      <nut-button style="margin-top: -1px" shape="square" icon="setting" @click="clickSetting">设置</nut-button>
-    </div>
+    <nut-cell-group title="当前账本">
+      <nut-cell icon="setting" title="账本配置" is-link :center="true" @click="clickSetting"></nut-cell>
+    </nut-cell-group>
   </nut-popup>
 </template>
 
@@ -47,19 +43,17 @@ function close() {
   emit('update:visible', false)
 }
 
-const showLedgerOptions = ref(false)
 
 const activeLedger = ref({})
 const waitingOperateLedger = ref({})
 
 function clickLedger(ledgerIndex) {
-  showLedgerOptions.value = true
   waitingOperateLedger.value = props.ledgers[ledgerIndex]
+  changeActiveLedger()
 }
 
 function changeActiveLedger() {
   activeLedger.value = waitingOperateLedger.value
-  showLedgerOptions.value = false
   emit('click-change', activeLedger)
 }
 
@@ -68,7 +62,6 @@ function clickCreateNewLedger() {
 }
 
 function clickSetting() {
-  showLedgerOptions.value = false
   emit('click-setting', waitingOperateLedger)
 }
 
@@ -135,5 +128,9 @@ initHomeMenu()
   display: flex;
   justify-content: center;
   padding: 10px 0;
+}
+
+.home-wrapper .nut-popup .nutui-popup__content-wrapper {
+  height: auto;
 }
 </style>
