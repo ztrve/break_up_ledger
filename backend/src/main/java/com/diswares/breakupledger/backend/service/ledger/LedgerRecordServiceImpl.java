@@ -9,6 +9,7 @@ import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerRecord;
 import com.diswares.breakupledger.backend.mapper.LedgerRecordMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerRechargeRecordQo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerRecordQo;
 import com.diswares.breakupledger.backend.service.user.UserInfoService;
 import com.diswares.breakupledger.backend.service.user.UserService;
@@ -77,6 +78,18 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
         // 创建成员账户扣款记录
         ledgerMemberWalletRecordService.createRecordsByLedgerRecord(ledgerRecord);
         return getDetailById(ledgerRecord.getId());
+    }
+
+    @Override
+    public LedgerRecordVo createRechargeRecord(LedgerRechargeRecordQo qo) {
+        // qo转换
+        LedgerRecordQo ledgerRecordQo = new LedgerRecordQo();
+        ledgerRecordQo.setLedgerId(qo.getLedgerId());
+        ledgerRecordQo.setAmount(qo.getAmount());
+        ledgerRecordQo.setTag("充值");
+
+        // 记录
+        return createLedgerRecord(LedgerRecordModelEnums.DUCT, ledgerRecordQo);
     }
 
     @Override

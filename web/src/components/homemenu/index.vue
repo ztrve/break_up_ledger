@@ -27,6 +27,7 @@
 <!--                @click="clickCreateNewLedger"></nut-cell>-->
     </nut-cell-group>
     <nut-cell-group title="当前账本">
+      <nut-cell :icon="require('../../../assets/wallet.png')" title="账本钱包" is-link :center="true" @click="clickSetting"></nut-cell>
       <nut-cell icon="setting" title="账本配置" is-link :center="true" @click="clickSetting"></nut-cell>
     </nut-cell-group>
   </nut-popup>

@@ -5,6 +5,7 @@ import com.diswares.breakupledger.backend.enums.LedgerRecordModelEnums;
 import com.diswares.breakupledger.backend.kernel.proxy.response.InclusionStrategy;
 import com.diswares.breakupledger.backend.kernel.proxy.response.annotions.Inclusion;
 import com.diswares.breakupledger.backend.po.ledger.LedgerRecord;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerRechargeRecordQo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerRecordQo;
 import com.diswares.breakupledger.backend.service.ledger.LedgerRecordService;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerRecordVo;
@@ -32,6 +33,11 @@ public class LedgerRecordController {
     @PostMapping
     public LedgerRecordVo createLedgerRecord(@RequestBody @Validated LedgerRecordQo ledgerRecordQo) {
         return ledgerRecordService.createLedgerRecord(LedgerRecordModelEnums.DEDUCT, ledgerRecordQo);
+    }
+
+    @PostMapping("/recharge")
+    public LedgerRecordVo createRechargeRecord(@RequestBody @Validated LedgerRechargeRecordQo ledgerRechargeRecordQo) {
+        return ledgerRecordService.createRechargeRecord(ledgerRechargeRecordQo);
     }
 
 }
