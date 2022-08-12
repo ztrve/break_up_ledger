@@ -5,15 +5,26 @@
              :visible="props.visible"
              @close="close"
   >
-    <nut-cell-group title="我的账本">
+    <nut-cell-group>
+      <template #title>
+          <div class="nut-cell-group__title my-ledgers-group-title-wrapper">
+            <div>我的账本</div>
+            <div class="home-menu-create-new-ledger-title" @click="clickCreateNewLedger">
+              <nut-icon name="plus"></nut-icon>
+              新建账本
+            </div>
+
+          </div>
+      </template>
+
       <nut-cell v-for="(ledger, index) in ledgers" :title="ledger.name"
                 :class="{
                 'home-menu-active-ledger-title': ledger.id === activeLedger.id
               }"
                 @click="clickLedger(index)"
       ></nut-cell>
-      <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账本"
-                @click="clickCreateNewLedger"></nut-cell>
+<!--      <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账本"-->
+<!--                @click="clickCreateNewLedger"></nut-cell>-->
     </nut-cell-group>
     <nut-cell-group title="当前账本">
       <nut-cell icon="setting" title="账本配置" is-link :center="true" @click="clickSetting"></nut-cell>
@@ -114,6 +125,8 @@ initHomeMenu()
 
 .home-menu-create-new-ledger-title {
   color: #07c160;
+  display: flex;
+  justify-content: center;
 }
 
 .ledger-options-wrapper {
@@ -132,5 +145,10 @@ initHomeMenu()
 
 .home-wrapper .nut-popup .nutui-popup__content-wrapper {
   height: auto;
+}
+
+.my-ledgers-group-title-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
