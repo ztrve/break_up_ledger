@@ -3,12 +3,22 @@
              :visible="props.visible" @close="close">
     <nut-navbar @on-click-back="close" title="记账详情"/>
     <nut-cell-group v-if="props.visible">
-      <nut-cell title="账本" :desc="props.ledger.name"></nut-cell>
+      <nut-cell title="账本" :center="true">
+        <template #link>
+          {{ props.ledger.name }}
+        </template>
+      </nut-cell>
+      <nut-cell title="标签" :center="true">
+        <template #link>
+          {{ props.ledgerRecord.tag }}
+        </template>
+      </nut-cell>
       <nut-cell title="金额变化">
         <template v-slot:link>
           <nut-price :price="props.ledgerRecord.amount / 100" size="normal" :need-symbol="false" :thousands="true"/>
         </template>
       </nut-cell>
+
       <!--      不可删除 后面有用-->
       <!--      <nut-cell title="计算方式">-->
       <!--        <template v-slot:link>-->
@@ -87,13 +97,15 @@
         </nut-cell>
         <nut-cell title="结算前">
           <template v-slot:link>
-            <nut-price :price="activeLedgerMemberWalletRecordDetail.prevWalletAmount / 100" size="normal" :need-symbol="false"
+            <nut-price :price="activeLedgerMemberWalletRecordDetail.prevWalletAmount / 100" size="normal"
+                       :need-symbol="false"
                        :thousands="true"/>
           </template>
         </nut-cell>
         <nut-cell title="结算后">
           <template v-slot:link>
-            <nut-price :price="activeLedgerMemberWalletRecordDetail.afterWalletAmount / 100" size="normal" :need-symbol="false"
+            <nut-price :price="activeLedgerMemberWalletRecordDetail.afterWalletAmount / 100" size="normal"
+                       :need-symbol="false"
                        :thousands="true"/>
           </template>
         </nut-cell>
@@ -170,10 +182,6 @@ function openUserLedgerWalletRecord(user) {
   activeUser.value = user
   loadLedgerMemberWalletRecordDetail()
   showUserLedgerWalletRecord.value = true
-}
-
-function computeModeAsTagType(computeModeId) {
-  return computeModeTagTypeList.filter(item => item.id === computeModeId)[0]
 }
 
 function showBalanceDetail() {
