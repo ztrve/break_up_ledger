@@ -19,9 +19,10 @@
         ></nut-icon>
       </div>
       <!-- 账本表单 -->
-      <nut-form class="ledger-record-setting-form" :model-value="form" ref="formRef">
+      <nut-form id="ledger-record-setting-form" class="ledger-record-setting-form" :model-value="form" ref="formRef">
         <nut-form-item label="账本名称">
-          <input class="nut-input-text" placeholder="账本名称" type="text" v-model="props.ledger.name" :disabled="true"/>
+          <input class="nut-input-text" placeholder="账本名称" type="text" v-model="props.ledger.name"
+                 :disabled="true"/>
         </nut-form-item>
         <nut-form-item
             label="账单标签" :required="true"
@@ -51,11 +52,11 @@
               </nut-tag>
             </div>
           </template>
-<!--          <template #default>-->
-<!--            <nut-button style="width: 100%" @click="showUserLedgerTagSetting = true" shape="square" type="primary">-->
-<!--              没有想要的? 新建一个吧-->
-<!--            </nut-button>-->
-<!--          </template>-->
+          <!--          <template #default>-->
+          <!--            <nut-button style="width: 100%" @click="showUserLedgerTagSetting = true" shape="square" type="primary">-->
+          <!--              没有想要的? 新建一个吧-->
+          <!--            </nut-button>-->
+          <!--          </template>-->
         </nut-picker>
         <nut-form-item
             label="账单金额" body-align="right" :required="true"
@@ -65,8 +66,8 @@
               { regex: /^(0*[1-9]+\d*(\.\d{1,2})?)|(0+\.0[1-9])|(0+\.[1-9]\d?)$/, message: '请输入正确的账单金额。小数点后最多两位' },
             ]"
         >
-          <div style="display: flex; justify-content: flex-end">
-            <nut-inputnumber v-model="form.amount" decimal-places="2"/>
+          <div style="display: flex; justify-content: flex-end; color: #000;">
+            <input v-model="form.amount" type="digit" placeholder="0.0" @input="changeFormAmount"/>
           </div>
         </nut-form-item>
         <nut-form-item label="账单备注" v-if="false">
@@ -84,9 +85,10 @@
 </template>
 
 <script setup>
-import {defineComponent, defineProps, ref, defineEmits} from 'vue';
-import axios_plus from "../../config/axios_plus";
+import { defineComponent, defineProps, ref, defineEmits } from 'vue'
+import axios_plus from '../../config/axios_plus';
 import UserLedgerTagSetting from '/src/components/userledgertagsetting'
+import Taro from "@tarojs/taro";
 
 defineComponent({
   name: 'LedgerRecordSetting'
@@ -136,15 +138,22 @@ const notDefaultTags = ref([])
 const tagPickerColumns = ref([])
 const tagPickerValue = ref('')
 
+function changeFormAmount(e) {
+  const money = (e.target.value.match(/^\d*(\.?\d{0,2})/g)[0]) || null
+  Taro.nextTick(() => {
+    form.value.amount = money
+  })
+}
+
 function initForm() {
   form.value = {
-    amount: 0,
+    amount: null,
     tag: '',
     extra: '',
   }
 }
 
-function customBlurValidate (prop) {
+function customBlurValidate(prop) {
   formRef.value.validate(prop)
 }
 
@@ -158,11 +167,11 @@ function addUserLedgerTag(tag) {
 }
 
 function commit() {
-  formRef.value.validate().then(({ valid, errors }) => {
+  formRef.value.validate().then(({valid, errors}) => {
     if (valid) {
       console.log('success', form);
       commitLoading.value = true
-      axios_plus.post("/ledger/record", {
+      axios_plus.post('/ledger/record', {
         ledgerId: props.ledger.id,
         amount: parseFloat(form.value.amount) * 100,
         tag: form.value.tag,
