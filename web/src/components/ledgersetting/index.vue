@@ -1,6 +1,7 @@
 <template>
   <!-- 账本配置弹出 -->
-  <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" :visible="popupVisible" @update:visible="close()">
+  <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" :visible="popupVisible"
+             @update:visible="close()">
     <div class="ledger-setting-popup-wrapper">
       <div class="ledger-setting-popup-title-wrapper">
         <div class="ledger-setting-popup-title">{{ createLedgerPopupTitle() }}</div>
@@ -15,8 +16,10 @@
       </div>
       <nut-form class="ledger-setting-popup-form" :model-value="ledgerFormData">
         <nut-form-item label="账本名称" :required="true">
-          <div  @click="randomLedgerName" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-            <input style="flex-grow: 1" class="nut-input-text" placeholder="请输入账本名称" type="text" v-model="ledgerFormData.name"
+          <div @click="randomLedgerName"
+               style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+            <input style="flex-grow: 1" class="nut-input-text" placeholder="请输入账本名称" type="text"
+                   v-model="ledgerFormData.name"
                    :disabled="true"/>
             <nut-icon name="refresh" v-if="canFormEdit"></nut-icon>
           </div>
@@ -161,6 +164,7 @@ watch(props, (newVal, oldValue) => {
   if (newVal.visible !== popupVisible.value) {
     popupVisible.value = newVal.visible
   }
+
   if ('create' === newVal.type) {
     canFormEdit.value = true
   } else if ('setting' === newVal.type) {
@@ -171,6 +175,8 @@ watch(props, (newVal, oldValue) => {
   } else {
     initCreateLedgerFormData(newVal.ledger)
   }
+}, {
+  deep: true
 })
 
 function randomLedgerName() {
@@ -209,8 +215,8 @@ function createLedgerPopupTitle() {
 }
 
 function initCreateLedgerFormData(ledger) {
+  const me = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
   if (undefined === ledger || null === ledger || '{}' === JSON.stringify(ledger)) {
-    const me = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
     ledgerFormData.value = {
       id: null,
       name: '',
@@ -220,12 +226,14 @@ function initCreateLedgerFormData(ledger) {
     }
     randomLedgerName()
   } else {
+    const friends = JSON.parse(JSON.stringify(friendList.value.filter(user => ledger.memberIds.indexOf(user.id) >= 0)))
+
     ledgerFormData.value = {
       id: ledger.id,
       name: ledger.name,
       canMemberCommit: ledger.canMemberCommit,
-      memberIds: ledger.memberIds,
-      ledgerMembers: friendList.value.filter(user => ledger.memberIds.indexOf(user.id) >= 0)
+      memberIds: JSON.parse(JSON.stringify(ledger.memberIds)),
+      ledgerMembers: friends
     }
   }
 }
@@ -320,11 +328,11 @@ function removeLedgerMember() {
   const friend = waitRemoveLedgerFriend.value
   const me = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
   if (me.id === friend.id) {
-    Taro.showToast({ icon: 'none', title: '无法移除自己' })
+    Taro.showToast({icon: 'none', title: '无法移除自己'})
     return
   }
   if (friend.id === props.ledger.ownerId) {
-    Taro.showToast({ icon: 'none', title: '无法移除拥有人和账门人' })
+    Taro.showToast({icon: 'none', title: '无法移除拥有人和账门人'})
     return
   }
 
