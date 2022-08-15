@@ -52,11 +52,6 @@
               </nut-tag>
             </div>
           </template>
-          <!--          <template #default>-->
-          <!--            <nut-button style="width: 100%" @click="showUserLedgerTagSetting = true" shape="square" type="primary">-->
-          <!--              没有想要的? 新建一个吧-->
-          <!--            </nut-button>-->
-          <!--          </template>-->
         </nut-picker>
         <nut-form-item
             label="账单金额" body-align="right" :required="true"
@@ -80,14 +75,11 @@
     </div>
   </nut-popup>
 
-  <user-ledger-tag-setting type="create" v-model:visible="showUserLedgerTagSetting" @submit-success="addUserLedgerTag"
-  ></user-ledger-tag-setting>
 </template>
 
 <script setup>
 import { defineComponent, defineProps, ref, defineEmits } from 'vue'
 import axios_plus from '../../config/axios_plus';
-import UserLedgerTagSetting from '/src/components/userledgertagsetting'
 import Taro from "@tarojs/taro";
 
 defineComponent({
@@ -128,7 +120,6 @@ function close() {
 
 const canFormEdit = ref(true)
 const showTagPicker = ref(false)
-const showUserLedgerTagSetting = ref(false)
 const commitLoading = ref(false)
 
 const form = ref({})

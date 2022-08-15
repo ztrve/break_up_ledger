@@ -3,6 +3,7 @@ package com.diswares.breakupledger.backend.vo.ledger;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -72,6 +73,8 @@ public class LedgerMemberWalletRecordVo extends AncestorDomain implements Serial
      */
     private LocalDateTime createTime;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 额外信息
+     */
+    private UserInfoVo creator;
 }

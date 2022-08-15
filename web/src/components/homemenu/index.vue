@@ -23,18 +23,19 @@
               }"
                 @click="clickLedger(index)"
       ></nut-cell>
-<!--      <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账本"-->
-<!--                @click="clickCreateNewLedger"></nut-cell>-->
     </nut-cell-group>
     <nut-cell-group title="当前账本">
-      <nut-cell :icon="require('../../../assets/wallet.png')" title="账本钱包" is-link :center="true" @click="clickSetting"></nut-cell>
+      <nut-cell :icon="require('../../../assets/wallet.png')" title="账本钱包" is-link :center="true" @click="showLedgerMemberWallet = true"></nut-cell>
       <nut-cell icon="setting" title="账本配置" is-link :center="true" @click="clickSetting"></nut-cell>
     </nut-cell-group>
   </nut-popup>
+
+  <ledger-member-wallet v-model:visible="showLedgerMemberWallet" :ledger="activeLedger"></ledger-member-wallet>
 </template>
 
 <script setup>
-import {defineComponent, defineProps, ref, watch, defineEmits, onMounted} from 'vue';
+import {defineComponent, defineProps, ref, watch, defineEmits} from 'vue';
+import LedgerMemberWallet from '/src/components/ledgermemberwallet'
 
 defineComponent({
   name: 'HomeMenu'
@@ -55,6 +56,7 @@ function close() {
   emit('update:visible', false)
 }
 
+const showLedgerMemberWallet = ref(false)
 
 const activeLedger = ref({})
 const waitingOperateLedger = ref({})

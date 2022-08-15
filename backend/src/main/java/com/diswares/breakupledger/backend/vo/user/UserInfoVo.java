@@ -35,7 +35,4 @@ public class UserInfoVo implements Serializable {
      *
      */
     private String phone;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

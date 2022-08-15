@@ -83,7 +83,9 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         ledgerVo.setMemberIds(memberIds);
         List<UserInfoVo> memberVoList = userInfoService.listVoByUserIds(memberIds);
         ledgerVo.setMembers(memberVoList);
-
+        // 账本余额
+        Integer ledgerAmount = ledgerMemberService.getLedgerAmount(ledgerId);
+        ledgerVo.setAmount(ledgerAmount);
         return ledgerVo;
     }
 

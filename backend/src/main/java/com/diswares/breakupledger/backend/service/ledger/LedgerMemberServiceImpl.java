@@ -28,6 +28,8 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
         implements LedgerMemberService {
     private final NoticeService noticeService;
 
+    private final LedgerMemberMapper ledgerMemberMapper;
+
     @Override
     public List<Long> myLedgerIds() {
         UserInfo me = AuthUtil.currentUserInfo();
@@ -136,6 +138,17 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
             return 0;
         }
         return ledgerMembers.stream()
+                .mapToInt(LedgerMember::getWalletAmount)
+                .sum();
+    }
+
+    @Override
+    public Integer getLedgerAmount(Long ledgerId) {
+        List<LedgerMember> members = ledgerMemberMapper.getMembers(ledgerId);
+        if (ObjectUtils.isEmpty(members)) {
+            return 0;
+        }
+        return members.stream()
                 .mapToInt(LedgerMember::getWalletAmount)
                 .sum();
     }

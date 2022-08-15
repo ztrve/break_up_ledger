@@ -60,4 +60,6 @@ public class LedgerVo {
     private List<Long> memberIds;
 
     private List<UserInfoVo> members;
+
+    private Integer amount;
 }
