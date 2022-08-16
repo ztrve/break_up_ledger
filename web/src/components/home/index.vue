@@ -131,10 +131,6 @@ const activeLedgerRecordsPage = {
   current: 0
 }
 
-watch(hasMoreLedgerRecords, (newVal) => {
-  console.log(newVal)
-})
-
 function initActiveLedgerRecords() {
   hasMoreLedgerRecords.value = true
   activeLedgerRecords.value = []

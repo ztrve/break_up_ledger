@@ -23,9 +23,12 @@ import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
 import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
@@ -47,18 +50,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
 
     private final FriendService friendService;
 
-    private Map<NoticeEnums, NoticeHandler> noticeHandlerMap = null;
-
     private final ApplicationContext applicationContext;
-
-    @PostConstruct
-    public void post () {
-        noticeHandlerMap = applicationContext.getBeansOfType(NoticeHandler.class)
-                .values()
-                .stream()
-                .collect(Collectors.toMap(NoticeHandler::noticeType, v -> v, (k1, k2) -> k1));
-
-    }
 
     @Override
     public Page<NoticeVo> pageOfMine(Page<Notice> page) {
@@ -145,6 +137,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public NoticeVo handleNoticeByType(NoticeDealQo noticeDealQo) {
         Notice notice = getById(noticeDealQo.getNoticeId());
         Assert.notNull(notice, "通知不存在");
@@ -156,6 +149,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         notice.setDealStatus(NoticeDealEnums.DEAL);
         updateById(notice);
 
+        Map<NoticeEnums, NoticeHandler> noticeHandlerMap = getNoticeEnumsNoticeHandlerMap();
         NoticeHandler noticeHandler = noticeHandlerMap.get(notice.getNoticeType());
 
         if (NoticeDealResultEnums.AGREE.equals(noticeDealQo.getDealResult())) {
@@ -166,6 +160,14 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         NoticeVo noticeVo = new NoticeVo();
         BeanUtils.copyProperties(notice, noticeVo);
         return noticeVo;
+    }
+
+    @NotNull
+    private Map<NoticeEnums, NoticeHandler> getNoticeEnumsNoticeHandlerMap() {
+        return applicationContext.getBeansOfType(NoticeHandler.class)
+                .values()
+                .stream()
+                .collect(Collectors.toMap(NoticeHandler::noticeType, v -> v, (k1, k2) -> k1));
     }
 
     @Override

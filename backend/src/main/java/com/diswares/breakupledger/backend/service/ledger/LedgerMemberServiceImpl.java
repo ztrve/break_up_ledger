@@ -2,11 +2,14 @@ package com.diswares.breakupledger.backend.service.ledger;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.diswares.breakupledger.backend.kernel.vo.AncestorDomain;
 import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.mapper.LedgerMemberMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
+import com.diswares.breakupledger.backend.service.notice.NoticeService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -20,8 +23,12 @@ import java.util.stream.Collectors;
  * @createDate 2022-07-31 21:23:35
  */
 @Service
+@RequiredArgsConstructor
 public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, LedgerMember>
         implements LedgerMemberService {
+    private final NoticeService noticeService;
+
+    private final LedgerMemberMapper ledgerMemberMapper;
 
     @Override
     public List<Long> myLedgerIds() {
@@ -98,7 +105,18 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
         }
 
         if (!ObjectUtils.isEmpty(addLedgerMemberList)) {
-            saveBatch(addLedgerMemberList);
+            UserInfo me = AuthUtil.currentUserInfo();
+            List<LedgerMember> singleMe = addLedgerMemberList.stream()
+                    .filter(addMember -> addMember.getMemberId().equals(me.getId()))
+                    .collect(Collectors.toList());
+            if (!ObjectUtils.isEmpty(singleMe)) {
+                saveBatch(singleMe);
+            }
+            List<Long> noticeAddMembers = addLedgerMemberList.stream()
+                    .map(LedgerMember::getMemberId)
+                    .filter(addMemberId -> !addMemberId.equals(me.getId()))
+                    .collect(Collectors.toList());
+            noticeService.createLedgerInviteNotice(ledger, me, noticeAddMembers);
         }
         return getMemberIdsByLedgerId(ledgerId);
     }
@@ -120,6 +138,17 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
             return 0;
         }
         return ledgerMembers.stream()
+                .mapToInt(LedgerMember::getWalletAmount)
+                .sum();
+    }
+
+    @Override
+    public Integer getLedgerAmount(Long ledgerId) {
+        List<LedgerMember> members = ledgerMemberMapper.getMembers(ledgerId);
+        if (ObjectUtils.isEmpty(members)) {
+            return 0;
+        }
+        return members.stream()
                 .mapToInt(LedgerMember::getWalletAmount)
                 .sum();
     }

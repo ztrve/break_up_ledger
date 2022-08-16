@@ -5,28 +5,37 @@
              :visible="props.visible"
              @close="close"
   >
-    <nut-cell-group title="我的账本" style="position: relative">
+    <nut-cell-group>
+      <template #title>
+          <div class="nut-cell-group__title my-ledgers-group-title-wrapper">
+            <div>我的账本</div>
+            <div class="home-menu-create-new-ledger-title" @click="clickCreateNewLedger">
+              <nut-icon name="plus"></nut-icon>
+              新建账本
+            </div>
+
+          </div>
+      </template>
+
       <nut-cell v-for="(ledger, index) in ledgers" :title="ledger.name"
                 :class="{
                 'home-menu-active-ledger-title': ledger.id === activeLedger.id
               }"
                 @click="clickLedger(index)"
       ></nut-cell>
-      <nut-cell class="home-menu-create-new-ledger-title" icon="plus" title="新建账本"
-                @click="clickCreateNewLedger"></nut-cell>
+    </nut-cell-group>
+    <nut-cell-group title="当前账本">
+      <nut-cell :icon="require('../../../assets/wallet.png')" title="账本钱包" is-link :center="true" @click="showLedgerMemberWallet = true"></nut-cell>
+      <nut-cell icon="setting" title="账本配置" is-link :center="true" @click="clickSetting"></nut-cell>
     </nut-cell-group>
   </nut-popup>
-  <nut-popup position="bottom" :style="{ width: '100%', height: 'auto' }" v-model:visible="showLedgerOptions">
-    <div class="ledger-options-wrapper">
-      <div class="ledger-options-title">账本 {{ activeLedger.name }}</div>
-      <nut-button shape="square" icon="retweet" @click="changeActiveLedger">切换</nut-button>
-      <nut-button style="margin-top: -1px" shape="square" icon="setting" @click="clickSetting">设置</nut-button>
-    </div>
-  </nut-popup>
+
+  <ledger-member-wallet v-model:visible="showLedgerMemberWallet" :ledger="activeLedger"></ledger-member-wallet>
 </template>
 
 <script setup>
-import {defineComponent, defineProps, ref, watch, defineEmits, onMounted} from 'vue';
+import {defineComponent, defineProps, ref, watch, defineEmits} from 'vue';
+import LedgerMemberWallet from '/src/components/ledgermemberwallet'
 
 defineComponent({
   name: 'HomeMenu'
@@ -47,19 +56,18 @@ function close() {
   emit('update:visible', false)
 }
 
-const showLedgerOptions = ref(false)
+const showLedgerMemberWallet = ref(false)
 
 const activeLedger = ref({})
 const waitingOperateLedger = ref({})
 
 function clickLedger(ledgerIndex) {
-  showLedgerOptions.value = true
   waitingOperateLedger.value = props.ledgers[ledgerIndex]
+  changeActiveLedger()
 }
 
 function changeActiveLedger() {
   activeLedger.value = waitingOperateLedger.value
-  showLedgerOptions.value = false
   emit('click-change', activeLedger)
 }
 
@@ -68,7 +76,6 @@ function clickCreateNewLedger() {
 }
 
 function clickSetting() {
-  showLedgerOptions.value = false
   emit('click-setting', waitingOperateLedger)
 }
 
@@ -121,6 +128,8 @@ initHomeMenu()
 
 .home-menu-create-new-ledger-title {
   color: #07c160;
+  display: flex;
+  justify-content: center;
 }
 
 .ledger-options-wrapper {
@@ -135,5 +144,14 @@ initHomeMenu()
   display: flex;
   justify-content: center;
   padding: 10px 0;
+}
+
+.home-wrapper .nut-popup .nutui-popup__content-wrapper {
+  height: auto;
+}
+
+.my-ledgers-group-title-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

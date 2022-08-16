@@ -2,12 +2,11 @@ package com.diswares.breakupledger.backend.service.ledger;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.mapper.LedgerMapper;
+import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerCreateQo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerUpdateQo;
-import com.diswares.breakupledger.backend.service.notice.NoticeService;
 import com.diswares.breakupledger.backend.service.user.UserInfoService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerVo;
@@ -35,8 +34,6 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
     private final LedgerMemberService ledgerMemberService;
 
     private final UserInfoService userInfoService;
-
-    private final NoticeService noticeService;
 
     @Override
     public List<LedgerVo> myLedgers() {
@@ -86,7 +83,9 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
         ledgerVo.setMemberIds(memberIds);
         List<UserInfoVo> memberVoList = userInfoService.listVoByUserIds(memberIds);
         ledgerVo.setMembers(memberVoList);
-
+        // 账本余额
+        Integer ledgerAmount = ledgerMemberService.getLedgerAmount(ledgerId);
+        ledgerVo.setAmount(ledgerAmount);
         return ledgerVo;
     }
 
@@ -108,11 +107,6 @@ public class LedgerServiceImpl extends ServiceImpl<LedgerMapper, Ledger>
 
         ledgerMemberService.updateLedgerMembers(ledger, Collections.singletonList(me.getId()));
 
-        // 给 当前用户以外的所有用户 发送通知
-        ledgerCreateQo.getMemberIds().removeIf(id -> id.equals(me.getId()));
-        if (!ObjectUtils.isEmpty(ledgerCreateQo.getMemberIds())) {
-            noticeService.createLedgerInviteNotice(ledger, me, ledgerCreateQo.getMemberIds());
-        }
         return getDetailById(ledger.getId());
     }
 

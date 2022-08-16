@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diswares.breakupledger.backend.enums.LedgerRecordModelEnums;
 import com.diswares.breakupledger.backend.po.ledger.LedgerRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerRechargeRecordQo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerRecordQo;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerRecordVo;
 
@@ -30,6 +31,14 @@ public interface LedgerRecordService extends IService<LedgerRecord> {
     LedgerRecordVo createLedgerRecord(LedgerRecordModelEnums model, LedgerRecordQo ledgerRecordQo);
 
     /**
+     * 新建账本充值记录
+     *
+     * @param ledgerRechargeRecordQo 账本充值记录 Qo
+     * @return 新的 账本记录
+     */
+    LedgerRecordVo createRechargeRecord(LedgerRechargeRecordQo ledgerRechargeRecordQo);
+
+    /**
      * 根据 账本id 获取 账单记录分页数据
      * 时间倒序
      *
@@ -38,4 +47,5 @@ public interface LedgerRecordService extends IService<LedgerRecord> {
      * @return 账单记录分页数据
      */
     Page<LedgerRecordVo> pageByLedgerId(Page<LedgerRecord> page, Long ledgerId);
+
 }

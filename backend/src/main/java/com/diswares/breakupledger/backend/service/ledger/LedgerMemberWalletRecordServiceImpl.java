@@ -1,20 +1,31 @@
 package com.diswares.breakupledger.backend.service.ledger;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMemberWalletRecord;
 import com.diswares.breakupledger.backend.mapper.LedgerMemberWalletRecordMapper;
 import com.diswares.breakupledger.backend.po.ledger.LedgerRecord;
+import com.diswares.breakupledger.backend.po.notice.Notice;
+import com.diswares.breakupledger.backend.po.user.UserInfo;
 import com.diswares.breakupledger.backend.qo.ledger.LedgerMemberWalletRecordGetOneQo;
+import com.diswares.breakupledger.backend.qo.ledger.LedgerMemberWalletRecordGetPageQo;
+import com.diswares.breakupledger.backend.service.user.UserInfoService;
+import com.diswares.breakupledger.backend.util.AuthUtil;
 import com.diswares.breakupledger.backend.vo.ledger.LedgerMemberWalletRecordVo;
+import com.diswares.breakupledger.backend.vo.notice.NoticeVo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import io.jsonwebtoken.lang.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author z_true
@@ -24,6 +35,36 @@ import java.util.List;
 public class LedgerMemberWalletRecordServiceImpl extends ServiceImpl<LedgerMemberWalletRecordMapper, LedgerMemberWalletRecord>
         implements LedgerMemberWalletRecordService {
     private final LedgerMemberService ledgerMemberService;
+
+    private final UserInfoService userInfoService;
+
+    @Override
+    public Page<LedgerMemberWalletRecordVo> page(Page<LedgerMemberWalletRecord> page, LedgerMemberWalletRecordGetPageQo qo) {
+        LambdaQueryWrapper<LedgerMemberWalletRecord> query = new LambdaQueryWrapper<>();
+        query.eq(LedgerMemberWalletRecord::getLedgerId, qo.getLedgerId())
+                .eq(LedgerMemberWalletRecord::getLedgerMemberId, qo.getLedgerMemberId())
+                .orderByDesc(LedgerMemberWalletRecord::getCreateTime);
+        page = page(page, query);
+
+        Page<LedgerMemberWalletRecordVo> voPage = new Page<>();
+        BeanUtils.copyProperties(page, voPage, "records");
+        if (ObjectUtils.isEmpty(page.getRecords())) {
+            return voPage;
+        }
+
+        List<Long> friendIds = page.getRecords().stream().map(LedgerMemberWalletRecord::getCreatorId).collect(Collectors.toList());
+        Map<Long, UserInfoVo> userIdMap = userInfoService.listVoByUserIds(friendIds)
+                .stream()
+                .collect(Collectors.toMap(UserInfoVo::getId, v -> v, (a, b) -> a));
+
+        return voPage.setRecords(page.getRecords().stream().map(po -> {
+            LedgerMemberWalletRecordVo vo = new LedgerMemberWalletRecordVo();
+            BeanUtils.copyProperties(po, vo);
+            UserInfoVo creator = userIdMap.get(vo.getCreatorId());
+            vo.setCreator(creator);
+            return vo;
+        }).collect(Collectors.toList()));
+    }
 
     @Override
     public LedgerMemberWalletRecordVo getOneDetail(LedgerMemberWalletRecordGetOneQo qo) {

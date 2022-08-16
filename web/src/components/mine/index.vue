@@ -168,14 +168,11 @@ function computeMineOption() {
   Taro.createSelectorQuery().select('.mine-wrapper')
       .boundingClientRect()
       .exec(mineWrappers => {
-        console.log('mineWrappers: ' + mineWrappers)
-        console.log(mineWrappers)
         const mineWrapperHeight = mineWrappers[0].height
 
         Taro.createSelectorQuery().select('.mine-wrapper > .mine-user-display')
             .boundingClientRect()
             .exec(mineUserDisplays => {
-              console.log('mineUserDisplays: ' + mineUserDisplays)
               const mineUserDisplayHeight = mineUserDisplays[0].height
               mineOptions.value.width = windowWidth + 'px'
               mineOptions.value.height = mineWrapperHeight - mineUserDisplayHeight + 'px'
