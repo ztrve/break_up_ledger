@@ -121,4 +121,13 @@ export default {
   overflow: hidden;
 }
 
+.pop-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  width: 100%;
+  margin: 10px 0;
+}
+
 </style>

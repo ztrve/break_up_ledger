@@ -43,7 +43,14 @@
                 <div class="ledger-desc">
                   <div class="ledger-desc-item">
                     <div>{{ ledgerRecord.text }}</div>
-                    <div style="font-size: 12px">{{ ledgerRecord.amount / 100 }} 软妹币</div>
+                    <div style="font-size: 12px">
+                      <span :class="{
+                            'lmw-font-red': ledgerRecord.amount < 0,
+                            'lmw-font-green': ledgerRecord.amount >=0
+                            }"
+                            style="display: inline-block"
+                      >{{ ledgerRecord.amount > 0 ? '+' : '' }}{{ ledgerRecord.amount / 100 }} 软妹币</span>
+                    </div>
                   </div>
                   <nut-tag v-if="false" class="ledger-desc-item" type="primary">单</nut-tag>
                 </div>
@@ -74,6 +81,7 @@
                @click-change="changeActiveLedger"
                @click-create-ledger="openCreateLedgerSettingPopup"
                @click-setting="openLedgerSettingPopup"
+               @recharge-success="changeActiveLedger(activeLedger)"
     ></home-menu>
 
     <!-- 创建账单 -->
@@ -140,9 +148,10 @@ function initActiveLedgerRecords() {
 }
 
 function loadLedgerDetail(ledger) {
-  activeLedger.value = ledger.value
+  activeLedger.value = ledger
+
   axios_plus.get(
-      `/ledger/${ledger.value.id}`
+      `/ledger/${activeLedger.value.id}`
   ).then(response => {
     const resp = response.data
     if (resp.code === 'E0001' && undefined !== resp.data) {
@@ -237,8 +246,14 @@ function loadActiveLedgerRecords(done) {
 
 function changeActiveLedger(ledger) {
   console.log('触发变更 active')
+  let ledgerData
+  if (ledger.value) {
+    ledgerData = ledger.value
+  } else {
+    ledgerData = ledger
+  }
   initActiveLedgerRecords()
-  loadLedgerDetail(ledger)
+  loadLedgerDetail(ledgerData)
   loadActiveLedgerRecords()
   showHomeMenu.value = false
 }

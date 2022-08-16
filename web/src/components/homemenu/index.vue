@@ -24,18 +24,23 @@
                 @click="clickLedger(index)"
       ></nut-cell>
     </nut-cell-group>
+
+    <!-- 操作 -->
     <nut-cell-group title="当前账本">
       <nut-cell :icon="require('../../../assets/wallet.png')" title="账本钱包" is-link :center="true" @click="showLedgerMemberWallet = true"></nut-cell>
+      <nut-cell :icon="require('../../../assets/recharge.png')" title="钱包充值" is-link :center="true" @click="clickRecharge"></nut-cell>
       <nut-cell icon="setting" title="账本配置" is-link :center="true" @click="clickSetting"></nut-cell>
     </nut-cell-group>
   </nut-popup>
 
   <ledger-member-wallet v-model:visible="showLedgerMemberWallet" :ledger="activeLedger"></ledger-member-wallet>
+  <wallet-recharge v-model:visible="showWalletRecharge" :ledger="activeLedger" @recharge-success="walletRechargeSuccess"></wallet-recharge>
 </template>
 
 <script setup>
 import {defineComponent, defineProps, ref, watch, defineEmits} from 'vue';
 import LedgerMemberWallet from '/src/components/ledgermemberwallet'
+import WalletRecharge from '/src/components/walletrecharge'
 
 defineComponent({
   name: 'HomeMenu'
@@ -50,16 +55,28 @@ const props = defineProps({
     type: Array
   }
 })
-const emit = defineEmits(['update:visible', 'click-change', 'click-create-ledger', 'click-setting'])
+const emit = defineEmits([
+    'update:visible', 'click-change', 'click-create-ledger', 'click-setting',
+    'recharge-success'
+])
 
 function close() {
   emit('update:visible', false)
 }
 
 const showLedgerMemberWallet = ref(false)
+const showWalletRecharge = ref(false)
 
 const activeLedger = ref({})
 const waitingOperateLedger = ref({})
+
+function walletRechargeSuccess () {
+  emit('recharge-success')
+}
+
+function clickRecharge() {
+  showWalletRecharge.value = true
+}
 
 function clickLedger(ledgerIndex) {
   waitingOperateLedger.value = props.ledgers[ledgerIndex]

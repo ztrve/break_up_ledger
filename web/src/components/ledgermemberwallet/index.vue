@@ -58,7 +58,7 @@
                             'lmw-font-green': record.amount >=0
                             }"
                             style="display: inline-block"
-                      >{{ record.amount / 100 }}¥</span>
+                      >{{ record.amount > 0 ? '+' : '' }}{{ record.amount / 100 }}¥</span>
                     </div>
                     <div>
                       余额
@@ -67,7 +67,7 @@
                             'lmw-font-green': record.amount >=0
                             }"
                             style="display: inline-block"
-                      >{{ record.afterWalletAmount / 100 }}¥</span>
+                      >{{ record.amount > 0 ? '+' : '' }}{{ record.afterWalletAmount / 100 }}¥</span>
                     </div>
                   </div>
                 </div>
