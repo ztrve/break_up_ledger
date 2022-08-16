@@ -62,6 +62,9 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend>
 
     @Override
     public boolean isFriends(Long uid, List<Long> userIds) {
+        if (ObjectUtils.isEmpty(userIds)) {
+            return true;
+        }
         LambdaQueryWrapper<Friend> query = new LambdaQueryWrapper<>();
         query.eq(Friend::getLeftUserId, uid);
         query.in(Friend::getRightUserId, userIds);
