@@ -23,7 +23,19 @@
       <!-- 账单列表 -->
       <div class="ledgers" id="ledger-list">
         <!-- 通知列表 -->
+        <!-- 空 -->
+        <nut-empty v-if="showEmptyLedgerRecordSetting" image="error">
+          <template v-slot:description>
+            <p>快去记一笔吧</p>
+          </template>
+          <template v-slot:default>
+            <div style="margin-top: 10px">
+              <nut-button icon="plus" type="primary" @click="showLedgerRecordSetting = true">记一笔</nut-button>
+            </div>
+          </template>
+        </nut-empty>
         <nut-infiniteloading
+            v-else
             containerId='ledger-list'
             :use-window='false'
             :has-more="hasMoreLedgerRecords"
@@ -118,6 +130,7 @@ const showLedgerRecordDetail = ref(false)
 const showHomeMenu = ref(false)
 const showLedgerRecordSetting = ref(false)
 const hasMoreLedgerRecords = ref(true)
+const showEmptyLedgerRecordSetting = ref(false)
 
 const homeWrapperRef = ref(null)
 const ledgers = ref([])
@@ -141,6 +154,7 @@ const activeLedgerRecordsPage = {
 
 function initActiveLedgerRecords() {
   hasMoreLedgerRecords.value = true
+  showEmptyLedgerRecordSetting.value = false
   activeLedgerRecords.value = []
   activeLedgerRecordsPage.pages = 0
   activeLedgerRecordsPage.size = 10
@@ -154,7 +168,7 @@ function loadLedgerDetail(ledger) {
       `/ledger/${activeLedger.value.id}`
   ).then(response => {
     const resp = response.data
-    if (resp.code === 'E0001' && undefined !== resp.data) {
+    if (resp.code === 'E0001') {
       activeLedger.value = resp.data
     }
   })
@@ -169,6 +183,10 @@ function clickLedgerRecordDetail(ledgerRecord) {
 function addActiveLedgerRecord(ledgerRecord) {
   translateToLedgerRecordView(ledgerRecord)
   activeLedgerRecords.value.unshift(ledgerRecord)
+
+  if (showEmptyLedgerRecordSetting.value) {
+    showEmptyLedgerRecordSetting.value = false
+  }
 }
 
 function openLedgerSettingPopup(ledger) {
@@ -223,6 +241,7 @@ function loadActiveLedgerRecords(done) {
     if ('E0001' === resp.code) {
       if (resp.data === undefined || resp.data === null || resp.data.length === 0) {
         activeLedgerRecords.value = []
+        showEmptyLedgerRecordSetting.value = true
       } else {
         resp.data.forEach(record => {
           translateToLedgerRecordView(record)
@@ -255,6 +274,7 @@ function changeActiveLedger(ledger) {
   initActiveLedgerRecords()
   loadLedgerDetail(ledgerData)
   loadActiveLedgerRecords()
+
   showHomeMenu.value = false
 }
 
