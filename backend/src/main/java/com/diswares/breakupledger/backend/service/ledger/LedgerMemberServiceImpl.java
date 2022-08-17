@@ -7,14 +7,19 @@ import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.diswares.breakupledger.backend.mapper.LedgerMemberMapper;
 import com.diswares.breakupledger.backend.po.user.UserInfo;
+import com.diswares.breakupledger.backend.service.friend.FriendService;
 import com.diswares.breakupledger.backend.service.notice.NoticeService;
+import com.diswares.breakupledger.backend.service.user.UserInfoService;
 import com.diswares.breakupledger.backend.util.AuthUtil;
+import com.diswares.breakupledger.backend.vo.ledger.LedgerMemberWalletVo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +34,57 @@ public class LedgerMemberServiceImpl extends ServiceImpl<LedgerMemberMapper, Led
     private final NoticeService noticeService;
 
     private final LedgerMemberMapper ledgerMemberMapper;
+
+    private final UserInfoService userInfoService;
+
+    @Override
+    public List<LedgerMemberWalletVo> getMemberWallets(Long ledgerId) {
+        UserInfo me = AuthUtil.currentUserInfo();
+
+        LambdaQueryWrapper<LedgerMember> query = new LambdaQueryWrapper<>();
+        query.eq(LedgerMember::getLedgerId, ledgerId)
+                .eq(LedgerMember::getMemberId, me.getId())
+                .last("limit 1");
+        Assert.isTrue(count(query) > 0, "你不在此账本中");
+
+        query.clear();
+        query.eq(LedgerMember::getLedgerId, ledgerId);
+        List<LedgerMember> members = list(query);
+        List<Long> memberIds = members.stream().map(LedgerMember::getMemberId).collect(Collectors.toList());
+
+        Map<Long, UserInfoVo> userInfoVoMap = userInfoService.listVoByUserIds(memberIds)
+                .stream()
+                .collect(Collectors.toMap(UserInfoVo::getId, v -> v, (a, b) -> a));
+
+        return members.stream().map(memberPo-> {
+            LedgerMemberWalletVo vo = new LedgerMemberWalletVo();
+            vo.setId(memberPo.getId());
+            vo.setLedgerId(memberPo.getLedgerId());
+            vo.setMemberId(memberPo.getMemberId());
+            vo.setAmount(memberPo.getWalletAmount());
+            vo.setMember(userInfoVoMap.get(memberPo.getMemberId()));
+            return vo;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public LedgerMemberWalletVo getMemberWallet(Long ledgerId, Long memberId) {
+        LambdaQueryWrapper<LedgerMember> query = new LambdaQueryWrapper<>();
+        query.eq(LedgerMember::getLedgerId, ledgerId)
+                .eq(LedgerMember::getMemberId, memberId)
+                .last("limit 1");
+        LedgerMember ledgerMember = getOne(query);
+
+        UserInfoVo userVo = userInfoService.getOneDetail(memberId);
+
+        LedgerMemberWalletVo vo = new LedgerMemberWalletVo();
+        vo.setId(ledgerMember.getId());
+        vo.setLedgerId(ledgerMember.getLedgerId());
+        vo.setMemberId(ledgerMember.getMemberId());
+        vo.setAmount(ledgerMember.getWalletAmount());
+        vo.setMember(userVo);
+        return vo;
+    }
 
     @Override
     public List<Long> myLedgerIds() {

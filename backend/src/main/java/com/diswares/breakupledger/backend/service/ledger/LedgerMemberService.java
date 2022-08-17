@@ -3,6 +3,9 @@ package com.diswares.breakupledger.backend.service.ledger;
 import com.diswares.breakupledger.backend.po.ledger.Ledger;
 import com.diswares.breakupledger.backend.po.ledger.LedgerMember;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diswares.breakupledger.backend.vo.ledger.LedgerMemberWalletVo;
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -12,6 +15,23 @@ import java.util.List;
  * @createDate 2022-07-31 21:23:35
  */
 public interface LedgerMemberService extends IService<LedgerMember> {
+
+    /**
+     * 获取账本 成员钱包
+     *
+     * @param ledgerId 账本id
+     * @return 成员钱包
+     */
+    List<LedgerMemberWalletVo> getMemberWallets(Long ledgerId);
+
+    /**
+     * 成员钱包信息
+     *
+     * @param ledgerId 账本
+     * @param memberId 成员
+     * @return 成员钱包信息
+     */
+    LedgerMemberWalletVo getMemberWallet(Long ledgerId, Long memberId);
 
     /**
      * 我的账本ID

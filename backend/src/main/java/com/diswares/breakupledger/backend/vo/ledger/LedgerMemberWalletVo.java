@@ -1,5 +1,6 @@
 package com.diswares.breakupledger.backend.vo.ledger;
 
+import com.diswares.breakupledger.backend.vo.user.UserInfoVo;
 import lombok.Data;
 
 /**
@@ -16,4 +17,6 @@ public class LedgerMemberWalletVo {
     private Long memberId;
 
     private Integer amount;
+
+    private UserInfoVo member;
 }
