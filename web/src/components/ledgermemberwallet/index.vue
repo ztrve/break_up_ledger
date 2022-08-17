@@ -197,6 +197,16 @@ function loadMemberWallet(member) {
   })
 }
 
+function loadMembers() {
+  axios_plus.get(
+      `/ledger/member/wallet?ledgerId=${props.ledger.id}`
+  ).then(({data}) => {
+    if (data.code === 'E0001') {
+      members.value = data.data.map(item => item.member)
+    }
+  })
+}
+
 function clickLedger() {
   initRecords()
   loadLedgerDetail()
@@ -242,22 +252,6 @@ function loadLedgerRecords(done) {
   })
 }
 
-function loadFriends() {
-  axios_plus.get(
-      '/friend/my'
-  ).then(({data}) => {
-    if (data.code === 'E0001') {
-      members.value = members.value.concat(data.data)
-    }
-  })
-}
-
-function initMembers() {
-  const userInfo = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
-  members.value.push(userInfo)
-  loadFriends()
-}
-
 let getDomSuccess = false
 
 function computeRecordsStyle() {
@@ -277,7 +271,7 @@ function computeRecordsStyle() {
 watch(props, (newVal, oldVal) => {
   initRecords()
   clickLedger()
-
+  loadMembers()
   // 计算dom
   const intervalId = setInterval(() => {
     let getDomCount = 0
@@ -292,8 +286,6 @@ watch(props, (newVal, oldVal) => {
     clearInterval(intervalId)
   }, 50)
 })
-
-initMembers()
 </script>
 
 <style lang="scss">

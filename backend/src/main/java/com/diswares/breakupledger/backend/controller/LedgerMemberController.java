@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author: z_true
  * @date: 2022/8/4 18:24
@@ -27,16 +29,12 @@ public class LedgerMemberController {
 
     @GetMapping("/wallet/one")
     public LedgerMemberWalletVo getMemberWallet(@RequestParam Long ledgerId, @RequestParam Long memberId) {
-        LambdaQueryWrapper<LedgerMember> query = new LambdaQueryWrapper<>();
-        query.eq(LedgerMember::getLedgerId, ledgerId)
-                .eq(LedgerMember::getMemberId, memberId)
-                        .last("limit 1");
-        LedgerMember ledgerMember = ledgerMemberService.getOne(query);
-        LedgerMemberWalletVo vo = new LedgerMemberWalletVo();
-        vo.setId(ledgerMember.getId());
-        vo.setLedgerId(ledgerMember.getLedgerId());
-        vo.setMemberId(ledgerMember.getMemberId());
-        vo.setAmount(ledgerMember.getWalletAmount());
-        return vo;
+        return ledgerMemberService.getMemberWallet(ledgerId, memberId);
     }
+
+    @GetMapping("/wallet")
+    public List<LedgerMemberWalletVo> getMemberWallets(@RequestParam Long ledgerId) {
+        return ledgerMemberService.getMemberWallets(ledgerId);
+    }
+
 }

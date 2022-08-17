@@ -118,23 +118,19 @@ function changeMemberRechargeAmount(e) {
   })
 }
 
-function loadFriends() {
+function loadMembers() {
   axios_plus.get(
-      '/friend/my'
+      `/ledger/member/wallet?ledgerId=${props.ledger.id}`
   ).then(({data}) => {
     if (data.code === 'E0001') {
-      members.value = members.value.concat(data.data)
+      members.value = data.data.map(item => item.member)
     }
   })
 }
 
-function initMembers() {
-  const userInfo = Taro.getStorageSync(LOCAL_STORAGE_KEYS.user)
-  members.value.push(userInfo)
-  loadFriends()
-}
-
-initMembers()
+watch(props, (newVal, oldVal) => {
+  loadMembers()
+})
 </script>
 
 <style lang="scss">

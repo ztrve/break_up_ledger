@@ -58,8 +58,9 @@ public class LedgerRecordServiceImpl extends ServiceImpl<LedgerRecordMapper, Led
         Assert.notNull(ledger, "账本不存在");
         UserInfo me = AuthUtil.currentUserInfo();
         // 是否有权限可以创建记录
-        Assert.isTrue(!ledger.getCanMemberCommit() && ledger.getLeaderId().equals(me.getId()),
-                "账本" + ledger.getName() + "仅允许帐门人提交");
+        if (!ledger.getCanMemberCommit()) {
+            Assert.isTrue(ledger.getLeaderId().equals(me.getId()), "账本" + ledger.getName() + "仅允许帐门人提交");
+        }
 
         int ledgerWalletAmount = ledgerMemberService.getLedgerWalletAmount(ledger.getId());
 
